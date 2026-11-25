@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using QuanLyHoaDon.GUI.Controls;
+using QuanLyHoaDon.GUI.Forms.ThongKe;
 using QuanLyHoaDon.Utilities;
 
 namespace QuanLyHoaDon.GUI.Forms.HeThong
@@ -46,6 +47,13 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
 
             // Khoi tao danh sach menu Sidebar theo phan quyen
             KhoiTaoSidebarTheoPhanQuyen();
+
+            // Doi nen thanh ben (gan cung o Designer) sang mau xanh moi
+            DoiMauThanhBen();
+
+            // Hien dung ky tu & trong tieu de (mac dinh WinForms nuot dau & lam gach chan chu)
+            lblTopbarTieuDe.UseMnemonic = false;
+            lblTopbarBreadcrumb.UseMnemonic = false;
 
             // Mac dinh mo man hinh Tong quan
             DieuHuongTheoMa("TongQuan");
@@ -110,11 +118,11 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             // 7. Thong ke & Bao cao (Tat ca)
             ThemItemSidebar("BaoCao", "📈  Thống kê & Báo cáo", () => DieuHuongTheoMa("BaoCao"));
 
-            // Duong phan cach nhe
+            // Duong phan cach nhe (mau sang hon cho nen xanh)
             var pnlDivider = new Panel
             {
                 Size = new Size(240, 1),
-                BackColor = Color.FromArgb(40, 60, 95),
+                BackColor = Color.FromArgb(90, 150, 230),
                 Margin = new Padding(10, 10, 10, 10)
             };
             flpSidebarMenu.Controls.Add(pnlDivider);
@@ -126,15 +134,52 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             ThemItemSidebar("DangXuat", "🚪  Đăng xuất", XacNhanVaDangXuat, laNutNguyHiem: true);
         }
 
+        /// <summary>
+        /// Doi cac nen toi (navy cu, gan o Designer) cua thanh ben sang mau xanh theo ThemeHelper.
+        /// Khong can biet ten tung control: chi doi nhung control co nen toi.
+        /// </summary>
+        private void DoiMauThanhBen()
+        {
+            flpSidebarMenu.BackColor = ThemeHelper.MauSidebar;
+
+            var sidebar = flpSidebarMenu.Parent;
+            if (sidebar == null) return;
+
+            sidebar.BackColor = ThemeHelper.MauSidebar;
+
+            foreach (Control c in sidebar.Controls)
+            {
+                if (c == flpSidebarMenu) continue;
+
+                // Khoi logo o dau thanh ben: dung xanh dam hon de noi bat o "QL"
+                if (c.BackColor.A == 255 && c.BackColor.GetBrightness() < 0.30f)
+                    c.BackColor = ThemeHelper.MauSidebarActive;
+
+                DoiMauNenToi(c, ThemeHelper.MauSidebarActive);
+            }
+        }
+
+        private static void DoiMauNenToi(Control goc, Color mau)
+        {
+            foreach (Control c in goc.Controls)
+            {
+                if (c.BackColor.A == 255 && c.BackColor.GetBrightness() < 0.30f)
+                    c.BackColor = mau;
+
+                DoiMauNenToi(c, mau);
+            }
+        }
+
         private void ThemItemSidebar(string maChucNang, string textHienThi, Action hanhDong, bool laNutNguyHiem = false)
         {
             var btn = new Button
             {
                 Name = "btnMenu_" + maChucNang,
                 Text = textHienThi,
+                UseMnemonic = false,
                 Size = new Size(240, 46),
                 BackColor = ThemeHelper.MauSidebar,
-                ForeColor = laNutNguyHiem ? Color.FromArgb(248, 113, 113) : Color.FromArgb(226, 232, 240),
+                ForeColor = laNutNguyHiem ? ColorTranslator.FromHtml("#FFE4E4") : ThemeHelper.MauChuSidebar,
                 Font = ThemeHelper.TaoFont(9.5f, FontStyle.Regular),
                 FlatStyle = FlatStyle.Flat,
                 TextAlign = ContentAlignment.MiddleLeft,
@@ -149,7 +194,7 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             {
                 if (_maChucNangHienTai != maChucNang)
                 {
-                    btn.BackColor = laNutNguyHiem ? Color.FromArgb(153, 27, 27) : ThemeHelper.MauSidebarHover;
+                    btn.BackColor = laNutNguyHiem ? ThemeHelper.MauLoi : ThemeHelper.MauSidebarHover;
                 }
             };
 
@@ -269,13 +314,10 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
                     break;
 
                 case "BaoCao":
+                    // Man hinh that cua Thanh vien 4 (thay cho UCDangPhatTrien)
                     if (!_manHinhCache.TryGetValue("BaoCao", out var ucBaoCao))
                     {
-                        ucBaoCao = new UCDangPhatTrien(
-                            "Phân Hệ Thống Kê & Báo Cáo",
-                            "Thành viên 4 (Thống kê & Báo cáo)",
-                            "Báo cáo tổng hợp doanh thu theo ngày/tháng, thống kê top sản phẩm bán chạy và khách hàng tiềm năng.",
-                            "📈");
+                        ucBaoCao = new UCThongKe();
                         _manHinhCache["BaoCao"] = ucBaoCao;
                     }
                     DieuHuong(ucBaoCao, "Thống kê & Báo cáo", "Trang chủ / Báo cáo doanh thu");
@@ -317,7 +359,7 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
                 else
                 {
                     kvp.Value.BackColor = ThemeHelper.MauSidebar;
-                    kvp.Value.ForeColor = Color.FromArgb(226, 232, 240);
+                    kvp.Value.ForeColor = ThemeHelper.MauChuSidebar;
                     kvp.Value.Font = ThemeHelper.TaoFont(9.5f, FontStyle.Regular);
                 }
             }

@@ -1,3 +1,4 @@
+
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -9,359 +10,594 @@ namespace QuanLyHoaDon.GUI.Forms.KhachHang
 {
     public class UCKhachHang : UserControl
     {
-        private readonly KhachHangBLL _bll = new();
+        private readonly KhachHangBLL _khachHangBLL = new();
 
-        private Panel pnlTop = null!;
         private TextBox txtTimKiem = null!;
-        private Button btnTimKiem = null!;
-        private Button btnLamMoi = null!;
-
-        private SplitContainer splitContainer = null!;
         private DataGridView dgvKhachHang = null!;
+        private Label lblSoLuong = null!;
 
-        private Panel pnlFormChiTiet = null!;
-        private Label lblFormTieuDe = null!;
-        private Label lblQuyenGhiChu = null!;
+        private readonly Font fontNoiDung = new("Segoe UI", 10F);
+        private readonly Font fontNut = new("Segoe UI", 9.5F, FontStyle.Bold);
 
-        private TextBox txtMaKhachHang = null!;
-        private TextBox txtHoTen = null!;
-        private TextBox txtSoDienThoai = null!;
-        private TextBox txtEmail = null!;
-        private TextBox txtDiaChi = null!;
-
-        private Button btnThem = null!;
-        private Button btnCapNhat = null!;
-        private Button btnBoChon = null!;
-
-        private Panel pnlThongBao = null!;
-        private Label lblThongBao = null!;
+        private static readonly Color MauNen = Color.FromArgb(245, 247, 250);
+        private static readonly Color MauVien = Color.FromArgb(203, 213, 225);
+        private static readonly Color MauChu = Color.FromArgb(30, 41, 59);
+        private static readonly Color MauPhu = Color.FromArgb(100, 116, 139);
+        private static readonly Color MauChinh = Color.FromArgb(37, 99, 235);
 
         public UCKhachHang()
         {
             KhoiTaoGiaoDien();
-            TaiDanhSach();
+            TaiDanhSachKhachHang();
         }
 
         private void KhoiTaoGiaoDien()
         {
-            this.Dock = DockStyle.Fill;
-            this.BackColor = ThemeHelper.MauNenUngDung;
-            this.Font = ThemeHelper.FontNoiDung;
-            this.Padding = new Padding(24, 20, 24, 20);
+            Dock = DockStyle.Fill;
+            BackColor = MauNen;
+            Padding = new Padding(24);
+            AutoScaleMode = AutoScaleMode.Dpi;
 
-            // ==========================================
-            // 1. Panel tìm kiếm & nút chức năng
-            // ==========================================
-            pnlTop = new Panel
+            var layout = new TableLayoutPanel
             {
-                Dock = DockStyle.Top,
-                Height = 60,
-                BackColor = ThemeHelper.MauNenNoiDung,
-                Padding = new Padding(16, 10, 16, 10)
-            };
-            pnlTop.Paint += (s, e) =>
-            {
-                using var pen = new Pen(ThemeHelper.MauDuongVien, 1);
-                e.Graphics.DrawRectangle(pen, 0, 0, pnlTop.Width - 1, pnlTop.Height - 1);
+                Dock = DockStyle.Fill,
+                ColumnCount = 1,
+                RowCount = 4,
+                BackColor = Color.Transparent,
+                Margin = new Padding(0),
+                Padding = new Padding(0)
             };
 
-            var lblTim = new Label
+            layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+            layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 88));
+            layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 62));
+            layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+            layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 52));
+
+            // TIÊU ĐỀ
+            var pnlTieuDe = new TableLayoutPanel
             {
-                Text = "🔍 Tìm kiếm:",
-                Font = ThemeHelper.FontLabel,
-                ForeColor = ThemeHelper.MauChuChinh,
-                Location = new Point(16, 18),
-                AutoSize = true
+                Dock = DockStyle.Fill,
+                ColumnCount = 1,
+                RowCount = 2,
+                Margin = new Padding(0),
+                BackColor = Color.Transparent
             };
+
+            pnlTieuDe.RowStyles.Add(new RowStyle(SizeType.Percent, 62));
+            pnlTieuDe.RowStyles.Add(new RowStyle(SizeType.Percent, 38));
+
+            var lblTieuDe = new Label
+            {
+                Text = "QUẢN LÝ KHÁCH HÀNG",
+                Dock = DockStyle.Fill,
+                Font = new Font("Segoe UI", 19F, FontStyle.Bold),
+                ForeColor = MauChu,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Margin = new Padding(0)
+            };
+
+            var lblMoTa = new Label
+            {
+                Text = "Danh sách và thông tin khách hàng",
+                Dock = DockStyle.Fill,
+                Font = new Font("Segoe UI", 10F),
+                ForeColor = MauPhu,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Margin = new Padding(2, 0, 0, 0)
+            };
+
+            pnlTieuDe.Controls.Add(lblTieuDe, 0, 0);
+            pnlTieuDe.Controls.Add(lblMoTa, 0, 1);
+
+            // THANH CÔNG CỤ
+            var pnlCongCu = new Panel
+            {
+                Dock = DockStyle.Fill,
+                BackColor = Color.White,
+                Padding = new Padding(10),
+                Margin = new Padding(0, 0, 0, 10)
+            };
+
+            var flowCongCu = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                ColumnCount = 4,
+                RowCount = 1,
+                BackColor = Color.White,
+                Margin = new Padding(0),
+                Padding = new Padding(0)
+            };
+
+            flowCongCu.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+            flowCongCu.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 105));
+            flowCongCu.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 95));
+            flowCongCu.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 165));
+            flowCongCu.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
 
             txtTimKiem = new TextBox
             {
-                Location = new Point(125, 14),
-                Size = new Size(320, 32),
-                Font = ThemeHelper.FontNoiDung
-            };
-            txtTimKiem.KeyDown += (s, e) => { if (e.KeyCode == Keys.Enter) TaiDanhSach(); };
-
-            btnTimKiem = new Button
-            {
-                Text = "Tìm kiếm",
-                Location = new Point(455, 12),
-                Size = new Size(110, 36)
-            };
-            ThemeHelper.ApDungButtonChinh(btnTimKiem);
-            btnTimKiem.Height = 36;
-            btnTimKiem.Click += (s, e) => TaiDanhSach();
-
-            btnLamMoi = new Button
-            {
-                Text = "Tải lại",
-                Location = new Point(575, 12),
-                Size = new Size(100, 36)
-            };
-            ThemeHelper.ApDungButtonPhu(btnLamMoi);
-            btnLamMoi.Height = 36;
-            btnLamMoi.Click += (s, e) => { txtTimKiem.Clear(); TaiDanhSach(); LamMoiForm(); };
-
-            pnlTop.Controls.Add(lblTim);
-            pnlTop.Controls.Add(txtTimKiem);
-            pnlTop.Controls.Add(btnTimKiem);
-            pnlTop.Controls.Add(btnLamMoi);
-
-            // ==========================================
-            // 2. SplitContainer: Trái là Bảng, Phải là Form
-            // ==========================================
-            splitContainer = new SplitContainer
-            {
+                PlaceholderText = "Nhập tên hoặc số điện thoại khách hàng...",
+                Font = new Font("Segoe UI", 9.5F),
+                BorderStyle = BorderStyle.FixedSingle,
+                AutoSize = false,
                 Dock = DockStyle.Fill,
-                Orientation = Orientation.Vertical,
-                SplitterDistance = 650,
-                SplitterWidth = 14,
-                BackColor = ThemeHelper.MauNenUngDung,
-                Margin = new Padding(0, 16, 0, 0)
+                Margin = new Padding(4, 3, 8, 3)
             };
 
-            // Bảng khách hàng (Bên trái)
+            txtTimKiem.KeyDown += (s, e) =>
+            {
+                if (e.KeyCode == Keys.Enter)
+                {
+                    e.SuppressKeyPress = true;
+                    TaiDanhSachKhachHang(txtTimKiem.Text.Trim());
+                }
+            };
+
+            var btnTimKiem = TaoNut("Tìm kiếm");
+            btnTimKiem.Dock = DockStyle.Fill;
+            btnTimKiem.Margin = new Padding(3, 1, 3, 1);
+            btnTimKiem.Click += (s, e) =>
+                TaiDanhSachKhachHang(txtTimKiem.Text.Trim());
+
+            var btnLamMoi = TaoNut("Làm mới");
+            btnLamMoi.Dock = DockStyle.Fill;
+            btnLamMoi.Margin = new Padding(3, 1, 3, 1);
+            btnLamMoi.Click += (s, e) =>
+            {
+                txtTimKiem.Clear();
+                TaiDanhSachKhachHang();
+                txtTimKiem.Focus();
+            };
+
+            var btnThem = TaoNut("＋ Thêm khách hàng", true);
+            btnThem.Dock = DockStyle.Fill;
+            btnThem.Margin = new Padding(3, 1, 3, 1);
+            btnThem.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+
+            // Nhân viên được thêm khách hàng, Quản lý chỉ xem
+            btnThem.Visible = Session.LaNhanVien;
+            btnThem.Click += (s, e) => ThemKhachHang();
+
+            flowCongCu.Controls.Add(txtTimKiem, 0, 0);
+            flowCongCu.Controls.Add(btnTimKiem, 1, 0);
+            flowCongCu.Controls.Add(btnLamMoi, 2, 0);
+            flowCongCu.Controls.Add(btnThem, 3, 0);
+
+            pnlCongCu.Controls.Add(flowCongCu);
+
+            // BẢNG KHÁCH HÀNG
             dgvKhachHang = new DataGridView
             {
-                Dock = DockStyle.Fill
+                Dock = DockStyle.Fill,
+                BackgroundColor = Color.White,
+                BorderStyle = BorderStyle.None,
+                AllowUserToAddRows = false,
+                AllowUserToDeleteRows = false,
+                AllowUserToResizeRows = false,
+                ReadOnly = true,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                MultiSelect = false,
+                RowHeadersVisible = false,
+                ScrollBars = ScrollBars.Both,
+                Font = fontNoiDung,
+                GridColor = MauVien,
+                CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal,
+                ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single,
+                RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.None,
+                ColumnHeadersHeight = 46,
+                ColumnHeadersHeightSizeMode =
+                    DataGridViewColumnHeadersHeightSizeMode.DisableResizing,
+                RowTemplate = { Height = 46 },
+                EnableHeadersVisualStyles = false
             };
-            ThemeHelper.ChuanHoaDataGridView(dgvKhachHang);
 
-            dgvKhachHang.Columns.Add(new DataGridViewTextBoxColumn { Name = "MaKhachHang", HeaderText = "Mã KH", FillWeight = 20 });
-            dgvKhachHang.Columns.Add(new DataGridViewTextBoxColumn { Name = "HoTen", HeaderText = "Họ và tên", FillWeight = 40 });
-            dgvKhachHang.Columns.Add(new DataGridViewTextBoxColumn { Name = "SoDienThoai", HeaderText = "Số điện thoại", FillWeight = 30 });
-            dgvKhachHang.Columns.Add(new DataGridViewTextBoxColumn { Name = "Email", HeaderText = "Email", FillWeight = 35 });
-            dgvKhachHang.Columns.Add(new DataGridViewTextBoxColumn { Name = "DiaChi", HeaderText = "Địa chỉ", FillWeight = 45 });
+            dgvKhachHang.ColumnHeadersDefaultCellStyle.BackColor =
+                Color.FromArgb(241, 245, 249);
+            dgvKhachHang.ColumnHeadersDefaultCellStyle.ForeColor = MauChu;
+            dgvKhachHang.ColumnHeadersDefaultCellStyle.Font =
+                new Font("Segoe UI", 10F, FontStyle.Bold);
+            dgvKhachHang.ColumnHeadersDefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleLeft;
+            dgvKhachHang.ColumnHeadersDefaultCellStyle.Padding =
+                new Padding(10, 0, 10, 0);
+            dgvKhachHang.ColumnHeadersDefaultCellStyle.WrapMode =
+                DataGridViewTriState.False;
+            dgvKhachHang.ColumnHeadersDefaultCellStyle.SelectionBackColor =
+                Color.FromArgb(241, 245, 249);
+            dgvKhachHang.ColumnHeadersDefaultCellStyle.SelectionForeColor = MauChu;
 
-            dgvKhachHang.SelectionChanged += DgvKhachHang_SelectionChanged;
+            dgvKhachHang.DefaultCellStyle.BackColor = Color.White;
+            dgvKhachHang.DefaultCellStyle.ForeColor =
+                Color.FromArgb(51, 65, 85);
+            dgvKhachHang.DefaultCellStyle.SelectionBackColor =
+                Color.FromArgb(219, 234, 254);
+            dgvKhachHang.DefaultCellStyle.SelectionForeColor = MauChu;
+            dgvKhachHang.DefaultCellStyle.Padding =
+                new Padding(10, 0, 10, 0);
+            dgvKhachHang.DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleLeft;
+            dgvKhachHang.DefaultCellStyle.WrapMode =
+                DataGridViewTriState.False;
 
-            var pnlBangContainer = new Panel
+            dgvKhachHang.AlternatingRowsDefaultCellStyle.BackColor =
+                Color.FromArgb(248, 250, 252);
+
+            dgvKhachHang.Columns.Add("MaKhachHang", "Mã KH");
+            dgvKhachHang.Columns.Add("HoTen", "Họ và tên");
+            dgvKhachHang.Columns.Add("SoDienThoai", "Số điện thoại");
+            dgvKhachHang.Columns.Add("Email", "Email");
+            dgvKhachHang.Columns.Add("DiaChi", "Địa chỉ");
+
+            dgvKhachHang.Columns["MaKhachHang"]!.FillWeight = 75;
+            dgvKhachHang.Columns["HoTen"]!.FillWeight = 145;
+            dgvKhachHang.Columns["SoDienThoai"]!.FillWeight = 115;
+            dgvKhachHang.Columns["Email"]!.FillWeight = 150;
+            dgvKhachHang.Columns["DiaChi"]!.FillWeight = 180;
+
+            dgvKhachHang.Columns["MaKhachHang"]!.MinimumWidth = 75;
+            dgvKhachHang.Columns["HoTen"]!.MinimumWidth = 130;
+            dgvKhachHang.Columns["SoDienThoai"]!.MinimumWidth = 115;
+            dgvKhachHang.Columns["Email"]!.MinimumWidth = 140;
+            dgvKhachHang.Columns["DiaChi"]!.MinimumWidth = 150;
+
+            foreach (DataGridViewColumn col in dgvKhachHang.Columns)
+            {
+                col.SortMode = DataGridViewColumnSortMode.NotSortable;
+                col.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+                col.HeaderCell.Style.WrapMode = DataGridViewTriState.False;
+            }
+
+            dgvKhachHang.Columns["MaKhachHang"]!.DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
+            dgvKhachHang.Columns["SoDienThoai"]!.DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
+            // THANH CUỐI BẢNG
+            var pnlDuoi = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
-                BackColor = Color.White
+                ColumnCount = 2,
+                RowCount = 1,
+                BackColor = Color.Transparent,
+                Margin = new Padding(0, 5, 0, 0)
             };
-            pnlBangContainer.Paint += (s, e) =>
-            {
-                using var pen = new Pen(ThemeHelper.MauDuongVien, 1);
-                e.Graphics.DrawRectangle(pen, 0, 0, pnlBangContainer.Width - 1, pnlBangContainer.Height - 1);
-            };
-            pnlBangContainer.Controls.Add(dgvKhachHang);
-            splitContainer.Panel1.Controls.Add(pnlBangContainer);
 
-            // Form chi tiết & thao tác (Bên phải)
-            pnlFormChiTiet = new Panel
+            pnlDuoi.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+            pnlDuoi.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 155));
+            pnlDuoi.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+
+            lblSoLuong = new Label
             {
+                Text = "Tổng số: 0 khách hàng",
                 Dock = DockStyle.Fill,
-                BackColor = ThemeHelper.MauNenNoiDung,
-                Padding = new Padding(20)
-            };
-            pnlFormChiTiet.Paint += (s, e) =>
-            {
-                using var pen = new Pen(ThemeHelper.MauDuongVien, 1);
-                e.Graphics.DrawRectangle(pen, 0, 0, pnlFormChiTiet.Width - 1, pnlFormChiTiet.Height - 1);
-            };
-
-            lblFormTieuDe = new Label
-            {
-                Text = "THÔNG TIN KHÁCH HÀNG",
-                Font = ThemeHelper.FontTieuDeCard,
-                ForeColor = ThemeHelper.MauChuChinh,
-                Location = new Point(20, 16),
-                AutoSize = true
-            };
-
-            lblQuyenGhiChu = new Label
-            {
-                Text = Session.LaQuanLy
-                    ? "🔒 Chế độ xem: Tài khoản Quản lý chỉ được xem và tìm kiếm khách hàng."
-                    : "✏ Phân quyền: Nhân viên bán hàng được phép thêm mới và cập nhật khách hàng.",
-                Font = ThemeHelper.FontChuThichDam,
-                ForeColor = Session.LaQuanLy ? ThemeHelper.MauCanhBao : ThemeHelper.MauThanhCong,
-                Location = new Point(20, 44),
-                AutoSize = true
-            };
-
-            pnlThongBao = new Panel
-            {
-                Location = new Point(20, 70),
-                Size = new Size(380, 36),
-                Visible = false
-            };
-            lblThongBao = new Label
-            {
-                Dock = DockStyle.Fill,
-                Font = ThemeHelper.FontChuThichDam,
+                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(71, 85, 105),
                 TextAlign = ContentAlignment.MiddleLeft,
-                Padding = new Padding(8, 0, 8, 0)
+                Margin = new Padding(2, 0, 0, 0)
             };
-            pnlThongBao.Controls.Add(lblThongBao);
 
-            int top = 115;
-            ThemInput(pnlFormChiTiet, "Mã khách hàng:", ref txtMaKhachHang, ref top, laReadOnly: true);
-            ThemInput(pnlFormChiTiet, "Họ và tên *:", ref txtHoTen, ref top);
-            ThemInput(pnlFormChiTiet, "Số điện thoại:", ref txtSoDienThoai, ref top);
-            ThemInput(pnlFormChiTiet, "Email liên hệ:", ref txtEmail, ref top);
-            ThemInput(pnlFormChiTiet, "Địa chỉ liên hệ:", ref txtDiaChi, ref top);
+            var btnSua = TaoNut("✎  Sửa thông tin", true);
+            btnSua.Dock = DockStyle.Fill;
+            btnSua.Margin = new Padding(4, 2, 0, 2);
 
-            btnThem = new Button
-            {
-                Text = "Thêm mới",
-                Location = new Point(20, top + 10),
-                Size = new Size(110, ThemeHelper.ChieuCaoButtonChuan),
-                Enabled = Session.LaNhanVien
-            };
-            ThemeHelper.ApDungButtonThanhCong(btnThem);
-            btnThem.Click += BtnThem_Click;
+            // Nhân viên được cập nhật khách hàng
+            btnSua.Visible = Session.LaNhanVien;
+            btnSua.Click += (s, e) => SuaKhachHang();
 
-            btnCapNhat = new Button
-            {
-                Text = "Lưu cập nhật",
-                Location = new Point(140, top + 10),
-                Size = new Size(130, ThemeHelper.ChieuCaoButtonChuan),
-                Enabled = Session.LaNhanVien
-            };
-            ThemeHelper.ApDungButtonChinh(btnCapNhat);
-            btnCapNhat.Click += BtnCapNhat_Click;
+            pnlDuoi.Controls.Add(lblSoLuong, 0, 0);
+            pnlDuoi.Controls.Add(btnSua, 1, 0);
 
-            btnBoChon = new Button
-            {
-                Text = "Bỏ chọn",
-                Location = new Point(280, top + 10),
-                Size = new Size(100, ThemeHelper.ChieuCaoButtonChuan)
-            };
-            ThemeHelper.ApDungButtonPhu(btnBoChon);
-            btnBoChon.Click += (s, e) => LamMoiForm();
+            layout.Controls.Add(pnlTieuDe, 0, 0);
+            layout.Controls.Add(pnlCongCu, 0, 1);
+            layout.Controls.Add(dgvKhachHang, 0, 2);
+            layout.Controls.Add(pnlDuoi, 0, 3);
 
-            pnlFormChiTiet.Controls.Add(lblFormTieuDe);
-            pnlFormChiTiet.Controls.Add(lblQuyenGhiChu);
-            pnlFormChiTiet.Controls.Add(pnlThongBao);
-            pnlFormChiTiet.Controls.Add(btnThem);
-            pnlFormChiTiet.Controls.Add(btnCapNhat);
-            pnlFormChiTiet.Controls.Add(btnBoChon);
-
-            splitContainer.Panel2.Controls.Add(pnlFormChiTiet);
-
-            var pnlDem = new Panel { Dock = DockStyle.Top, Height = 14 };
-
-            this.Controls.Add(splitContainer);
-            this.Controls.Add(pnlDem);
-            this.Controls.Add(pnlTop);
+            Controls.Add(layout);
         }
 
-        private void ThemInput(Panel parent, string labelText, ref TextBox txt, ref int top, bool laReadOnly = false)
+        private Button TaoNut(string noiDung, bool nutChinh = false)
         {
-            var lbl = new Label
+            var btn = new Button
             {
-                Text = labelText,
-                Font = ThemeHelper.FontLabel,
-                ForeColor = ThemeHelper.MauChuChinh,
-                Location = new Point(20, top),
-                AutoSize = true
+                Text = noiDung,
+                Size = new Size(115, 38),
+                Font = fontNut,
+                BackColor = nutChinh
+                    ? MauChinh
+                    : Color.FromArgb(241, 245, 249),
+                ForeColor = nutChinh
+                    ? Color.White
+                    : MauChu,
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand,
+                Margin = new Padding(0),
+                UseVisualStyleBackColor = false,
+                TextAlign = ContentAlignment.MiddleCenter,
+                AutoEllipsis = true
             };
 
-            txt = new TextBox
-            {
-                Location = new Point(20, top + 22),
-                Size = new Size(360, 32),
-                Font = ThemeHelper.FontNoiDung
-            };
-            ThemeHelper.ChuanHoaTextBox(txt, laReadOnly || Session.LaQuanLy);
+            btn.FlatAppearance.BorderSize = 1;
+            btn.FlatAppearance.BorderColor = nutChinh
+                ? MauChinh
+                : MauVien;
 
-            parent.Controls.Add(lbl);
-            parent.Controls.Add(txt);
-            top += 58;
+            return btn;
         }
 
-        private void TaiDanhSach()
+        private void TaiDanhSachKhachHang(string tuKhoa = "")
         {
-            dgvKhachHang.Rows.Clear();
-            var ds = _bll.LayDanhSach(txtTimKiem.Text);
-            foreach (var kh in ds)
+            try
             {
-                dgvKhachHang.Rows.Add(kh.MaKhachHang, kh.HoTen, kh.SoDienThoai ?? "", kh.Email ?? "", kh.DiaChi ?? "");
+                var danhSach = _khachHangBLL.LayDanhSach(tuKhoa);
+
+                dgvKhachHang.Rows.Clear();
+
+                foreach (var kh in danhSach)
+                {
+                    dgvKhachHang.Rows.Add(
+                        kh.MaKhachHang,
+                        kh.HoTen,
+                        kh.SoDienThoai ?? "",
+                        kh.Email ?? "",
+                        kh.DiaChi ?? ""
+                    );
+                }
+
+                lblSoLuong.Text =
+                    $"Tổng số: {danhSach.Count} khách hàng";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Không thể tải danh sách khách hàng.\n" + ex.Message,
+                    "Lỗi",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
             }
         }
 
-        private void DgvKhachHang_SelectionChanged(object? sender, EventArgs e)
+        private void ThemKhachHang()
         {
-            if (dgvKhachHang.CurrentRow == null || dgvKhachHang.CurrentRow.Index < 0) return;
-
-            var r = dgvKhachHang.CurrentRow;
-            txtMaKhachHang.Text = r.Cells["MaKhachHang"].Value?.ToString() ?? "";
-            txtHoTen.Text = r.Cells["HoTen"].Value?.ToString() ?? "";
-            txtSoDienThoai.Text = r.Cells["SoDienThoai"].Value?.ToString() ?? "";
-            txtEmail.Text = r.Cells["Email"].Value?.ToString() ?? "";
-            txtDiaChi.Text = r.Cells["DiaChi"].Value?.ToString() ?? "";
+            HienThiHopThoaiKhachHang(null);
         }
 
-        private void LamMoiForm()
+        private void SuaKhachHang()
         {
-            txtMaKhachHang.Clear();
-            txtHoTen.Clear();
-            txtSoDienThoai.Clear();
-            txtEmail.Clear();
-            txtDiaChi.Clear();
-            dgvKhachHang.ClearSelection();
-            AnThongBao();
-        }
-
-        private void BtnThem_Click(object? sender, EventArgs e)
-        {
-            var kh = new KhachHangDTO
+            if (dgvKhachHang.CurrentRow == null)
             {
-                HoTen = txtHoTen.Text,
-                SoDienThoai = txtSoDienThoai.Text,
-                Email = txtEmail.Text,
-                DiaChi = txtDiaChi.Text
-            };
-
-            var kq = _bll.ThemKhachHang(kh);
-            HienThongBao(kq.ThongBao, !kq.ThanhCong);
-            if (kq.ThanhCong)
-            {
-                TaiDanhSach();
-                LamMoiForm();
-            }
-        }
-
-        private void BtnCapNhat_Click(object? sender, EventArgs e)
-        {
-            if (!int.TryParse(txtMaKhachHang.Text, out int maKH))
-            {
-                HienThongBao("Vui lòng chọn khách hàng trong danh sách trước khi cập nhật.", true);
+                MessageBox.Show(
+                    "Vui lòng chọn khách hàng cần sửa.",
+                    "Thông báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
                 return;
             }
 
             var kh = new KhachHangDTO
             {
-                MaKhachHang = maKH,
-                HoTen = txtHoTen.Text,
-                SoDienThoai = txtSoDienThoai.Text,
-                Email = txtEmail.Text,
-                DiaChi = txtDiaChi.Text
+                MaKhachHang = Convert.ToInt32(
+                    dgvKhachHang.CurrentRow.Cells["MaKhachHang"].Value
+                ),
+                HoTen = dgvKhachHang.CurrentRow.Cells["HoTen"].Value?.ToString() ?? "",
+                SoDienThoai = dgvKhachHang.CurrentRow.Cells["SoDienThoai"].Value?.ToString(),
+                Email = dgvKhachHang.CurrentRow.Cells["Email"].Value?.ToString(),
+                DiaChi = dgvKhachHang.CurrentRow.Cells["DiaChi"].Value?.ToString()
             };
 
-            var kq = _bll.CapNhatKhachHang(kh);
-            HienThongBao(kq.ThongBao, !kq.ThanhCong);
-            if (kq.ThanhCong)
+            HienThiHopThoaiKhachHang(kh);
+        }
+
+        private void HienThiHopThoaiKhachHang(KhachHangDTO? khachHang)
+        {
+            bool laThemMoi = khachHang == null;
+
+            using var form = new Form
             {
-                TaiDanhSach();
-            }
+                Text = laThemMoi ? "Thêm khách hàng" : "Cập nhật khách hàng",
+                Size = new Size(500, 480),
+                MinimumSize = new Size(500, 480),
+                StartPosition = FormStartPosition.CenterParent,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                MaximizeBox = false,
+                MinimizeBox = false,
+                BackColor = Color.White,
+                Font = fontNoiDung,
+                AutoScaleMode = AutoScaleMode.Dpi
+            };
+
+            var layout = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                Padding = new Padding(26, 18, 26, 16),
+                ColumnCount = 1,
+                RowCount = 5,
+                BackColor = Color.White
+            };
+
+            layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+            layout.RowStyles.Add(new RowStyle(SizeType.Percent, 22));
+            layout.RowStyles.Add(new RowStyle(SizeType.Percent, 22));
+            layout.RowStyles.Add(new RowStyle(SizeType.Percent, 22));
+            layout.RowStyles.Add(new RowStyle(SizeType.Percent, 22));
+            layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 54));
+
+            var txtHoTen = TaoONhap(
+                layout, 0, "Họ và tên:",
+                khachHang?.HoTen ?? ""
+            );
+
+            var txtSoDienThoai = TaoONhap(
+                layout, 1, "Số điện thoại:",
+                khachHang?.SoDienThoai ?? ""
+            );
+
+            var txtEmail = TaoONhap(
+                layout, 2, "Email:",
+                khachHang?.Email ?? ""
+            );
+
+            var txtDiaChi = TaoONhap(
+                layout, 3, "Địa chỉ:",
+                khachHang?.DiaChi ?? ""
+            );
+
+            var pnlNut = TaoKhungNut();
+
+            var btnHuy = TaoNutTrongDialog("Hủy");
+            btnHuy.DialogResult = DialogResult.Cancel;
+
+            var btnLuu = TaoNutTrongDialog(
+                laThemMoi ? "Thêm mới" : "Cập nhật",
+                true
+            );
+
+            btnLuu.Click += (s, e) =>
+            {
+                var kh = new KhachHangDTO
+                {
+                    MaKhachHang = khachHang?.MaKhachHang ?? 0,
+                    HoTen = txtHoTen.Text.Trim(),
+                    SoDienThoai = txtSoDienThoai.Text.Trim(),
+                    Email = txtEmail.Text.Trim(),
+                    DiaChi = txtDiaChi.Text.Trim()
+                };
+
+                try
+                {
+                    KetQuaThaoTacDTO ketQua = laThemMoi
+                        ? _khachHangBLL.ThemKhachHang(kh)
+                        : _khachHangBLL.CapNhatKhachHang(kh);
+
+                    MessageBox.Show(
+                        ketQua.ThongBao,
+                        ketQua.ThanhCong ? "Thành công" : "Thông báo",
+                        MessageBoxButtons.OK,
+                        ketQua.ThanhCong
+                            ? MessageBoxIcon.Information
+                            : MessageBoxIcon.Warning
+                    );
+
+                    if (ketQua.ThanhCong)
+                    {
+                        form.DialogResult = DialogResult.OK;
+                        form.Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        "Không thể lưu thông tin khách hàng.\n" + ex.Message,
+                        "Lỗi",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                }
+            };
+
+            pnlNut.Controls.Add(btnHuy);
+            pnlNut.Controls.Add(btnLuu);
+            layout.Controls.Add(pnlNut, 0, 4);
+
+            form.Controls.Add(layout);
+            form.AcceptButton = btnLuu;
+            form.CancelButton = btnHuy;
+
+            if (form.ShowDialog() == DialogResult.OK)
+                TaiDanhSachKhachHang(txtTimKiem.Text.Trim());
         }
 
-        private void HienThongBao(string thongBao, bool laLoi)
+        private TextBox TaoONhap(
+            TableLayoutPanel layout,
+            int dong,
+            string nhan,
+            string giaTri)
         {
-            pnlThongBao.Visible = true;
-            pnlThongBao.BackColor = laLoi ? ColorTranslator.FromHtml("#FEF2F2") : ColorTranslator.FromHtml("#F0FDF4");
-            lblThongBao.ForeColor = laLoi ? ThemeHelper.MauLoi : ThemeHelper.MauThanhCong;
-            lblThongBao.Text = (laLoi ? "⚠ " : "✓ ") + thongBao;
+            var pnl = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                ColumnCount = 1,
+                RowCount = 2,
+                Margin = new Padding(0, 3, 0, 3),
+                Padding = new Padding(0),
+                BackColor = Color.White
+            };
+
+            pnl.RowStyles.Add(new RowStyle(SizeType.Absolute, 25));
+            pnl.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+
+            var lbl = new Label
+            {
+                Text = nhan,
+                Dock = DockStyle.Fill,
+                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+                ForeColor = MauChu,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Margin = new Padding(0)
+            };
+
+            var txt = new TextBox
+            {
+                Text = giaTri,
+                Dock = DockStyle.Fill,
+                Font = fontNoiDung,
+                BorderStyle = BorderStyle.FixedSingle,
+                Margin = new Padding(0, 2, 0, 2),
+                AutoSize = false
+            };
+
+            pnl.Controls.Add(lbl, 0, 0);
+            pnl.Controls.Add(txt, 0, 1);
+            layout.Controls.Add(pnl, 0, dong);
+
+            return txt;
         }
 
-        private void AnThongBao()
+        private FlowLayoutPanel TaoKhungNut()
         {
-            pnlThongBao.Visible = false;
-            lblThongBao.Text = string.Empty;
+            return new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                FlowDirection = FlowDirection.RightToLeft,
+                WrapContents = false,
+                BackColor = Color.White,
+                Padding = new Padding(0, 6, 0, 0),
+                Margin = new Padding(0)
+            };
+        }
+
+        private Button TaoNutTrongDialog(
+            string noiDung,
+            bool nutChinh = false)
+        {
+            var btn = new Button
+            {
+                Text = noiDung,
+                Size = new Size(105, 36),
+                Font = fontNut,
+                BackColor = nutChinh
+                    ? MauChinh
+                    : Color.FromArgb(241, 245, 249),
+                ForeColor = nutChinh
+                    ? Color.White
+                    : MauChu,
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand,
+                Margin = new Padding(8, 0, 0, 0),
+                UseVisualStyleBackColor = false
+            };
+
+            btn.FlatAppearance.BorderSize = 1;
+            btn.FlatAppearance.BorderColor = nutChinh
+                ? MauChinh
+                : MauVien;
+
+            return btn;
         }
     }
 }
-

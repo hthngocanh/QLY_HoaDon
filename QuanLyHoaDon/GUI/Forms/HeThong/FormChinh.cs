@@ -9,6 +9,8 @@ using QuanLyHoaDon.GUI.Forms.NhanVien;
 using QuanLyHoaDon.GUI.Forms.SanPham;
 using QuanLyHoaDon.GUI.Forms.ThongKe;
 using QuanLyHoaDon.Utilities;
+using QuanLyHoaDon.GUI.Forms.KhachHang;
+using QuanLyHoaDon.GUI.Forms.SanPham;
 
 namespace QuanLyHoaDon.GUI.Forms.HeThong
 {

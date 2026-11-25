@@ -35,68 +35,32 @@ namespace QuanLyHoaDon.GUI.Forms.KhachHang
         {
             Dock = DockStyle.Fill;
             BackColor = MauNen;
-            Padding = new Padding(24);
+            Padding = new Padding(20);
             AutoScaleMode = AutoScaleMode.Dpi;
 
+            // Bố cục chính: thanh công cụ - bảng - thanh cuối.
             var layout = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 ColumnCount = 1,
-                RowCount = 4,
+                RowCount = 3,
                 BackColor = Color.Transparent,
                 Margin = new Padding(0),
                 Padding = new Padding(0)
             };
 
             layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-            layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 88));
-            layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 62));
+            layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 64));
             layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-            layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 52));
-
-            // TIÊU ĐỀ
-            var pnlTieuDe = new TableLayoutPanel
-            {
-                Dock = DockStyle.Fill,
-                ColumnCount = 1,
-                RowCount = 2,
-                Margin = new Padding(0),
-                BackColor = Color.Transparent
-            };
-
-            pnlTieuDe.RowStyles.Add(new RowStyle(SizeType.Percent, 62));
-            pnlTieuDe.RowStyles.Add(new RowStyle(SizeType.Percent, 38));
-
-            var lblTieuDe = new Label
-            {
-                Text = "QUẢN LÝ KHÁCH HÀNG",
-                Dock = DockStyle.Fill,
-                Font = new Font("Segoe UI", 19F, FontStyle.Bold),
-                ForeColor = MauChu,
-                TextAlign = ContentAlignment.MiddleLeft,
-                Margin = new Padding(0)
-            };
-
-            var lblMoTa = new Label
-            {
-                Text = "Danh sách và thông tin khách hàng",
-                Dock = DockStyle.Fill,
-                Font = new Font("Segoe UI", 10F),
-                ForeColor = MauPhu,
-                TextAlign = ContentAlignment.MiddleLeft,
-                Margin = new Padding(2, 0, 0, 0)
-            };
-
-            pnlTieuDe.Controls.Add(lblTieuDe, 0, 0);
-            pnlTieuDe.Controls.Add(lblMoTa, 0, 1);
+            layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48));
 
             // THANH CÔNG CỤ
             var pnlCongCu = new Panel
             {
                 Dock = DockStyle.Fill,
                 BackColor = Color.White,
-                Padding = new Padding(10),
-                Margin = new Padding(0, 0, 0, 10)
+                Padding = new Padding(12, 10, 12, 10),
+                Margin = new Padding(0, 0, 0, 12)
             };
 
             var flowCongCu = new TableLayoutPanel
@@ -110,8 +74,8 @@ namespace QuanLyHoaDon.GUI.Forms.KhachHang
             };
 
             flowCongCu.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-            flowCongCu.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 105));
-            flowCongCu.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 95));
+            flowCongCu.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
+            flowCongCu.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));
             flowCongCu.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 165));
             flowCongCu.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
 
@@ -122,7 +86,7 @@ namespace QuanLyHoaDon.GUI.Forms.KhachHang
                 BorderStyle = BorderStyle.FixedSingle,
                 AutoSize = false,
                 Dock = DockStyle.Fill,
-                Margin = new Padding(4, 3, 8, 3)
+                Margin = new Padding(2, 3, 10, 3)
             };
 
             txtTimKiem.KeyDown += (s, e) =>
@@ -155,7 +119,7 @@ namespace QuanLyHoaDon.GUI.Forms.KhachHang
             btnThem.Margin = new Padding(3, 1, 3, 1);
             btnThem.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
 
-            // Nhân viên được thêm khách hàng, Quản lý chỉ xem
+            // Nhân viên được thêm khách hàng, Quản lý chỉ xem.
             btnThem.Visible = Session.LaNhanVien;
             btnThem.Click += (s, e) => ThemKhachHang();
 
@@ -187,10 +151,10 @@ namespace QuanLyHoaDon.GUI.Forms.KhachHang
                 CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal,
                 ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single,
                 RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.None,
-                ColumnHeadersHeight = 46,
+                ColumnHeadersHeight = 44,
                 ColumnHeadersHeightSizeMode =
                     DataGridViewColumnHeadersHeightSizeMode.DisableResizing,
-                RowTemplate = { Height = 46 },
+                RowTemplate = { Height = 44 },
                 EnableHeadersVisualStyles = false
             };
 
@@ -202,7 +166,7 @@ namespace QuanLyHoaDon.GUI.Forms.KhachHang
             dgvKhachHang.ColumnHeadersDefaultCellStyle.Alignment =
                 DataGridViewContentAlignment.MiddleLeft;
             dgvKhachHang.ColumnHeadersDefaultCellStyle.Padding =
-                new Padding(10, 0, 10, 0);
+                new Padding(12, 0, 10, 0);
             dgvKhachHang.ColumnHeadersDefaultCellStyle.WrapMode =
                 DataGridViewTriState.False;
             dgvKhachHang.ColumnHeadersDefaultCellStyle.SelectionBackColor =
@@ -216,7 +180,7 @@ namespace QuanLyHoaDon.GUI.Forms.KhachHang
                 Color.FromArgb(219, 234, 254);
             dgvKhachHang.DefaultCellStyle.SelectionForeColor = MauChu;
             dgvKhachHang.DefaultCellStyle.Padding =
-                new Padding(10, 0, 10, 0);
+                new Padding(12, 0, 10, 0);
             dgvKhachHang.DefaultCellStyle.Alignment =
                 DataGridViewContentAlignment.MiddleLeft;
             dgvKhachHang.DefaultCellStyle.WrapMode =
@@ -274,7 +238,7 @@ namespace QuanLyHoaDon.GUI.Forms.KhachHang
             {
                 Text = "Tổng số: 0 khách hàng",
                 Dock = DockStyle.Fill,
-                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+                Font = new Font("Segoe UI", 9.5F, FontStyle.Bold),
                 ForeColor = Color.FromArgb(71, 85, 105),
                 TextAlign = ContentAlignment.MiddleLeft,
                 Margin = new Padding(2, 0, 0, 0)
@@ -284,17 +248,16 @@ namespace QuanLyHoaDon.GUI.Forms.KhachHang
             btnSua.Dock = DockStyle.Fill;
             btnSua.Margin = new Padding(4, 2, 0, 2);
 
-            // Nhân viên được cập nhật khách hàng
+            // Nhân viên được cập nhật khách hàng.
             btnSua.Visible = Session.LaNhanVien;
             btnSua.Click += (s, e) => SuaKhachHang();
 
             pnlDuoi.Controls.Add(lblSoLuong, 0, 0);
             pnlDuoi.Controls.Add(btnSua, 1, 0);
 
-            layout.Controls.Add(pnlTieuDe, 0, 0);
-            layout.Controls.Add(pnlCongCu, 0, 1);
-            layout.Controls.Add(dgvKhachHang, 0, 2);
-            layout.Controls.Add(pnlDuoi, 0, 3);
+            layout.Controls.Add(pnlCongCu, 0, 0);
+            layout.Controls.Add(dgvKhachHang, 0, 1);
+            layout.Controls.Add(pnlDuoi, 0, 2);
 
             Controls.Add(layout);
         }

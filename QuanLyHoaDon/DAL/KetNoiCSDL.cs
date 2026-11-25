@@ -12,7 +12,7 @@ namespace QuanLyHoaDon.DAL
             var chuoiKetNoi = ConfigurationManager.ConnectionStrings[TenChuoiKetNoi]?.ConnectionString;
             if (string.IsNullOrWhiteSpace(chuoiKetNoi))
             {
-                return "Data Source=.;Initial Catalog=QuanLyHoaDon;Integrated Security=True;TrustServerCertificate=True;";
+                return "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=QuanLyHoaDon;Integrated Security=True;TrustServerCertificate=True;";
             }
             return chuoiKetNoi;
         }

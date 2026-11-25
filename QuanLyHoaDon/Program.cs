@@ -10,8 +10,7 @@ namespace QuanLyHoaDon
         private static void Main()
         {
             ApplicationConfiguration.Initialize();
-            Application.Run(new FormChinh());
+            Application.Run(new FormDangNhap());
         }
     }
 }
-

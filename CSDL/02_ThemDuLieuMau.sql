@@ -528,3 +528,37 @@ GROUP BY
     hd.TrangThai
 ORDER BY hd.MaHoaDon;
 GO
+
+
+
+
+
+
+
+
+
+
+-- check sluong
+USE QuanLyHoaDon;
+GO
+
+SELECT N'VaiTro' AS TenBang, COUNT(*) AS SoLuong FROM VaiTro
+UNION ALL
+SELECT N'NhanVien', COUNT(*) FROM NhanVien
+UNION ALL
+SELECT N'TaiKhoan', COUNT(*) FROM TaiKhoan
+UNION ALL
+SELECT N'KhachHang', COUNT(*) FROM KhachHang
+UNION ALL
+SELECT N'SanPham', COUNT(*) FROM SanPham
+UNION ALL
+SELECT N'HoaDon', COUNT(*) FROM HoaDon
+UNION ALL
+SELECT N'ChiTietHoaDon', COUNT(*) FROM ChiTietHoaDon;
+
+
+
+SELECT
+    @@SERVERNAME AS ServerName,
+    SERVERPROPERTY('InstanceName') AS InstanceName,
+    DB_NAME() AS CurrentDatabase;

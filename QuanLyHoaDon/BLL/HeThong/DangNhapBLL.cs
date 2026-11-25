@@ -21,7 +21,7 @@ namespace QuanLyHoaDon.BLL.HeThong
 
         public KetQuaDangNhapDTO DangNhap(string tenDangNhap, string matKhau)
         {
-            // 1. Kiem tra du lieu dau vao
+            // 1. Kiểm tra dữ liệu đầu vào
             if (string.IsNullOrWhiteSpace(tenDangNhap))
             {
                 return KetQuaDangNhapDTO.TaoThatBai("Vui lòng nhập tên đăng nhập.");
@@ -34,32 +34,32 @@ namespace QuanLyHoaDon.BLL.HeThong
 
             try
             {
-                // 2. Truy van thong tin tai khoan tu DAL
+                // 2. Truy vấn thông tin tài khoản từ DAL
                 var taiKhoan = _dangNhapDAL.LayThongTinDangNhap(tenDangNhap);
                 if (taiKhoan == null)
                 {
                     return KetQuaDangNhapDTO.TaoThatBai("Tên đăng nhập không tồn tại trên hệ thống.");
                 }
 
-                // 3. Xac thuc mat khau bang PasswordHelper
+                // 3. Xác thực mật khẩu bằng PasswordHelper
                 if (!PasswordHelper.XacThucMatKhau(matKhau, taiKhoan.MatKhauHash))
                 {
                     return KetQuaDangNhapDTO.TaoThatBai("Mật khẩu không chính xác. Vui lòng thử lại.");
                 }
 
-                // 4. Kiem tra trang thai tai khoan
+                // 4. Kiểm tra trạng thái tài khoản
                 if (!string.Equals(taiKhoan.TrangThai, "HoatDong", StringComparison.OrdinalIgnoreCase))
                 {
                     return KetQuaDangNhapDTO.TaoThatBai("Tài khoản của bạn đang bị khóa. Vui lòng liên hệ Quản lý.");
                 }
 
-                // 5. Kiem tra trang thai nhan vien
+                // 5. Kiểm tra trạng thái nhân viên
                 if (!string.Equals(taiKhoan.TrangThaiNhanVien, "DangHoatDong", StringComparison.OrdinalIgnoreCase))
                 {
                     return KetQuaDangNhapDTO.TaoThatBai("Nhân viên liên kết đã ngừng hoạt động trên hệ thống.");
                 }
 
-                // 6. Luu thong tin vao Session
+                // 6. Lưu thông tin vào Session
                 Session.DangNhap(
                     taiKhoan.MaTaiKhoan,
                     taiKhoan.MaNhanVien,
@@ -89,4 +89,3 @@ namespace QuanLyHoaDon.BLL.HeThong
         }
     }
 }
-

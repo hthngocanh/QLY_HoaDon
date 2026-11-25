@@ -50,6 +50,13 @@ namespace QuanLyHoaDon.Utilities
             DaDangNhap = true;
         }
 
+        public static void CapNhatThongTinLienHe(string soDienThoai, string email, string diaChi)
+        {
+            SoDienThoai = soDienThoai ?? string.Empty;
+            Email = email ?? string.Empty;
+            DiaChi = diaChi ?? string.Empty;
+        }
+
         public static void DangXuat()
         {
             MaTaiKhoan = 0;

@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using QuanLyHoaDon.GUI.Controls;
+using QuanLyHoaDon.GUI.Forms.HoaDon;
+using QuanLyHoaDon.GUI.Forms.KhachHang;
+using QuanLyHoaDon.GUI.Forms.NhanVien;
+using QuanLyHoaDon.GUI.Forms.SanPham;
 using QuanLyHoaDon.GUI.Forms.ThongKe;
 using QuanLyHoaDon.Utilities;
 
@@ -10,11 +14,11 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
 {
     public partial class FormChinh : Form
     {
-        // Danh sach cac button menu de quan ly trang thai active
+        // Danh sách các button menu để quản lý trạng thái active
         private readonly Dictionary<string, Button> _menuButtons = new();
         private string _maChucNangHienTai = string.Empty;
 
-        // Cache cac man hinh noi dung da tao
+        // Cache các màn hình nội dung đã tạo
         private readonly Dictionary<string, Control> _manHinhCache = new();
 
         public FormChinh()
@@ -25,46 +29,97 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
 
         private void ApDungGiaoDienVaKhoiTao()
         {
-            this.Font = ThemeHelper.TaoFont(9.5f);
+            // Thiết lập font chữ và màu sắc chuẩn theo ThemeHelper
+            this.Font = ThemeHelper.FontNoiDung;
             this.BackColor = ThemeHelper.MauNenUngDung;
 
-            // Ve duong vien phan tach duoi Topbar
+            // Header Sidebar
+            pnlSidebarBrand.BackColor = Color.FromArgb(21, 44, 72);
+            pnlAvatarSidebar.BackColor = ThemeHelper.MauChinh;
+            lblBrandLogo.BackColor = ThemeHelper.MauChinh;
+
+            // Topbar
+            pnlTopbar.BackColor = ThemeHelper.MauNenNoiDung;
             pnlTopbar.Paint += (s, e) =>
             {
                 using var pen = new Pen(ThemeHelper.MauDuongVien, 1);
                 e.Graphics.DrawLine(pen, 0, pnlTopbar.Height - 1, pnlTopbar.Width, pnlTopbar.Height - 1);
             };
 
-            // Hien thi thong tin nguoi dung tren Topbar
-            CapNhatThongTinNguoiDungTopbar();
+            lblTopbarTieuDe.Font = ThemeHelper.FontTieuDeTrang;
+            lblTopbarTieuDe.ForeColor = ThemeHelper.MauChuChinh;
 
-            // Click vao khu vuc user de xem ho so
-            pnlNguoiDung.Click += (s, e) => DieuHuongTheoMa("HoSoCaNhan");
-            lblTenNguoiDung.Click += (s, e) => DieuHuongTheoMa("HoSoCaNhan");
-            lblVaiTroBadge.Click += (s, e) => DieuHuongTheoMa("HoSoCaNhan");
-            pnlAvatarCircle.Click += (s, e) => DieuHuongTheoMa("HoSoCaNhan");
-            lblAvatarKyHieu.Click += (s, e) => DieuHuongTheoMa("HoSoCaNhan");
+            lblTopbarBreadcrumb.Font = ThemeHelper.FontChuThich;
+            lblTopbarBreadcrumb.ForeColor = ThemeHelper.MauChuPhu;
 
-            // Khoi tao danh sach menu Sidebar theo phan quyen
+            // Sự kiện click khu vực người dùng Topbar -> Mở Thông tin cá nhân
+            pnlNguoiDung.Click += (s, e) => DieuHuongTheoMa("ThongTinCaNhan");
+            lblTenNguoiDung.Click += (s, e) => DieuHuongTheoMa("ThongTinCaNhan");
+            lblVaiTroBadge.Click += (s, e) => DieuHuongTheoMa("ThongTinCaNhan");
+            pnlAvatarCircle.Click += (s, e) => DieuHuongTheoMa("ThongTinCaNhan");
+            lblAvatarKyHieu.Click += (s, e) => DieuHuongTheoMa("ThongTinCaNhan");
+
+            // Hiển thị thông tin người dùng từ Session
+            lblTenNguoiDung.Text = Session.HoTen;
+            lblVaiTroBadge.Text = Session.LaQuanLy ? "Quản lý" : "Nhân viên";
+
+            lblTenNguoiDungSidebar.Text = Session.HoTen;
+            lblVaiTroSidebar.Text = Session.LaQuanLy ? "Quản lý" : "Nhân viên";
+
+            string kyHieuAvatar = LayKyHieuAvatar(Session.HoTen);
+            lblAvatarKyHieu.Text = kyHieuAvatar;
+            lblAvatarSidebar.Text = kyHieuAvatar;
+
+            // Xử lý sự kiện click tài khoản ở Sidebar -> Mở context menu hướng lên
+            pnlTaiKhoanSidebar.Click += (s, e) => MoMenuTaiKhoan();
+            lblTenNguoiDungSidebar.Click += (s, e) => MoMenuTaiKhoan();
+            lblVaiTroSidebar.Click += (s, e) => MoMenuTaiKhoan();
+            lblChevronSidebar.Click += (s, e) => MoMenuTaiKhoan();
+            pnlAvatarSidebar.Click += (s, e) => MoMenuTaiKhoan();
+            lblAvatarSidebar.Click += (s, e) => MoMenuTaiKhoan();
+
+            // Hover effect cho pnlTaiKhoanSidebar
+            pnlTaiKhoanSidebar.MouseEnter += (s, e) => pnlTaiKhoanSidebar.BackColor = ThemeHelper.MauSidebarHover;
+            pnlTaiKhoanSidebar.MouseLeave += (s, e) => pnlTaiKhoanSidebar.BackColor = Color.FromArgb(21, 44, 72);
+
+            // Context Menu Styling
+            cmsTaiKhoan.Font = ThemeHelper.FontNoiDung;
+            cmsTaiKhoan.BackColor = Color.White;
+            cmsTaiKhoan.ShowImageMargin = false;
+
+            tsmiThongTinCaNhan.Font = ThemeHelper.FontNoiDung;
+            tsmiThongTinCaNhan.ForeColor = ThemeHelper.MauChuChinh;
+            tsmiThongTinCaNhan.Click += (s, e) => DieuHuongTheoMa("ThongTinCaNhan");
+
+            tsmiDoiMatKhau.Font = ThemeHelper.FontNoiDung;
+            tsmiDoiMatKhau.ForeColor = ThemeHelper.MauChuChinh;
+            tsmiDoiMatKhau.Click += (s, e) => DieuHuongTheoMa("DoiMatKhau");
+
+            tsmiDangXuat.Font = ThemeHelper.FontNoiDung;
+            tsmiDangXuat.ForeColor = ThemeHelper.MauNguyHiem;
+            tsmiDangXuat.Click += (s, e) => XacNhanVaDangXuat();
+
+            // Phân quyền cho Context Menu: Chỉ Nhân viên mới có mục Đổi mật khẩu
+            tsmiDoiMatKhau.Visible = Session.LaNhanVien;
+
+            // Khởi tạo danh sách menu theo phân quyền
             KhoiTaoSidebarTheoPhanQuyen();
 
-            // Doi nen thanh ben (gan cung o Designer) sang mau xanh moi
-            DoiMauThanhBen();
-
-            // Hien dung ky tu & trong tieu de (mac dinh WinForms nuot dau & lam gach chan chu)
-            lblTopbarTieuDe.UseMnemonic = false;
-            lblTopbarBreadcrumb.UseMnemonic = false;
-
-            // Mac dinh mo man hinh Tong quan
+            // Mặc định nạp màn hình Tổng quan
             DieuHuongTheoMa("TongQuan");
         }
 
-        private void CapNhatThongTinNguoiDungTopbar()
+        private void MoMenuTaiKhoan()
         {
-            lblTenNguoiDung.Text = string.IsNullOrWhiteSpace(Session.HoTen) ? Session.TenDangNhap : Session.HoTen;
-            lblVaiTroBadge.Text = Session.LaQuanLy ? "Quản lý hệ thống" : "Nhân viên bán hàng";
-            lblVaiTroBadge.ForeColor = Session.LaQuanLy ? ThemeHelper.MauChinh : ThemeHelper.MauThanhCong;
-            lblAvatarKyHieu.Text = LayKyHieuAvatar(lblTenNguoiDung.Text);
+            // Dropdown hiển thị hướng lên trên từ vị trí pnlTaiKhoanSidebar
+            int chieuCaoMenu = cmsTaiKhoan.Height;
+            if (chieuCaoMenu <= 0)
+            {
+                chieuCaoMenu = Session.LaNhanVien ? 115 : 85;
+            }
+
+            Point diemHienThi = new Point(10, -chieuCaoMenu - 4);
+            cmsTaiKhoan.Show(pnlTaiKhoanSidebar, diemHienThi);
         }
 
         private string LayKyHieuAvatar(string hoTen)
@@ -82,105 +137,53 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
         }
 
         /// <summary>
-        /// Khoi tao cac muc Sidebar dua tren vai tro cua nguoi dung
-        /// - QuanLy: Duoc hien thi toan bo 9 muc
-        /// - NhanVien: KHONG hien thi "HeThong" va "NhanVien"
+        /// Khởi tạo các mục Sidebar dựa trên vai trò của người dùng
+        /// - QuanLy: Được hiển thị toàn bộ các phân hệ quản lý
+        /// - NhanVien: KHÔNG hiển thị "HeThong" và "NhanVien"
         /// </summary>
         private void KhoiTaoSidebarTheoPhanQuyen()
         {
             flpSidebarMenu.Controls.Clear();
             _menuButtons.Clear();
 
-            // 1. Tong quan (Tat ca)
+            // 1. Tổng quan (Tất cả)
             ThemItemSidebar("TongQuan", "📊  Tổng quan", () => DieuHuongTheoMa("TongQuan"));
 
-            // 2. He thong & Tai khoan (Chi QuanLy)
+            // 2. Hệ thống & Cấu hình (Chỉ Quản lý)
             if (Session.LaQuanLy)
             {
-                ThemItemSidebar("HeThong", "⚙️  Hệ thống & Tài khoản", () => DieuHuongTheoMa("HeThong"));
+                ThemItemSidebar("HeThong", "⚙️  Hệ thống & Cấu hình", () => DieuHuongTheoMa("HeThong"));
             }
 
-            // 3. Nhan vien (Chi QuanLy)
+            // 3. Nhân viên (Chỉ Quản lý)
             if (Session.LaQuanLy)
             {
-                ThemItemSidebar("NhanVien", "👔  Nhân viên", () => DieuHuongTheoMa("NhanVien"));
+                ThemItemSidebar("NhanVien", "👤  Nhân viên", () => DieuHuongTheoMa("NhanVien"));
             }
 
-            // 4. Khach hang (Tat ca)
+            // 4. Khách hàng (Tất cả)
             ThemItemSidebar("KhachHang", "👥  Khách hàng", () => DieuHuongTheoMa("KhachHang"));
 
-            // 5. San pham (Tat ca)
+            // 5. Sản phẩm (Tất cả)
             ThemItemSidebar("SanPham", "📦  Sản phẩm", () => DieuHuongTheoMa("SanPham"));
 
-            // 6. Hoa don (Tat ca)
+            // 6. Hóa đơn (Tất cả)
             ThemItemSidebar("HoaDon", "🧾  Hóa đơn", () => DieuHuongTheoMa("HoaDon"));
 
-            // 7. Thong ke & Bao cao (Tat ca)
+            // 7. Thống kê & Báo cáo (Tất cả)
             ThemItemSidebar("BaoCao", "📈  Thống kê & Báo cáo", () => DieuHuongTheoMa("BaoCao"));
-
-            // Duong phan cach nhe (mau sang hon cho nen xanh)
-            var pnlDivider = new Panel
-            {
-                Size = new Size(240, 1),
-                BackColor = Color.FromArgb(90, 150, 230),
-                Margin = new Padding(10, 10, 10, 10)
-            };
-            flpSidebarMenu.Controls.Add(pnlDivider);
-
-            // 8. Ho so ca nhan (Tat ca)
-            ThemItemSidebar("HoSoCaNhan", "👤  Hồ sơ cá nhân", () => DieuHuongTheoMa("HoSoCaNhan"));
-
-            // 9. Dang xuat (Tat ca)
-            ThemItemSidebar("DangXuat", "🚪  Đăng xuất", XacNhanVaDangXuat, laNutNguyHiem: true);
         }
 
-        /// <summary>
-        /// Doi cac nen toi (navy cu, gan o Designer) cua thanh ben sang mau xanh theo ThemeHelper.
-        /// Khong can biet ten tung control: chi doi nhung control co nen toi.
-        /// </summary>
-        private void DoiMauThanhBen()
-        {
-            flpSidebarMenu.BackColor = ThemeHelper.MauSidebar;
-
-            var sidebar = flpSidebarMenu.Parent;
-            if (sidebar == null) return;
-
-            sidebar.BackColor = ThemeHelper.MauSidebar;
-
-            foreach (Control c in sidebar.Controls)
-            {
-                if (c == flpSidebarMenu) continue;
-
-                // Khoi logo o dau thanh ben: dung xanh dam hon de noi bat o "QL"
-                if (c.BackColor.A == 255 && c.BackColor.GetBrightness() < 0.30f)
-                    c.BackColor = ThemeHelper.MauSidebarActive;
-
-                DoiMauNenToi(c, ThemeHelper.MauSidebarActive);
-            }
-        }
-
-        private static void DoiMauNenToi(Control goc, Color mau)
-        {
-            foreach (Control c in goc.Controls)
-            {
-                if (c.BackColor.A == 255 && c.BackColor.GetBrightness() < 0.30f)
-                    c.BackColor = mau;
-
-                DoiMauNenToi(c, mau);
-            }
-        }
-
-        private void ThemItemSidebar(string maChucNang, string textHienThi, Action hanhDong, bool laNutNguyHiem = false)
+        private void ThemItemSidebar(string maChucNang, string textHienThi, Action hanhDong)
         {
             var btn = new Button
             {
                 Name = "btnMenu_" + maChucNang,
                 Text = textHienThi,
-                UseMnemonic = false,
-                Size = new Size(240, 46),
+                Size = new Size(250, 48),
                 BackColor = ThemeHelper.MauSidebar,
-                ForeColor = laNutNguyHiem ? ColorTranslator.FromHtml("#FFE4E4") : ThemeHelper.MauChuSidebar,
-                Font = ThemeHelper.TaoFont(9.5f, FontStyle.Regular),
+                ForeColor = ThemeHelper.MauChuTrenSidebar,
+                Font = ThemeHelper.FontNoiDung,
                 FlatStyle = FlatStyle.Flat,
                 TextAlign = ContentAlignment.MiddleLeft,
                 Padding = new Padding(18, 0, 0, 0),
@@ -194,7 +197,7 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             {
                 if (_maChucNangHienTai != maChucNang)
                 {
-                    btn.BackColor = laNutNguyHiem ? ThemeHelper.MauLoi : ThemeHelper.MauSidebarHover;
+                    btn.BackColor = ThemeHelper.MauSidebarHover;
                 }
             };
 
@@ -207,25 +210,31 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             };
 
             btn.Click += (s, e) => hanhDong();
-
-            if (!laNutNguyHiem)
-            {
-                _menuButtons[maChucNang] = btn;
-            }
+            _menuButtons[maChucNang] = btn;
 
             flpSidebarMenu.Controls.Add(btn);
         }
 
         /// <summary>
-        /// Dieu huong tap trung theo ma chuc nang co kiem tra phan quyen
+        /// Điều hướng tập trung theo mã chức năng có kiểm tra phân quyền
         /// </summary>
         public void DieuHuongTheoMa(string maChucNang)
         {
-            // KIEM TRA PHAN QUYEN TAI TANG DIEU HUONG
+            // KIỂM TRA PHÂN QUYỀN TẠI TẦNG ĐIỀU HƯỚNG
             if ((maChucNang == "HeThong" || maChucNang == "NhanVien") && !Session.LaQuanLy)
             {
                 MessageBox.Show(
                     "Bạn không có quyền truy cập vào phân hệ này.\nChức năng chỉ dành riêng cho tài khoản Quản lý.",
+                    "Từ Chối Truy Cập",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (maChucNang == "DoiMatKhau" && !Session.LaNhanVien)
+            {
+                MessageBox.Show(
+                    "Chức năng cập nhật mật khẩu chỉ dành cho tài khoản Nhân viên.",
                     "Từ Chối Truy Cập",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
@@ -252,36 +261,28 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
                     if (!_manHinhCache.TryGetValue("HeThong", out var ucHeThong))
                     {
                         ucHeThong = new UCDangPhatTrien(
-                            "Phân Hệ Quản Lý Hệ Thống & Tài Khoản",
+                            "Phân Hệ Quản Lý Hệ Thống & Cấu Hình",
                             "Quản Trị Viên (Admin)",
-                            "Cung cấp các công cụ cấu hình hệ thống, quản lý tài khoản người dùng, phân quyền truy cập và sao lưu cơ sở dữ liệu.",
+                            "Cung cấp các công cụ cấu hình sao lưu cơ sở dữ liệu và giám sát hệ thống.",
                             "⚙️");
                         _manHinhCache["HeThong"] = ucHeThong;
                     }
-                    DieuHuong(ucHeThong, "Hệ thống & Tài khoản", "Trang chủ / Quản trị hệ thống");
+                    DieuHuong(ucHeThong, "Hệ thống & Cấu hình", "Trang chủ / Quản trị hệ thống");
                     break;
 
                 case "NhanVien":
                     if (!_manHinhCache.TryGetValue("NhanVien", out var ucNhanVien))
                     {
-                        ucNhanVien = new UCDangPhatTrien(
-                            "Phân Hệ Quản Lý Nhân Viên",
-                            "Quản Trị Viên (Admin)",
-                            "Quản lý hồ sơ nhân sự, danh sách nhân viên bán hàng, thông tin liên hệ và trạng thái hoạt động.",
-                            "👔");
+                        ucNhanVien = new UCNhanVien();
                         _manHinhCache["NhanVien"] = ucNhanVien;
                     }
-                    DieuHuong(ucNhanVien, "Quản lý nhân sự", "Trang chủ / Quản lý nhân viên");
+                    DieuHuong(ucNhanVien, "Quản lý nhân sự & tài khoản", "Trang chủ / Quản lý nhân viên");
                     break;
 
                 case "KhachHang":
                     if (!_manHinhCache.TryGetValue("KhachHang", out var ucKhachHang))
                     {
-                        ucKhachHang = new UCDangPhatTrien(
-                            "Phân Hệ Quản Lý Khách Hàng",
-                            "Thành viên 2 (Khách hàng & Sản phẩm)",
-                            "Quản lý thông tin danh sách khách hàng, số điện thoại, email, địa chỉ và lịch sử giao dịch mua hàng.",
-                            "👥");
+                        ucKhachHang = new UCKhachHang();
                         _manHinhCache["KhachHang"] = ucKhachHang;
                     }
                     DieuHuong(ucKhachHang, "Quản lý khách hàng", "Trang chủ / Danh mục khách hàng");
@@ -290,11 +291,7 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
                 case "SanPham":
                     if (!_manHinhCache.TryGetValue("SanPham", out var ucSanPham))
                     {
-                        ucSanPham = new UCDangPhatTrien(
-                            "Phân Hệ Quản Lý Sản Phẩm",
-                            "Thành viên 2 (Khách hàng & Sản phẩm)",
-                            "Quản lý danh mục mặt hàng bánh kẹo, đơn vị tính, đơn giá bán và số lượng tồn kho theo thời gian thực.",
-                            "📦");
+                        ucSanPham = new UCSanPham();
                         _manHinhCache["SanPham"] = ucSanPham;
                     }
                     DieuHuong(ucSanPham, "Quản lý sản phẩm", "Trang chủ / Danh mục sản phẩm");
@@ -303,35 +300,37 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
                 case "HoaDon":
                     if (!_manHinhCache.TryGetValue("HoaDon", out var ucHoaDon))
                     {
-                        ucHoaDon = new UCDangPhatTrien(
-                            "Phân Hệ Lập & Quản Lý Hóa Đơn",
-                            "Thành viên 3 (Hóa đơn)",
-                            "Lập hóa đơn bán hàng mới, chọn khách hàng, thêm các dòng sản phẩm, tự động tính tổng tiền và in phiếu bán hàng.",
-                            "🧾");
+                        ucHoaDon = new UCHoaDon();
                         _manHinhCache["HoaDon"] = ucHoaDon;
                     }
-                    DieuHuong(ucHoaDon, "Quản lý hóa đơn", "Trang chủ / Quản lý bán hàng / Hóa đơn");
+                    DieuHuong(ucHoaDon, "Quản lý hóa đơn bán hàng", "Trang chủ / Quản lý bán hàng / Hóa đơn");
                     break;
 
                 case "BaoCao":
-                    // Man hinh that cua Thanh vien 4 (thay cho UCDangPhatTrien)
                     if (!_manHinhCache.TryGetValue("BaoCao", out var ucBaoCao))
                     {
                         ucBaoCao = new UCThongKe();
                         _manHinhCache["BaoCao"] = ucBaoCao;
                     }
-                    DieuHuong(ucBaoCao, "Thống kê & Báo cáo", "Trang chủ / Báo cáo doanh thu");
+                    DieuHuong(ucBaoCao, "Thống kê & Báo cáo doanh thu", "Trang chủ / Báo cáo doanh thu");
                     break;
 
+                case "ThongTinCaNhan":
                 case "HoSoCaNhan":
-                    var ucHoSo = new UCHoSoCaNhan();
-                    DieuHuong(ucHoSo, "Hồ sơ cá nhân", "Trang chủ / Người dùng / Hồ sơ cá nhân");
+                    var ucThongTin = new UCThongTinCaNhan();
+                    DieuHuong(ucThongTin, "Thông tin cá nhân", "Trang chủ / Người dùng / Thông tin cá nhân");
+                    break;
+
+                case "DoiMatKhau":
+                    var ucDoiMK = new UCDoiMatKhau();
+                    ucDoiMK.OnQuayLai += () => DieuHuongTheoMa("TongQuan");
+                    DieuHuong(ucDoiMK, "Cập nhật mật khẩu", "Trang chủ / Người dùng / Đổi mật khẩu");
                     break;
             }
         }
 
         /// <summary>
-        /// Phuong thuc dieu huong tong quat danh cho cac thanh vien khac tich hop
+        /// Phương thức điều hướng tổng quát dành cho các thành viên khác tích hợp
         /// </summary>
         public void DieuHuong(Control control, string tieuDe, string breadcrumb)
         {
@@ -354,13 +353,13 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
                 {
                     kvp.Value.BackColor = ThemeHelper.MauSidebarActive;
                     kvp.Value.ForeColor = Color.White;
-                    kvp.Value.Font = ThemeHelper.TaoFont(9.5f, FontStyle.Bold);
+                    kvp.Value.Font = ThemeHelper.FontNoiDungDam;
                 }
                 else
                 {
                     kvp.Value.BackColor = ThemeHelper.MauSidebar;
-                    kvp.Value.ForeColor = ThemeHelper.MauChuSidebar;
-                    kvp.Value.Font = ThemeHelper.TaoFont(9.5f, FontStyle.Regular);
+                    kvp.Value.ForeColor = ThemeHelper.MauChuTrenSidebar;
+                    kvp.Value.Font = ThemeHelper.FontNoiDung;
                 }
             }
         }

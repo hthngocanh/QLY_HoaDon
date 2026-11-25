@@ -78,11 +78,11 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             this.SuspendLayout();
 
             // ==========================================
-            // pnlBranding (Ben trai - Modern Dark Blue)
+            // pnlBranding (Bên trái - Modern Dark Blue #1E3A5F)
             // ==========================================
             this.pnlBranding.Dock = System.Windows.Forms.DockStyle.Left;
-            this.pnlBranding.Width = 360;
-            this.pnlBranding.BackColor = System.Drawing.Color.FromArgb(23, 43, 77);
+            this.pnlBranding.Width = 380;
+            this.pnlBranding.BackColor = System.Drawing.Color.FromArgb(30, 58, 95);
             this.pnlBranding.Controls.Add(this.lblBrandLogo);
             this.pnlBranding.Controls.Add(this.lblBrandTieuDe);
             this.pnlBranding.Controls.Add(this.lblBrandMoTa);
@@ -93,56 +93,56 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
 
             // lblBrandLogo
             this.lblBrandLogo.AutoSize = false;
-            this.lblBrandLogo.Size = new System.Drawing.Size(60, 60);
-            this.lblBrandLogo.Location = new System.Drawing.Point(40, 50);
-            this.lblBrandLogo.BackColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            this.lblBrandLogo.Size = new System.Drawing.Size(64, 64);
+            this.lblBrandLogo.Location = new System.Drawing.Point(40, 48);
+            this.lblBrandLogo.BackColor = System.Drawing.Color.FromArgb(29, 78, 216);
             this.lblBrandLogo.ForeColor = System.Drawing.Color.White;
-            this.lblBrandLogo.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            this.lblBrandLogo.Font = new System.Drawing.Font("Segoe UI", 22F, System.Drawing.FontStyle.Bold);
             this.lblBrandLogo.Text = "QL";
             this.lblBrandLogo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
             // lblBrandTieuDe
             this.lblBrandTieuDe.AutoSize = true;
-            this.lblBrandTieuDe.Location = new System.Drawing.Point(38, 125);
+            this.lblBrandTieuDe.Location = new System.Drawing.Point(38, 126);
             this.lblBrandTieuDe.ForeColor = System.Drawing.Color.White;
-            this.lblBrandTieuDe.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
+            this.lblBrandTieuDe.Font = new System.Drawing.Font("Segoe UI", 19F, System.Drawing.FontStyle.Bold);
             this.lblBrandTieuDe.Text = "QUẢN LÝ HÓA ĐƠN";
 
             // lblBrandMoTa
-            this.lblBrandMoTa.Size = new System.Drawing.Size(280, 50);
-            this.lblBrandMoTa.Location = new System.Drawing.Point(40, 168);
+            this.lblBrandMoTa.Size = new System.Drawing.Size(300, 54);
+            this.lblBrandMoTa.Location = new System.Drawing.Point(40, 170);
             this.lblBrandMoTa.ForeColor = System.Drawing.Color.FromArgb(203, 213, 225);
-            this.lblBrandMoTa.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.lblBrandMoTa.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.lblBrandMoTa.Text = "Hệ thống quản lý khách hàng, sản phẩm và hóa đơn bán hàng chuyên nghiệp.";
 
             // Bullet points
             this.lblBrandDiemNoiBat1.AutoSize = true;
-            this.lblBrandDiemNoiBat1.Location = new System.Drawing.Point(40, 245);
-            this.lblBrandDiemNoiBat1.ForeColor = System.Drawing.Color.FromArgb(226, 232, 240);
-            this.lblBrandDiemNoiBat1.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.lblBrandDiemNoiBat1.Location = new System.Drawing.Point(40, 248);
+            this.lblBrandDiemNoiBat1.ForeColor = System.Drawing.Color.White;
+            this.lblBrandDiemNoiBat1.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.lblBrandDiemNoiBat1.Text = "✓  Phân quyền Quản lý & Nhân viên rõ ràng";
 
             this.lblBrandDiemNoiBat2.AutoSize = true;
-            this.lblBrandDiemNoiBat2.Location = new System.Drawing.Point(40, 280);
-            this.lblBrandDiemNoiBat2.ForeColor = System.Drawing.Color.FromArgb(226, 232, 240);
-            this.lblBrandDiemNoiBat2.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.lblBrandDiemNoiBat2.Location = new System.Drawing.Point(40, 286);
+            this.lblBrandDiemNoiBat2.ForeColor = System.Drawing.Color.White;
+            this.lblBrandDiemNoiBat2.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.lblBrandDiemNoiBat2.Text = "✓  Quản lý khách hàng, kho và lập hóa đơn";
 
             this.lblBrandDiemNoiBat3.AutoSize = true;
-            this.lblBrandDiemNoiBat3.Location = new System.Drawing.Point(40, 315);
-            this.lblBrandDiemNoiBat3.ForeColor = System.Drawing.Color.FromArgb(226, 232, 240);
-            this.lblBrandDiemNoiBat3.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.lblBrandDiemNoiBat3.Location = new System.Drawing.Point(40, 324);
+            this.lblBrandDiemNoiBat3.ForeColor = System.Drawing.Color.White;
+            this.lblBrandDiemNoiBat3.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.lblBrandDiemNoiBat3.Text = "✓  Báo cáo doanh thu & kiểm soát an toàn";
 
             // lblBrandPhienBan
             this.lblBrandPhienBan.AutoSize = true;
-            this.lblBrandPhienBan.Location = new System.Drawing.Point(40, 475);
-            this.lblBrandPhienBan.ForeColor = System.Drawing.Color.FromArgb(148, 163, 184);
-            this.lblBrandPhienBan.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.lblBrandPhienBan.Location = new System.Drawing.Point(40, 480);
+            this.lblBrandPhienBan.ForeColor = System.Drawing.Color.FromArgb(203, 213, 225);
+            this.lblBrandPhienBan.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.lblBrandPhienBan.Text = "Phiên bản 1.0.0 • .NET 10 LTS";
 
             // ==========================================
-            // pnlForm (Ben phai - White Form Card)
+            // pnlForm (Bên phải - White Form Card)
             // ==========================================
             this.pnlForm.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlForm.BackColor = System.Drawing.Color.White;
@@ -159,63 +159,63 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
 
             // lblTieuDeForm
             this.lblTieuDeForm.AutoSize = true;
-            this.lblTieuDeForm.Location = new System.Drawing.Point(48, 45);
-            this.lblTieuDeForm.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59);
-            this.lblTieuDeForm.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
+            this.lblTieuDeForm.Location = new System.Drawing.Point(48, 40);
+            this.lblTieuDeForm.ForeColor = System.Drawing.Color.FromArgb(23, 32, 51);
+            this.lblTieuDeForm.Font = new System.Drawing.Font("Segoe UI", 18.5F, System.Drawing.FontStyle.Bold);
             this.lblTieuDeForm.Text = "Đăng nhập hệ thống";
 
             // lblMoTaForm
             this.lblMoTaForm.AutoSize = true;
-            this.lblMoTaForm.Location = new System.Drawing.Point(50, 82);
-            this.lblMoTaForm.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
-            this.lblMoTaForm.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.lblMoTaForm.Location = new System.Drawing.Point(50, 78);
+            this.lblMoTaForm.ForeColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.lblMoTaForm.Font = new System.Drawing.Font("Segoe UI", 11.25F);
             this.lblMoTaForm.Text = "Nhập thông tin tài khoản được cấp để tiếp tục làm việc";
 
             // pnlThongBaoLoi
-            this.pnlThongBaoLoi.Location = new System.Drawing.Point(50, 115);
-            this.pnlThongBaoLoi.Size = new System.Drawing.Size(420, 36);
+            this.pnlThongBaoLoi.Location = new System.Drawing.Point(50, 112);
+            this.pnlThongBaoLoi.Size = new System.Drawing.Size(430, 38);
             this.pnlThongBaoLoi.BackColor = System.Drawing.Color.FromArgb(254, 242, 242);
             this.pnlThongBaoLoi.Visible = false;
             this.pnlThongBaoLoi.Controls.Add(this.lblThongBaoLoi);
 
             // lblThongBaoLoi
             this.lblThongBaoLoi.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblThongBaoLoi.ForeColor = System.Drawing.Color.FromArgb(220, 38, 38);
-            this.lblThongBaoLoi.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular);
+            this.lblThongBaoLoi.ForeColor = System.Drawing.Color.FromArgb(185, 28, 28);
+            this.lblThongBaoLoi.Font = new System.Drawing.Font("Segoe UI", 10.5F, System.Drawing.FontStyle.Bold);
             this.lblThongBaoLoi.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lblThongBaoLoi.Padding = new System.Windows.Forms.Padding(10, 0, 10, 0);
+            this.lblThongBaoLoi.Padding = new System.Windows.Forms.Padding(12, 0, 12, 0);
 
             // lblTenDangNhap
             this.lblTenDangNhap.AutoSize = true;
-            this.lblTenDangNhap.Location = new System.Drawing.Point(48, 160);
-            this.lblTenDangNhap.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
-            this.lblTenDangNhap.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold);
+            this.lblTenDangNhap.Location = new System.Drawing.Point(48, 158);
+            this.lblTenDangNhap.ForeColor = System.Drawing.Color.FromArgb(23, 32, 51);
+            this.lblTenDangNhap.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold);
             this.lblTenDangNhap.Text = "Tên đăng nhập";
 
             // pnlTenDangNhapBorder
-            this.pnlTenDangNhapBorder.Location = new System.Drawing.Point(50, 185);
-            this.pnlTenDangNhapBorder.Size = new System.Drawing.Size(420, 42);
+            this.pnlTenDangNhapBorder.Location = new System.Drawing.Point(50, 184);
+            this.pnlTenDangNhapBorder.Size = new System.Drawing.Size(430, 42);
             this.pnlTenDangNhapBorder.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
             this.pnlTenDangNhapBorder.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnlTenDangNhapBorder.Controls.Add(this.txtTenDangNhap);
 
             // txtTenDangNhap
             this.txtTenDangNhap.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtTenDangNhap.Location = new System.Drawing.Point(12, 11);
-            this.txtTenDangNhap.Size = new System.Drawing.Size(395, 20);
-            this.txtTenDangNhap.Font = new System.Drawing.Font("Segoe UI", 10.5F);
-            this.txtTenDangNhap.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            this.txtTenDangNhap.Location = new System.Drawing.Point(12, 10);
+            this.txtTenDangNhap.Size = new System.Drawing.Size(405, 22);
+            this.txtTenDangNhap.Font = new System.Drawing.Font("Segoe UI", 11.25F);
+            this.txtTenDangNhap.ForeColor = System.Drawing.Color.FromArgb(23, 32, 51);
 
             // lblMatKhau
             this.lblMatKhau.AutoSize = true;
-            this.lblMatKhau.Location = new System.Drawing.Point(48, 245);
-            this.lblMatKhau.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
-            this.lblMatKhau.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold);
+            this.lblMatKhau.Location = new System.Drawing.Point(48, 238);
+            this.lblMatKhau.ForeColor = System.Drawing.Color.FromArgb(23, 32, 51);
+            this.lblMatKhau.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold);
             this.lblMatKhau.Text = "Mật khẩu";
 
             // pnlMatKhauBorder
-            this.pnlMatKhauBorder.Location = new System.Drawing.Point(50, 270);
-            this.pnlMatKhauBorder.Size = new System.Drawing.Size(420, 42);
+            this.pnlMatKhauBorder.Location = new System.Drawing.Point(50, 264);
+            this.pnlMatKhauBorder.Size = new System.Drawing.Size(430, 42);
             this.pnlMatKhauBorder.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
             this.pnlMatKhauBorder.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnlMatKhauBorder.Controls.Add(this.txtMatKhau);
@@ -223,41 +223,41 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
 
             // txtMatKhau
             this.txtMatKhau.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtMatKhau.Location = new System.Drawing.Point(12, 11);
-            this.txtMatKhau.Size = new System.Drawing.Size(335, 20);
-            this.txtMatKhau.Font = new System.Drawing.Font("Segoe UI", 10.5F);
-            this.txtMatKhau.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            this.txtMatKhau.Location = new System.Drawing.Point(12, 10);
+            this.txtMatKhau.Size = new System.Drawing.Size(345, 22);
+            this.txtMatKhau.Font = new System.Drawing.Font("Segoe UI", 11.25F);
+            this.txtMatKhau.ForeColor = System.Drawing.Color.FromArgb(23, 32, 51);
             this.txtMatKhau.UseSystemPasswordChar = true;
 
             // btnHienMatKhau
-            this.btnHienMatKhau.Location = new System.Drawing.Point(355, 4);
+            this.btnHienMatKhau.Location = new System.Drawing.Point(365, 4);
             this.btnHienMatKhau.Size = new System.Drawing.Size(58, 32);
             this.btnHienMatKhau.Text = "Hiện";
             this.btnHienMatKhau.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnHienMatKhau.FlatAppearance.BorderSize = 0;
             this.btnHienMatKhau.BackColor = System.Drawing.Color.Transparent;
-            this.btnHienMatKhau.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
-            this.btnHienMatKhau.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular);
+            this.btnHienMatKhau.ForeColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.btnHienMatKhau.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnHienMatKhau.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnHienMatKhau.Click += BtnHienMatKhau_Click;
 
             // btnDangNhap
-            this.btnDangNhap.Location = new System.Drawing.Point(50, 345);
-            this.btnDangNhap.Size = new System.Drawing.Size(420, 46);
+            this.btnDangNhap.Location = new System.Drawing.Point(50, 335);
+            this.btnDangNhap.Size = new System.Drawing.Size(430, 44);
             this.btnDangNhap.Text = "ĐĂNG NHẬP";
-            this.btnDangNhap.BackColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            this.btnDangNhap.BackColor = System.Drawing.Color.FromArgb(29, 78, 216);
             this.btnDangNhap.ForeColor = System.Drawing.Color.White;
-            this.btnDangNhap.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.btnDangNhap.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold);
             this.btnDangNhap.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDangNhap.FlatAppearance.BorderSize = 0;
             this.btnDangNhap.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnDangNhap.Click += BtnDangNhap_Click;
 
             // lblGoiYDemo
-            this.lblGoiYDemo.Size = new System.Drawing.Size(420, 45);
-            this.lblGoiYDemo.Location = new System.Drawing.Point(50, 410);
-            this.lblGoiYDemo.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
-            this.lblGoiYDemo.Font = new System.Drawing.Font("Segoe UI", 8.5F);
+            this.lblGoiYDemo.Size = new System.Drawing.Size(430, 50);
+            this.lblGoiYDemo.Location = new System.Drawing.Point(50, 398);
+            this.lblGoiYDemo.ForeColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.lblGoiYDemo.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.lblGoiYDemo.Text = "💡 Tài khoản demo: quanly01 (Quản lý) | nhanvien01 (Nhân viên)\nMật khẩu dùng chung: Demo@123";
             this.lblGoiYDemo.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 
@@ -266,7 +266,7 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             // ==========================================
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(880, 520);
+            this.ClientSize = new System.Drawing.Size(920, 540);
             this.Controls.Add(this.pnlForm);
             this.Controls.Add(this.pnlBranding);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -288,4 +288,3 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
         }
     }
 }
-

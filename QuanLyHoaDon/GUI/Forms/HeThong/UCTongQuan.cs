@@ -27,7 +27,7 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
         {
             this.Dock = DockStyle.Fill;
             this.BackColor = ThemeHelper.MauNenUngDung;
-            this.Font = ThemeHelper.TaoFont(9.5f);
+            this.Font = ThemeHelper.FontNoiDung;
             this.AutoScroll = true;
 
             // ==========================================
@@ -36,7 +36,7 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             pnlBanner = new Panel
             {
                 Location = new Point(30, 24),
-                Size = new Size(1000, 85),
+                Size = new Size(1000, 95),
                 BackColor = ThemeHelper.MauNenNoiDung,
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
             };
@@ -49,7 +49,7 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             lblLoiChao = new Label
             {
                 Text = $"Xin chào, {Session.HoTen}!",
-                Font = ThemeHelper.TaoFont(16f, FontStyle.Bold),
+                Font = ThemeHelper.FontTieuDeKhuVuc,
                 ForeColor = ThemeHelper.MauChuChinh,
                 Location = new Point(24, 18),
                 AutoSize = true
@@ -58,21 +58,21 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             lblThoiGian = new Label
             {
                 Text = $"Hôm nay là {DateTime.Now:dddd, dd/MM/yyyy} • Hệ thống Quản lý hóa đơn sẵn sàng làm việc.",
-                Font = ThemeHelper.TaoFont(9.5f),
+                Font = ThemeHelper.FontNoiDung,
                 ForeColor = ThemeHelper.MauChuPhu,
-                Location = new Point(26, 50),
+                Location = new Point(26, 52),
                 AutoSize = true
             };
 
             lblVaiTroBadge = new Label
             {
-                Text = Session.LaQuanLy ? "VAI TRÒ: QUẢN LÝ" : "VAI TRÒ: NHÂN VIÊN",
-                Font = ThemeHelper.TaoFont(8.5f, FontStyle.Bold),
-                ForeColor = Session.LaQuanLy ? Color.FromArgb(37, 99, 235) : Color.FromArgb(22, 163, 74),
-                BackColor = Session.LaQuanLy ? Color.FromArgb(239, 246, 255) : Color.FromArgb(240, 253, 244),
-                Padding = new Padding(10, 5, 10, 5),
+                Text = Session.LaQuanLy ? "VAI TRÒ: QUẢN LÝ HỆ THỐNG" : "VAI TRÒ: NHÂN VIÊN BÁN HÀNG",
+                Font = ThemeHelper.FontChuThichDam,
+                ForeColor = Session.LaQuanLy ? ThemeHelper.MauChinh : ThemeHelper.MauThanhCong,
+                BackColor = Session.LaQuanLy ? ColorTranslator.FromHtml("#EFF6FF") : ColorTranslator.FromHtml("#F0FDF4"),
+                Padding = new Padding(12, 6, 12, 6),
                 AutoSize = true,
-                Location = new Point(830, 28),
+                Location = new Point(780, 28),
                 Anchor = AnchorStyles.Top | AnchorStyles.Right
             };
 
@@ -85,8 +85,8 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             // ==========================================
             flpStats = new FlowLayoutPanel
             {
-                Location = new Point(30, 125),
-                Size = new Size(1000, 115),
+                Location = new Point(30, 135),
+                Size = new Size(1000, 125),
                 BackColor = Color.Transparent,
                 WrapContents = false,
                 AutoScroll = false,
@@ -95,16 +95,16 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
 
             flpStats.Controls.Add(TaoCardThongKe("Doanh thu mẫu", "18.500.000 đ", "💰", ThemeHelper.MauChinh));
             flpStats.Controls.Add(TaoCardThongKe("Tổng hóa đơn", "18 đơn", "🧾", ThemeHelper.MauThanhCong));
-            flpStats.Controls.Add(TaoCardThongKe("Khách hàng", "12 đối tác", "👥", Color.FromArgb(217, 119, 6)));
-            flpStats.Controls.Add(TaoCardThongKe("Sản phẩm", "22 mặt hàng", "📦", Color.FromArgb(124, 58, 237)));
+            flpStats.Controls.Add(TaoCardThongKe("Khách hàng", "12 đối tác", "👥", ThemeHelper.MauCanhBao));
+            flpStats.Controls.Add(TaoCardThongKe("Sản phẩm", "22 mặt hàng", "📦", ColorTranslator.FromHtml("#6D28D9")));
 
             // ==========================================
             // 3. Hai panel chi tiet ben duoi
             // ==========================================
             pnlChiTietTrai = new Panel
             {
-                Location = new Point(30, 260),
-                Size = new Size(580, 360),
+                Location = new Point(30, 275),
+                Size = new Size(580, 400),
                 BackColor = ThemeHelper.MauNenNoiDung,
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
             };
@@ -117,7 +117,7 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             var lblTieuDeTrai = new Label
             {
                 Text = "Trạng thái vận hành & Kết nối CSDL",
-                Font = ThemeHelper.TaoFont(12f, FontStyle.Bold),
+                Font = ThemeHelper.FontTieuDeCard,
                 ForeColor = ThemeHelper.MauChuChinh,
                 Location = new Point(24, 20),
                 AutoSize = true
@@ -133,10 +133,10 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
                        $"• Nền tảng: Windows Forms / .NET 10 LTS (Visual Studio 2026)\n" +
                        $"• Kiến trúc: 3-Layer (GUI ➔ BLL ➔ DAL ➔ DTO)\n\n" +
                        $"Tất cả các dịch vụ xác thực và phân quyền đang hoạt động bình thường.",
-                Font = ThemeHelper.TaoFont(9.5f),
+                Font = ThemeHelper.FontNoiDung,
                 ForeColor = ThemeHelper.MauChuPhu,
-                Location = new Point(24, 60),
-                Size = new Size(530, 260)
+                Location = new Point(24, 58),
+                Size = new Size(530, 320)
             };
 
             pnlChiTietTrai.Controls.Add(lblTieuDeTrai);
@@ -145,8 +145,8 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             // Panel phai: Loi tat
             pnlChiTietPhai = new Panel
             {
-                Location = new Point(630, 260),
-                Size = new Size(400, 360),
+                Location = new Point(630, 275),
+                Size = new Size(400, 400),
                 BackColor = ThemeHelper.MauNenNoiDung,
                 Anchor = AnchorStyles.Top | AnchorStyles.Right
             };
@@ -159,7 +159,7 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             var lblTieuDePhai = new Label
             {
                 Text = "Lối tắt thao tác nhanh",
-                Font = ThemeHelper.TaoFont(12f, FontStyle.Bold),
+                Font = ThemeHelper.FontTieuDeCard,
                 ForeColor = ThemeHelper.MauChuChinh,
                 Location = new Point(24, 20),
                 AutoSize = true
@@ -167,10 +167,10 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
 
             pnlChiTietPhai.Controls.Add(lblTieuDePhai);
 
-            var btnLoiTatHoaDon = TaoNutLoiTat("🧾 Lập và tra cứu Hóa đơn", 60, () => OnChuyenChucNang?.Invoke("HoaDon"));
-            var btnLoiTatKhachHang = TaoNutLoiTat("👥 Quản lý Khách hàng", 120, () => OnChuyenChucNang?.Invoke("KhachHang"));
-            var btnLoiTatSanPham = TaoNutLoiTat("📦 Quản lý Sản phẩm", 180, () => OnChuyenChucNang?.Invoke("SanPham"));
-            var btnLoiTatHoSo = TaoNutLoiTat("👤 Xem Hồ sơ cá nhân", 240, () => OnChuyenChucNang?.Invoke("HoSoCaNhan"));
+            var btnLoiTatHoaDon = TaoNutLoiTat("🧾  Lập và tra cứu Hóa đơn", 60, () => OnChuyenChucNang?.Invoke("HoaDon"));
+            var btnLoiTatKhachHang = TaoNutLoiTat("👥  Quản lý Khách hàng", 130, () => OnChuyenChucNang?.Invoke("KhachHang"));
+            var btnLoiTatSanPham = TaoNutLoiTat("📦  Quản lý Sản phẩm", 200, () => OnChuyenChucNang?.Invoke("SanPham"));
+            var btnLoiTatHoSo = TaoNutLoiTat("👤  Xem Thông tin cá nhân", 270, () => OnChuyenChucNang?.Invoke("ThongTinCaNhan"));
 
             pnlChiTietPhai.Controls.Add(btnLoiTatHoaDon);
             pnlChiTietPhai.Controls.Add(btnLoiTatKhachHang);
@@ -187,7 +187,7 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
         {
             var pnl = new Panel
             {
-                Size = new Size(235, 100),
+                Size = new Size(240, 110),
                 BackColor = ThemeHelper.MauNenNoiDung,
                 Margin = new Padding(0, 0, 16, 0)
             };
@@ -200,27 +200,27 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             var lblIcon = new Label
             {
                 Text = icon,
-                Font = new Font("Segoe UI Emoji", 20f),
-                Size = new Size(45, 45),
-                Location = new Point(16, 26),
+                Font = new Font("Segoe UI Emoji", 24f),
+                Size = new Size(50, 50),
+                Location = new Point(14, 30),
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
             var lblT = new Label
             {
                 Text = tieuDe,
-                Font = ThemeHelper.TaoFont(9f),
+                Font = ThemeHelper.FontNoiDung,
                 ForeColor = ThemeHelper.MauChuPhu,
-                Location = new Point(70, 22),
+                Location = new Point(68, 22),
                 AutoSize = true
             };
 
             var lblG = new Label
             {
                 Text = giaTri,
-                Font = ThemeHelper.TaoFont(14f, FontStyle.Bold),
+                Font = ThemeHelper.TaoFont(15f, FontStyle.Bold),
                 ForeColor = mauChuDao,
-                Location = new Point(68, 46),
+                Location = new Point(66, 50),
                 AutoSize = true
             };
 
@@ -237,13 +237,13 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             {
                 Text = text,
                 Location = new Point(24, top),
-                Size = new Size(350, 44),
-                BackColor = Color.FromArgb(248, 250, 252),
+                Size = new Size(350, 50),
+                BackColor = ColorTranslator.FromHtml("#F8FAFC"),
                 ForeColor = ThemeHelper.MauChuChinh,
-                Font = ThemeHelper.TaoFont(9.5f, FontStyle.Bold),
+                Font = ThemeHelper.FontNoiDungDam,
                 FlatStyle = FlatStyle.Flat,
                 TextAlign = ContentAlignment.MiddleLeft,
-                Padding = new Padding(12, 0, 0, 0),
+                Padding = new Padding(16, 0, 0, 0),
                 Cursor = Cursors.Hand
             };
             btn.FlatAppearance.BorderColor = ThemeHelper.MauDuongVien;
@@ -251,12 +251,12 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
 
             btn.MouseEnter += (s, e) =>
             {
-                btn.BackColor = Color.FromArgb(239, 246, 255);
+                btn.BackColor = ColorTranslator.FromHtml("#EFF6FF");
                 btn.ForeColor = ThemeHelper.MauChinh;
             };
             btn.MouseLeave += (s, e) =>
             {
-                btn.BackColor = Color.FromArgb(248, 250, 252);
+                btn.BackColor = ColorTranslator.FromHtml("#F8FAFC");
                 btn.ForeColor = ThemeHelper.MauChuChinh;
             };
             btn.Click += (s, e) => action();

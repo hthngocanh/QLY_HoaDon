@@ -34,7 +34,7 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             this.BackColor = ThemeHelper.MauNenUngDung;
 
             // Header Sidebar
-            pnlSidebarBrand.BackColor = Color.FromArgb(21, 44, 72);
+            ApDungGiaoDienSidebarSang();
             pnlAvatarSidebar.BackColor = ThemeHelper.MauChinh;
             lblBrandLogo.BackColor = ThemeHelper.MauChinh;
 
@@ -104,8 +104,8 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             lblAvatarSidebar.Click += (s, e) => MoMenuTaiKhoan();
 
             // Hover effect cho pnlTaiKhoanSidebar
-            pnlTaiKhoanSidebar.MouseEnter += (s, e) => pnlTaiKhoanSidebar.BackColor = ThemeHelper.MauSidebarHover;
-            pnlTaiKhoanSidebar.MouseLeave += (s, e) => pnlTaiKhoanSidebar.BackColor = Color.FromArgb(21, 44, 72);
+            pnlTaiKhoanSidebar.MouseEnter += (s, e) => pnlTaiKhoanSidebar.BackColor = ThemeHelper.MauSidebarAccountHover;
+            pnlTaiKhoanSidebar.MouseLeave += (s, e) => pnlTaiKhoanSidebar.BackColor = ThemeHelper.MauSidebarAccount;
 
             // Context Menu Styling
             cmsTaiKhoan.Font = ThemeHelper.FontNoiDung;
@@ -132,6 +132,43 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
 
             // Mặc định nạp màn hình Tổng quan
             DieuHuongTheoMa("TongQuan");
+        }
+
+        /// <summary>
+        /// Sidebar nền trắng: đổi nền các panel và chuyển chữ trắng thành chữ tối
+        /// </summary>
+        private void ApDungGiaoDienSidebarSang()
+        {
+            var sidebar = flpSidebarMenu.Parent;
+            if (sidebar != null && sidebar != this)
+            {
+                sidebar.BackColor = ThemeHelper.MauSidebar;
+                sidebar.Paint += (s, e) =>
+                {
+                    using var pen = new Pen(ThemeHelper.MauSidebarBorder);
+                    e.Graphics.DrawLine(pen, sidebar.Width - 1, 0, sidebar.Width - 1, sidebar.Height);
+                };
+            }
+
+            flpSidebarMenu.BackColor = ThemeHelper.MauSidebar;
+            pnlSidebarBrand.BackColor = ThemeHelper.MauSidebarHeader;
+            pnlTaiKhoanSidebar.BackColor = ThemeHelper.MauSidebarAccount;
+
+            DoiMauChuSidebarSang(pnlSidebarBrand);
+            DoiMauChuSidebarSang(pnlTaiKhoanSidebar);
+        }
+
+        private void DoiMauChuSidebarSang(Control goc)
+        {
+            foreach (Control c in goc.Controls)
+            {
+                // Bỏ qua chữ nằm trong logo/avatar tròn màu xanh (giữ chữ trắng)
+                if (c is Label lb && c != lblBrandLogo && c != lblAvatarSidebar && lb.ForeColor.GetBrightness() > 0.6f)
+                {
+                    lb.ForeColor = lb.Font.Bold ? ThemeHelper.MauChuChinh : ThemeHelper.MauChuPhuSidebar;
+                }
+                if (c.HasChildren) DoiMauChuSidebarSang(c);
+            }
         }
 
         private void MoMenuTaiKhoan()
@@ -171,28 +208,18 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             flpSidebarMenu.Controls.Clear();
             _menuButtons.Clear();
 
-            // 1. Tổng quan (Tất cả)
             ThemItemSidebar("TongQuan", "📊  Tổng quan", () => DieuHuongTheoMa("TongQuan"));
 
-            // 2. Người dùng (Chỉ Quản lý - Sắp xếp ngay sau Tổng quan cho phân hệ quản trị nhân sự & tài khoản)
             if (Session.LaQuanLy)
             {
                 ThemItemSidebar("NhanVien", "👤  Người dùng", () => DieuHuongTheoMa("NhanVien"));
             }
 
-            // 3. Khách hàng (Tất cả)
             ThemItemSidebar("KhachHang", "👥  Khách hàng", () => DieuHuongTheoMa("KhachHang"));
-
-            // 4. Sản phẩm (Tất cả)
             ThemItemSidebar("SanPham", "📦  Sản phẩm", () => DieuHuongTheoMa("SanPham"));
-
-            // 5. Hóa đơn (Tất cả)
             ThemItemSidebar("HoaDon", "🧾  Hóa đơn", () => DieuHuongTheoMa("HoaDon"));
-
-            // 6. Thống kê & Báo cáo (Tất cả)
             ThemItemSidebar("BaoCao", "📈  Thống kê & Báo cáo", () => DieuHuongTheoMa("BaoCao"));
 
-            // 7. Hệ thống & Cấu hình (Chỉ Quản lý - Đặt ở cuối danh mục quản trị)
             if (Session.LaQuanLy)
             {
                 ThemItemSidebar("HeThong", "⚙️  Hệ thống & Cấu hình", () => DieuHuongTheoMa("HeThong"));
@@ -201,37 +228,19 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
 
         private void ThemItemSidebar(string maChucNang, string textHienThi, Action hanhDong)
         {
-            var btn = new Button
+            var btn = new RoundedButton
             {
                 Name = "btnMenu_" + maChucNang,
                 Text = textHienThi,
                 Size = new Size(250, 48),
                 BackColor = ThemeHelper.MauSidebar,
+                HoverColor = ThemeHelper.MauSidebarHover,
                 ForeColor = ThemeHelper.MauChuTrenSidebar,
                 Font = ThemeHelper.FontNoiDung,
-                FlatStyle = FlatStyle.Flat,
                 TextAlign = ContentAlignment.MiddleLeft,
                 Padding = new Padding(18, 0, 0, 0),
-                Cursor = Cursors.Hand,
-                Margin = new Padding(10, 3, 10, 3)
-            };
-            btn.FlatAppearance.BorderSize = 0;
-
-            // Hover effect
-            btn.MouseEnter += (s, e) =>
-            {
-                if (_maChucNangHienTai != maChucNang)
-                {
-                    btn.BackColor = ThemeHelper.MauSidebarHover;
-                }
-            };
-
-            btn.MouseLeave += (s, e) =>
-            {
-                if (_maChucNangHienTai != maChucNang)
-                {
-                    btn.BackColor = ThemeHelper.MauSidebar;
-                }
+                Margin = new Padding(10, 3, 10, 3),
+                BorderRadius = 10
             };
 
             btn.Click += (s, e) => hanhDong();
@@ -368,24 +377,25 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             control.Dock = DockStyle.Fill;
             pnlNoiDungChinh.Controls.Add(control);
             pnlNoiDungChinh.ResumeLayout(true);
+
+            // Bo góc các nút thường trong màn hình vừa nạp
+            ThemeHelper.BoGocTatCaNut(control);
         }
 
         private void CapNhatTrangThaiNutActive(string maChucNang)
         {
             foreach (var kvp in _menuButtons)
             {
-                if (kvp.Key == maChucNang)
-                {
-                    kvp.Value.BackColor = ThemeHelper.MauSidebarActive;
-                    kvp.Value.ForeColor = Color.White;
-                    kvp.Value.Font = ThemeHelper.FontNoiDungDam;
-                }
-                else
-                {
-                    kvp.Value.BackColor = ThemeHelper.MauSidebar;
-                    kvp.Value.ForeColor = ThemeHelper.MauChuTrenSidebar;
-                    kvp.Value.Font = ThemeHelper.FontNoiDung;
-                }
+                var rb = (RoundedButton)kvp.Value;
+                bool active = kvp.Key == maChucNang;
+
+                rb.BackColor = active ? ThemeHelper.MauSidebarActive : ThemeHelper.MauSidebar;
+                rb.HoverColor = active ? ThemeHelper.MauSidebarActive : ThemeHelper.MauSidebarHover;
+                rb.Font = active ? ThemeHelper.FontNoiDungDam : ThemeHelper.FontNoiDung;
+                // Mục đang chọn: nền trắng, chữ xanh. Mục còn lại: nền xanh, chữ trắng
+                rb.ForeColor = active ? ThemeHelper.MauChinhHover : ThemeHelper.MauChuTrenSidebar;
+                rb.AccentBarColor = active ? ThemeHelper.MauChinh : Color.Empty;
+                rb.Invalidate();
             }
         }
 

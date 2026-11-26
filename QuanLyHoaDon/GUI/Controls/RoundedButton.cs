@@ -8,23 +8,29 @@ namespace QuanLyHoaDon.GUI.Controls
 {
     public class RoundedButton : Button
     {
-        private bool _isHovered = false;
-        private bool _isPressed = false;
+        private bool _isHovered;
+        private bool _isPressed;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public int BorderRadius { get; set; } = 10;
+        public int BorderRadius { get; set; } = 12;
+
+        // Màu thường = BackColor để code cũ đổi BackColor vẫn hoạt động
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public Color NormalColor
+        {
+            get => BackColor;
+            set => BackColor = value;
+        }
+
+        // Color.Empty = tự tính từ BackColor
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public Color HoverColor { get; set; } = Color.Empty;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Color NormalColor { get; set; } = ColorTranslator.FromHtml("#2563EB");
+        public Color PressedColor { get; set; } = Color.Empty;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Color HoverColor { get; set; } = ColorTranslator.FromHtml("#1D4ED8");
-
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Color PressedColor { get; set; } = ColorTranslator.FromHtml("#1E40AF");
-
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Color DisabledColor { get; set; } = ColorTranslator.FromHtml("#94A3B8");
+        public Color DisabledColor { get; set; } = ColorTranslator.FromHtml("#9DB4CE");
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Color BorderColor { get; set; } = Color.Transparent;
@@ -35,114 +41,120 @@ namespace QuanLyHoaDon.GUI.Controls
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Color TextColor
         {
-            get => this.ForeColor;
-            set => this.ForeColor = value;
+            get => ForeColor;
+            set => ForeColor = value;
         }
+
+        // Thanh nhấn nhỏ bên trái (dùng cho mục menu đang chọn). Color.Empty = không vẽ
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public Color AccentBarColor { get; set; } = Color.Empty;
 
         public RoundedButton()
         {
-            SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
-            this.Height = 50;
-            this.Cursor = Cursors.Hand;
-            this.Font = new Font("Segoe UI", 11f, FontStyle.Bold);
-            this.ForeColor = Color.White;
-            this.FlatStyle = FlatStyle.Flat;
-            this.FlatAppearance.BorderSize = 0;
+            SetStyle(ControlStyles.UserPaint
+                   | ControlStyles.AllPaintingInWmPaint
+                   | ControlStyles.OptimizedDoubleBuffer
+                   | ControlStyles.ResizeRedraw
+                   | ControlStyles.SupportsTransparentBackColor, true);
+
+            Height = 50;
+            Cursor = Cursors.Hand;
+            Font = new Font("Segoe UI", 11f, FontStyle.Bold);
+            ForeColor = Color.White;
+            BackColor = ColorTranslator.FromHtml("#1976D2");
+            FlatStyle = FlatStyle.Flat;
+            FlatAppearance.BorderSize = 0;
+            TextAlign = ContentAlignment.MiddleCenter;
         }
 
-        protected override void OnMouseEnter(EventArgs e)
-        {
-            base.OnMouseEnter(e);
-            _isHovered = true;
-            Invalidate();
-        }
-
-        protected override void OnMouseLeave(EventArgs e)
-        {
-            base.OnMouseLeave(e);
-            _isHovered = false;
-            _isPressed = false;
-            Invalidate();
-        }
-
+        protected override void OnMouseEnter(EventArgs e) { _isHovered = true; Invalidate(); base.OnMouseEnter(e); }
+        protected override void OnMouseLeave(EventArgs e) { _isHovered = false; _isPressed = false; Invalidate(); base.OnMouseLeave(e); }
         protected override void OnMouseDown(MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Left) { _isPressed = true; Invalidate(); }
             base.OnMouseDown(e);
-            if (e.Button == MouseButtons.Left)
-            {
-                _isPressed = true;
-                Invalidate();
-            }
         }
-
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
-            base.OnMouseUp(e);
-            _isPressed = false;
-            Invalidate();
-        }
-
-        protected override void OnEnabledChanged(EventArgs e)
-        {
-            base.OnEnabledChanged(e);
-            Invalidate();
-        }
+        protected override void OnMouseUp(MouseEventArgs e) { _isPressed = false; Invalidate(); base.OnMouseUp(e); }
+        protected override void OnEnabledChanged(EventArgs e) { base.OnEnabledChanged(e); Invalidate(); }
+        protected override void OnTextChanged(EventArgs e) { base.OnTextChanged(e); Invalidate(); }
 
         protected override void OnPaint(PaintEventArgs pevent)
         {
             var g = pevent.Graphics;
+
+            // 1. Tô nền của control cha để góc bo không bị đen
+            Color nenCha = LayMauNenCha();
+            using (var brushCha = new SolidBrush(nenCha))
+                g.FillRectangle(brushCha, ClientRectangle);
+
             g.SmoothingMode = SmoothingMode.AntiAlias;
 
-            // Xác định màu nền theo trạng thái
+            // 2. Chọn màu theo trạng thái
             Color mauNen;
-            if (!this.Enabled)
+            if (!Enabled) mauNen = DisabledColor;
+            else if (_isPressed) mauNen = PressedColor != Color.Empty ? PressedColor : ControlPaint.Dark(BackColor, 0.15f);
+            else if (_isHovered) mauNen = HoverColor != Color.Empty ? HoverColor : ControlPaint.Dark(BackColor, 0.08f);
+            else mauNen = BackColor;
+
+            var rect = new Rectangle(0, 0, Width - 1, Height - 1);
+            int r = Math.Min(BorderRadius, Math.Min(rect.Width, rect.Height) / 2);
+
+            using (var path = TaoDuongDanBoGoc(rect, r))
             {
-                mauNen = DisabledColor;
-            }
-            else if (_isPressed)
-            {
-                mauNen = PressedColor;
-            }
-            else if (_isHovered)
-            {
-                mauNen = HoverColor;
-            }
-            else
-            {
-                mauNen = NormalColor;
+                using (var brush = new SolidBrush(mauNen))
+                    g.FillPath(brush, path);
+
+                if (BorderWidth > 0 && BorderColor != Color.Transparent)
+                {
+                    using var pen = new Pen(BorderColor, BorderWidth);
+                    g.DrawPath(pen, path);
+                }
             }
 
-            var rect = new Rectangle(0, 0, this.Width - 1, this.Height - 1);
-            using var path = TaoDuongDanBoGoc(rect, BorderRadius);
-
-            // Vẽ nền bo góc
-            using (var brush = new SolidBrush(mauNen))
+            if (AccentBarColor != Color.Empty && Enabled)
             {
-                g.FillPath(brush, path);
+                using var brushBar = new SolidBrush(AccentBarColor);
+                g.FillRectangle(brushBar, 0, r, 4, Math.Max(1, Height - 1 - 2 * r));
             }
 
-            // Vẽ viền nếu có
-            if (BorderWidth > 0 && BorderColor != Color.Transparent)
-            {
-                using var penBorder = new Pen(BorderColor, BorderWidth);
-                g.DrawPath(penBorder, path);
-            }
+            // 3. Vẽ chữ (không cắt, có dấu ... nếu quá dài)
+            var vungChu = new Rectangle(
+                Padding.Left, 0,
+                Math.Max(1, Width - Padding.Horizontal),
+                Height);
 
-            // Vẽ chữ căn giữa
-            TextRenderer.DrawText(
-                g,
-                this.Text,
-                this.Font,
-                rect,
-                this.ForeColor,
-                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+            TextFormatFlags flags = TextFormatFlags.VerticalCenter
+                                  | TextFormatFlags.SingleLine
+                                  | TextFormatFlags.EndEllipsis
+                                  | TextFormatFlags.NoPadding;
+
+            flags |= (TextAlign == ContentAlignment.MiddleLeft ||
+                      TextAlign == ContentAlignment.TopLeft ||
+                      TextAlign == ContentAlignment.BottomLeft)
+                ? TextFormatFlags.Left
+                : TextFormatFlags.HorizontalCenter;
+
+            Color mauChu = Enabled ? ForeColor : Color.White;
+            TextRenderer.DrawText(g, Text, Font, vungChu, mauChu, flags);
         }
+
+        // Tìm màu nền thật (đục hoàn toàn) của các control cha, tránh góc bị đen khi cha trong suốt
+        private Color LayMauNenCha()
+        {
+            for (Control? c = Parent; c != null; c = c.Parent)
+            {
+                if (c.BackColor.A == 255) return c.BackColor;
+            }
+            return SystemColors.Control;
+        }
+
+        protected override void OnParentChanged(EventArgs e) { base.OnParentChanged(e); Invalidate(); }
+        protected override void OnParentBackColorChanged(EventArgs e) { base.OnParentBackColorChanged(e); Invalidate(); }
 
         private static GraphicsPath TaoDuongDanBoGoc(Rectangle rect, int radius)
         {
             var path = new GraphicsPath();
             float d = radius * 2f;
-
             path.AddArc(rect.X, rect.Y, d, d, 180, 90);
             path.AddArc(rect.Right - d, rect.Y, d, d, 270, 90);
             path.AddArc(rect.Right - d, rect.Bottom - d, d, d, 0, 90);

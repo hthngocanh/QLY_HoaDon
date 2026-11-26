@@ -2,6 +2,8 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using QuanLyHoaDon.BLL.HeThong;
+using QuanLyHoaDon.GUI.Controls;
+using QuanLyHoaDon.Utilities;
 
 namespace QuanLyHoaDon.GUI.Forms.HeThong
 {
@@ -13,7 +15,36 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
         {
             InitializeComponent();
             _dangNhapBLL = new DangNhapBLL();
+            ApDungGiaoDien();
             CaiDatSuKien();
+        }
+
+        private void ApDungGiaoDien()
+        {
+            btnDangNhap.BorderRadius = 10;
+            btnDangNhap.HoverColor = ThemeHelper.MauChinhHover;
+
+            // Viền xanh khi ô nhập đang được chọn
+            GanHieuUngFocus(txtTenDangNhap, pnlTenDangNhap);
+            GanHieuUngFocus(txtMatKhau, pnlMatKhau);
+
+            // Hiện / ẩn mật khẩu
+            chkHienMatKhau.CheckedChanged += (s, e) =>
+                txtMatKhau.UseSystemPasswordChar = !chkHienMatKhau.Checked;
+
+            // Link quên mật khẩu: gạch chân khi rê chuột
+            var fontThuong = lblQuenMatKhau.Font;
+            var fontGachChan = new Font(fontThuong, FontStyle.Underline);
+            lblQuenMatKhau.MouseEnter += (s, e) => lblQuenMatKhau.Font = fontGachChan;
+            lblQuenMatKhau.MouseLeave += (s, e) => lblQuenMatKhau.Font = fontThuong;
+        }
+
+        private static void GanHieuUngFocus(TextBox txt, RoundedPanel khung)
+        {
+            Color vienThuong = khung.BorderColor;
+            txt.Enter += (s, e) => { khung.BorderColor = ThemeHelper.MauDuongVienFocus; khung.BorderWidth = 2; };
+            txt.Leave += (s, e) => { khung.BorderColor = vienThuong; khung.BorderWidth = 1; };
+            khung.Click += (s, e) => txt.Focus();
         }
 
         private void CaiDatSuKien()
@@ -62,7 +93,7 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
 
             // Chuyển nút sang trạng thái đang xử lý (ngăn bấm liên tục)
             btnDangNhap.Enabled = false;
-            btnDangNhap.Text = "Đang kiểm tra thông tin...";
+            btnDangNhap.Text = "Đang kiểm tra...";
             this.Cursor = Cursors.WaitCursor;
 
             try
@@ -85,7 +116,7 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             {
                 // Phục hồi trạng thái nút đăng nhập
                 btnDangNhap.Enabled = true;
-                btnDangNhap.Text = "Đăng nhập";
+                btnDangNhap.Text = "ĐĂNG NHẬP";
                 this.Cursor = Cursors.Default;
             }
         }

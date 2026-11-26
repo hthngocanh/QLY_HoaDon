@@ -107,5 +107,24 @@ namespace QuanLyHoaDon.BLL
             bool kq = _dal.ThayDoiTrangThaiTaiKhoan(maTaiKhoan, trangThaiMoi);
             return kq ? KetQuaThaoTacDTO.ThanhCongKq($"{(muonKhoa ? "Khóa" : "Mở khóa")} tài khoản thành công!") : KetQuaThaoTacDTO.ThatBai("Không thể cập nhật trạng thái tài khoản.");
         }
+
+        public KetQuaThaoTacDTO CapLaiMatKhau(int maTaiKhoan, string matKhauMoi = "Demo@123")
+        {
+            if (!Session.LaQuanLy)
+            {
+                return KetQuaThaoTacDTO.ThatBai("Chức năng cấp lại mật khẩu chỉ dành cho Quản lý hệ thống.");
+            }
+
+            if (maTaiKhoan <= 0)
+            {
+                return KetQuaThaoTacDTO.ThatBai("Tài khoản không hợp lệ hoặc chưa được khởi tạo.");
+            }
+
+            string hashMoi = PasswordHelper.BamMatKhau(matKhauMoi);
+            bool kq = _dal.CapLaiMatKhau(maTaiKhoan, hashMoi);
+            return kq
+                ? KetQuaThaoTacDTO.ThanhCongKq($"Đã cấp lại mật khẩu thành công! Mật khẩu mới được thiết lập về: {matKhauMoi}")
+                : KetQuaThaoTacDTO.ThatBai("Không thể cấp lại mật khẩu.");
+        }
     }
 }

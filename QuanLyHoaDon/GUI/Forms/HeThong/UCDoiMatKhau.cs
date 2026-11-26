@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using QuanLyHoaDon.BLL.HeThong;
+using QuanLyHoaDon.GUI.Controls;
 using QuanLyHoaDon.Utilities;
 
 namespace QuanLyHoaDon.GUI.Forms.HeThong
@@ -11,30 +12,20 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
         private readonly TaiKhoanBLL _taiKhoanBLL;
 
         private Panel pnlCard = null!;
-        private Panel pnlHeader = null!;
-        private Label lblTieuDe = null!;
-        private Label lblMoTa = null!;
-
-        private Panel pnlMatKhauHienTaiBorder = null!;
-        private TextBox txtMatKhauHienTai = null!;
-        private Button btnHienHienTai = null!;
-        private Label lblLoiMatKhauHienTai = null!;
-
-        private Panel pnlMatKhauMoiBorder = null!;
-        private TextBox txtMatKhauMoi = null!;
-        private Button btnHienMoi = null!;
-        private Label lblLoiMatKhauMoi = null!;
-
-        private Panel pnlXacNhanBorder = null!;
-        private TextBox txtXacNhanMatKhau = null!;
-        private Button btnHienXacNhan = null!;
-        private Label lblLoiXacNhan = null!;
-
         private Panel pnlThongBao = null!;
         private Label lblThongBao = null!;
 
-        private Button btnLuuThayDoi = null!;
-        private Button btnQuayLai = null!;
+        private RoundedTextBox txtMatKhauHienTai = null!;
+        private Label lblLoiMatKhauHienTai = null!;
+
+        private RoundedTextBox txtMatKhauMoi = null!;
+        private Label lblLoiMatKhauMoi = null!;
+
+        private RoundedTextBox txtXacNhanMatKhau = null!;
+        private Label lblLoiXacNhan = null!;
+
+        private RoundedButton btnLuuThayDoi = null!;
+        private RoundedButton btnQuayLai = null!;
 
         public event Action? OnQuayLai;
 
@@ -47,59 +38,56 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
         private void KhoiTaoGiaoDien()
         {
             this.Dock = DockStyle.Fill;
-            this.BackColor = ThemeHelper.MauNenUngDung;
+            this.BackColor = ColorTranslator.FromHtml("#F8FAFC");
             this.Font = ThemeHelper.FontNoiDung;
             this.AutoScroll = true;
 
             pnlCard = new Panel
             {
-                Location = new Point(36, 26),
-                Size = new Size(820, 620),
-                BackColor = ThemeHelper.MauNenNoiDung,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+                Location = new Point(24, 20),
+                Size = new Size(760, 560),
+                BackColor = Color.White,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left
             };
             pnlCard.Paint += (s, e) =>
             {
-                using var pen = new Pen(ThemeHelper.MauDuongVien, 1);
+                using var pen = new Pen(ColorTranslator.FromHtml("#E2E8F0"), 1.2f);
                 e.Graphics.DrawRectangle(pen, 0, 0, pnlCard.Width - 1, pnlCard.Height - 1);
             };
 
-            // Header Banner của trang
-            pnlHeader = new Panel
+            // Tiêu đề & mô tả gọn gàng bên trong card (không dùng banner đen to đè lên Topbar)
+            var lblTieuDeCard = new Label
             {
-                Dock = DockStyle.Top,
-                Height = 85,
-                BackColor = ThemeHelper.MauSidebarHeader
-            };
-
-            lblTieuDe = new Label
-            {
-                Text = "CẬP NHẬT MẬT KHẨU TÀI KHOẢN",
-                Font = ThemeHelper.FontTieuDeKhuVuc,
-                ForeColor = Color.White,
-                Location = new Point(24, 18),
+                Text = "🔑  CẬP NHẬT MẬT KHẨU TÀI KHOẢN",
+                Font = ThemeHelper.FontTieuDeCard,
+                ForeColor = ThemeHelper.MauChuChinh,
+                Location = new Point(28, 24),
                 AutoSize = true
             };
 
-            lblMoTa = new Label
+            var lblMoTaCard = new Label
             {
-                Text = "Dành riêng cho tài khoản Nhân viên để đảm bảo an toàn truy cập dữ liệu hệ thống.",
+                Text = "Dành cho tài khoản người dùng để định kỳ cập nhật mật khẩu, nâng cao bảo mật hệ thống.",
                 Font = ThemeHelper.FontChuThich,
-                ForeColor = ThemeHelper.MauChuPhuSidebar,
-                Location = new Point(26, 48),
+                ForeColor = ThemeHelper.MauChuPhu,
+                Location = new Point(30, 52),
                 AutoSize = true
             };
 
-            pnlHeader.Controls.Add(lblTieuDe);
-            pnlHeader.Controls.Add(lblMoTa);
+            pnlCard.Controls.Add(lblTieuDeCard);
+            pnlCard.Controls.Add(lblMoTaCard);
 
             // Banner thông báo kết quả
             pnlThongBao = new Panel
             {
-                Location = new Point(30, 105),
-                Size = new Size(760, 44),
-                Visible = false,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+                Location = new Point(28, 82),
+                Size = new Size(700, 44),
+                Visible = false
+            };
+            pnlThongBao.Paint += (s, e) =>
+            {
+                using var pen = new Pen(ColorTranslator.FromHtml("#CBD5E1"), 1f);
+                e.Graphics.DrawRectangle(pen, 0, 0, pnlThongBao.Width - 1, pnlThongBao.Height - 1);
             };
             lblThongBao = new Label
             {
@@ -109,219 +97,140 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
                 Padding = new Padding(12, 0, 12, 0)
             };
             pnlThongBao.Controls.Add(lblThongBao);
+            pnlCard.Controls.Add(pnlThongBao);
+
+            int top = 140;
 
             // 1. Mật khẩu hiện tại
             var lblHienTai = new Label
             {
-                Text = "Mật khẩu hiện tại *",
+                Text = "Mật khẩu hiện tại *:",
                 Font = ThemeHelper.FontLabel,
                 ForeColor = ThemeHelper.MauChuChinh,
-                Location = new Point(30, 160),
+                Location = new Point(28, top),
                 AutoSize = true
             };
-
-            pnlMatKhauHienTaiBorder = new Panel
+            txtMatKhauHienTai = new RoundedTextBox
             {
-                Location = new Point(30, 186),
+                Location = new Point(28, top + 24),
                 Size = new Size(540, 44),
-                BackColor = Color.White,
-                BorderStyle = BorderStyle.FixedSingle
+                BorderRadius = 8,
+                IconType = InputIconType.Lock,
+                IsPassword = true,
+                PlaceholderText = "Nhập mật khẩu đang sử dụng"
             };
-
-            txtMatKhauHienTai = new TextBox
-            {
-                BorderStyle = BorderStyle.None,
-                Location = new Point(12, 11),
-                Size = new Size(450, 22),
-                Font = ThemeHelper.FontNoiDung,
-                ForeColor = ThemeHelper.MauChuChinh,
-                UseSystemPasswordChar = true
-            };
-
-            btnHienHienTai = new Button
-            {
-                Text = "Hiện",
-                Location = new Point(470, 5),
-                Size = new Size(58, 32),
-                FlatStyle = FlatStyle.Flat,
-                Font = ThemeHelper.FontChuThichDam,
-                ForeColor = ThemeHelper.MauChuPhu,
-                Cursor = Cursors.Hand
-            };
-            btnHienHienTai.FlatAppearance.BorderSize = 0;
-            btnHienHienTai.Click += (s, e) => ToggleHienMatKhau(txtMatKhauHienTai, btnHienHienTai);
-
-            pnlMatKhauHienTaiBorder.Controls.Add(txtMatKhauHienTai);
-            pnlMatKhauHienTaiBorder.Controls.Add(btnHienHienTai);
-
             lblLoiMatKhauHienTai = new Label
             {
-                Location = new Point(30, 234),
+                Location = new Point(30, top + 70),
                 AutoSize = true,
                 Font = ThemeHelper.FontChuThichDam,
                 ForeColor = ThemeHelper.MauLoi,
                 Visible = false
             };
+            pnlCard.Controls.Add(lblHienTai);
+            pnlCard.Controls.Add(txtMatKhauHienTai);
+            pnlCard.Controls.Add(lblLoiMatKhauHienTai);
+
+            top += 90;
 
             // 2. Mật khẩu mới
             var lblMoi = new Label
             {
-                Text = "Mật khẩu mới (Tối thiểu 6 ký tự) *",
+                Text = "Mật khẩu mới (Tối thiểu 6 ký tự, không trùng mật khẩu cũ) *:",
                 Font = ThemeHelper.FontLabel,
                 ForeColor = ThemeHelper.MauChuChinh,
-                Location = new Point(30, 265),
+                Location = new Point(28, top),
                 AutoSize = true
             };
-
-            pnlMatKhauMoiBorder = new Panel
+            txtMatKhauMoi = new RoundedTextBox
             {
-                Location = new Point(30, 291),
+                Location = new Point(28, top + 24),
                 Size = new Size(540, 44),
-                BackColor = Color.White,
-                BorderStyle = BorderStyle.FixedSingle
+                BorderRadius = 8,
+                IconType = InputIconType.Lock,
+                IsPassword = true,
+                PlaceholderText = "Nhập mật khẩu mới"
             };
-
-            txtMatKhauMoi = new TextBox
-            {
-                BorderStyle = BorderStyle.None,
-                Location = new Point(12, 11),
-                Size = new Size(450, 22),
-                Font = ThemeHelper.FontNoiDung,
-                ForeColor = ThemeHelper.MauChuChinh,
-                UseSystemPasswordChar = true
-            };
-
-            btnHienMoi = new Button
-            {
-                Text = "Hiện",
-                Location = new Point(470, 5),
-                Size = new Size(58, 32),
-                FlatStyle = FlatStyle.Flat,
-                Font = ThemeHelper.FontChuThichDam,
-                ForeColor = ThemeHelper.MauChuPhu,
-                Cursor = Cursors.Hand
-            };
-            btnHienMoi.FlatAppearance.BorderSize = 0;
-            btnHienMoi.Click += (s, e) => ToggleHienMatKhau(txtMatKhauMoi, btnHienMoi);
-
-            pnlMatKhauMoiBorder.Controls.Add(txtMatKhauMoi);
-            pnlMatKhauMoiBorder.Controls.Add(btnHienMoi);
-
             lblLoiMatKhauMoi = new Label
             {
-                Location = new Point(30, 339),
+                Location = new Point(30, top + 70),
                 AutoSize = true,
                 Font = ThemeHelper.FontChuThichDam,
                 ForeColor = ThemeHelper.MauLoi,
                 Visible = false
             };
+            pnlCard.Controls.Add(lblMoi);
+            pnlCard.Controls.Add(txtMatKhauMoi);
+            pnlCard.Controls.Add(lblLoiMatKhauMoi);
+
+            top += 90;
 
             // 3. Xác nhận mật khẩu mới
             var lblXacNhan = new Label
             {
-                Text = "Xác nhận mật khẩu mới *",
+                Text = "Xác nhận mật khẩu mới *:",
                 Font = ThemeHelper.FontLabel,
                 ForeColor = ThemeHelper.MauChuChinh,
-                Location = new Point(30, 370),
+                Location = new Point(28, top),
                 AutoSize = true
             };
-
-            pnlXacNhanBorder = new Panel
+            txtXacNhanMatKhau = new RoundedTextBox
             {
-                Location = new Point(30, 396),
+                Location = new Point(28, top + 24),
                 Size = new Size(540, 44),
-                BackColor = Color.White,
-                BorderStyle = BorderStyle.FixedSingle
+                BorderRadius = 8,
+                IconType = InputIconType.Lock,
+                IsPassword = true,
+                PlaceholderText = "Nhập lại chính xác mật khẩu mới"
             };
-
-            txtXacNhanMatKhau = new TextBox
-            {
-                BorderStyle = BorderStyle.None,
-                Location = new Point(12, 11),
-                Size = new Size(450, 22),
-                Font = ThemeHelper.FontNoiDung,
-                ForeColor = ThemeHelper.MauChuChinh,
-                UseSystemPasswordChar = true
-            };
-
-            btnHienXacNhan = new Button
-            {
-                Text = "Hiện",
-                Location = new Point(470, 5),
-                Size = new Size(58, 32),
-                FlatStyle = FlatStyle.Flat,
-                Font = ThemeHelper.FontChuThichDam,
-                ForeColor = ThemeHelper.MauChuPhu,
-                Cursor = Cursors.Hand
-            };
-            btnHienXacNhan.FlatAppearance.BorderSize = 0;
-            btnHienXacNhan.Click += (s, e) => ToggleHienMatKhau(txtXacNhanMatKhau, btnHienXacNhan);
-
-            pnlXacNhanBorder.Controls.Add(txtXacNhanMatKhau);
-            pnlXacNhanBorder.Controls.Add(btnHienXacNhan);
-
             lblLoiXacNhan = new Label
             {
-                Location = new Point(30, 444),
+                Location = new Point(30, top + 70),
                 AutoSize = true,
                 Font = ThemeHelper.FontChuThichDam,
                 ForeColor = ThemeHelper.MauLoi,
                 Visible = false
             };
+            pnlCard.Controls.Add(lblXacNhan);
+            pnlCard.Controls.Add(txtXacNhanMatKhau);
+            pnlCard.Controls.Add(lblLoiXacNhan);
 
-            // Button Thao tác
-            btnLuuThayDoi = new Button
+            top += 95;
+
+            // Buttons
+            btnLuuThayDoi = new RoundedButton
             {
                 Text = "💾  Lưu mật khẩu mới",
-                Location = new Point(30, 485),
-                Size = new Size(200, ThemeHelper.ChieuCaoButtonChuan)
+                Location = new Point(28, top),
+                Size = new Size(210, 44),
+                BorderRadius = 8,
+                NormalColor = ThemeHelper.MauChinh,
+                HoverColor = ColorTranslator.FromHtml("#1D4ED8"),
+                PressedColor = ColorTranslator.FromHtml("#1E40AF"),
+                Font = new Font("Segoe UI", 10.5f, FontStyle.Bold)
             };
-            ThemeHelper.ApDungButtonChinh(btnLuuThayDoi);
             btnLuuThayDoi.Click += BtnLuuThayDoi_Click;
 
-            btnQuayLai = new Button
+            btnQuayLai = new RoundedButton
             {
                 Text = "Quay lại",
-                Location = new Point(245, 485),
-                Size = new Size(130, ThemeHelper.ChieuCaoButtonChuan)
+                Location = new Point(252, top),
+                Size = new Size(130, 44),
+                BorderRadius = 8,
+                NormalColor = ColorTranslator.FromHtml("#F1F5F9"),
+                HoverColor = ColorTranslator.FromHtml("#E2E8F0"),
+                PressedColor = ColorTranslator.FromHtml("#CBD5E1"),
+                TextColor = ThemeHelper.MauChuChinh,
+                BorderColor = ColorTranslator.FromHtml("#CBD5E1"),
+                BorderWidth = 1,
+                Font = new Font("Segoe UI", 10f, FontStyle.Regular)
             };
-            ThemeHelper.ApDungButtonPhu(btnQuayLai);
             btnQuayLai.Click += (s, e) => OnQuayLai?.Invoke();
-
-            // Focus highlight
-            txtMatKhauHienTai.Enter += (s, e) => pnlMatKhauHienTaiBorder.BackColor = Color.White;
-            txtMatKhauHienTai.Leave += (s, e) => pnlMatKhauHienTaiBorder.BackColor = ColorTranslator.FromHtml("#F8FAFC");
-            txtMatKhauMoi.Enter += (s, e) => pnlMatKhauMoiBorder.BackColor = Color.White;
-            txtMatKhauMoi.Leave += (s, e) => pnlMatKhauMoiBorder.BackColor = ColorTranslator.FromHtml("#F8FAFC");
-            txtXacNhanMatKhau.Enter += (s, e) => pnlXacNhanBorder.BackColor = Color.White;
-            txtXacNhanMatKhau.Leave += (s, e) => pnlXacNhanBorder.BackColor = ColorTranslator.FromHtml("#F8FAFC");
-
-            pnlCard.Controls.Add(pnlHeader);
-            pnlCard.Controls.Add(pnlThongBao);
-            pnlCard.Controls.Add(lblHienTai);
-            pnlCard.Controls.Add(pnlMatKhauHienTaiBorder);
-            pnlCard.Controls.Add(lblLoiMatKhauHienTai);
-
-            pnlCard.Controls.Add(lblMoi);
-            pnlCard.Controls.Add(pnlMatKhauMoiBorder);
-            pnlCard.Controls.Add(lblLoiMatKhauMoi);
-
-            pnlCard.Controls.Add(lblXacNhan);
-            pnlCard.Controls.Add(pnlXacNhanBorder);
-            pnlCard.Controls.Add(lblLoiXacNhan);
 
             pnlCard.Controls.Add(btnLuuThayDoi);
             pnlCard.Controls.Add(btnQuayLai);
 
             this.Controls.Add(pnlCard);
-        }
-
-        private void ToggleHienMatKhau(TextBox txt, Button btn)
-        {
-            txt.UseSystemPasswordChar = !txt.UseSystemPasswordChar;
-            btn.Text = txt.UseSystemPasswordChar ? "Hiện" : "Ẩn";
-            txt.Focus();
-            txt.SelectionStart = txt.Text.Length;
         }
 
         private void XoaTatCaLoi()
@@ -400,4 +309,3 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
         }
     }
 }
-

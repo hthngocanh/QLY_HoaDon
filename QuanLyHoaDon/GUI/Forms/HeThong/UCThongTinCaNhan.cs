@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using QuanLyHoaDon.BLL.HeThong;
+using QuanLyHoaDon.GUI.Controls;
 using QuanLyHoaDon.Utilities;
 
 namespace QuanLyHoaDon.GUI.Forms.HeThong
@@ -11,18 +12,17 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
         private readonly TaiKhoanBLL _taiKhoanBLL;
 
         // Container chính
-        private Panel pnlHeaderCard = null!;
-        private Panel pnlBodyCard = null!;
+        private Panel pnlContainer = null!;
         private Panel pnlThongBao = null!;
         private Label lblThongBao = null!;
 
-        // Cac truong nhap lieu duoc phep sua
-        private TextBox txtSoDienThoai = null!;
-        private TextBox txtEmail = null!;
-        private TextBox txtDiaChi = null!;
+        // Các trường nhập liệu được phép sửa
+        private RoundedTextBox txtSoDienThoai = null!;
+        private RoundedTextBox txtEmail = null!;
+        private RoundedTextBox txtDiaChi = null!;
 
-        // Nut Luu thay doi
-        private Button btnLuuThayDoi = null!;
+        // Nút Lưu thay đổi
+        private RoundedButton btnLuuThayDoi = null!;
 
         public UCThongTinCaNhan()
         {
@@ -34,89 +34,30 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
         private void KhoiTaoGiaoDien()
         {
             this.Dock = DockStyle.Fill;
-            this.BackColor = ThemeHelper.MauNenUngDung;
+            this.BackColor = ColorTranslator.FromHtml("#F8FAFC");
             this.Font = ThemeHelper.FontNoiDung;
             this.AutoScroll = true;
 
-            // ====================================================
-            // 1. Header Card (Avatar + Họ tên + Vai trò)
-            // ====================================================
-            pnlHeaderCard = new Panel
-            {
-                Location = new Point(30, 24),
-                Size = new Size(1000, 100),
-                BackColor = ThemeHelper.MauNenNoiDung,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
-            };
-            pnlHeaderCard.Paint += (s, e) =>
-            {
-                using var pen = new Pen(ThemeHelper.MauDuongVien, 1);
-                e.Graphics.DrawRectangle(pen, 0, 0, pnlHeaderCard.Width - 1, pnlHeaderCard.Height - 1);
-            };
-
-            var pnlAvatar = new Panel
-            {
-                Size = new Size(64, 64),
-                Location = new Point(24, 18),
-                BackColor = ThemeHelper.MauChinh
-            };
-            var lblAvatarText = new Label
-            {
-                Text = LayChuCaiDau(Session.HoTen),
-                Font = new Font("Segoe UI", 18f, FontStyle.Bold),
-                ForeColor = Color.White,
-                Dock = DockStyle.Fill,
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-            pnlAvatar.Controls.Add(lblAvatarText);
-
-            var lblHoTen = new Label
-            {
-                Text = Session.HoTen,
-                Font = ThemeHelper.FontTieuDeKhuVuc,
-                ForeColor = ThemeHelper.MauChuChinh,
-                Location = new Point(106, 20),
-                AutoSize = true
-            };
-
-            var lblVaiTroBadge = new Label
-            {
-                Text = Session.LaQuanLy ? "VAI TRÒ: QUẢN LÝ HỆ THỐNG" : "VAI TRÒ: NHÂN VIÊN BÁN HÀNG",
-                Font = ThemeHelper.FontChuThichDam,
-                ForeColor = Session.LaQuanLy ? ThemeHelper.MauChinh : ThemeHelper.MauThanhCong,
-                BackColor = Session.LaQuanLy ? ColorTranslator.FromHtml("#EFF6FF") : ColorTranslator.FromHtml("#F0FDF4"),
-                Padding = new Padding(10, 5, 10, 5),
-                Location = new Point(106, 54),
-                AutoSize = true
-            };
-
-            pnlHeaderCard.Controls.Add(pnlAvatar);
-            pnlHeaderCard.Controls.Add(lblHoTen);
-            pnlHeaderCard.Controls.Add(lblVaiTroBadge);
-
-            // ====================================================
-            // 2. Body Card (Chia 2 nhom thong tin)
-            // ====================================================
-            pnlBodyCard = new Panel
-            {
-                Location = new Point(30, 140),
-                Size = new Size(1000, 680),
-                BackColor = ThemeHelper.MauNenNoiDung,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
-            };
-            pnlBodyCard.Paint += (s, e) =>
-            {
-                using var pen = new Pen(ThemeHelper.MauDuongVien, 1);
-                e.Graphics.DrawRectangle(pen, 0, 0, pnlBodyCard.Width - 1, pnlBodyCard.Height - 1);
-            };
-
-            // Banner thong bao ket qua
-            pnlThongBao = new Panel
+            pnlContainer = new Panel
             {
                 Location = new Point(24, 20),
-                Size = new Size(950, 46),
+                Size = new Size(960, 720),
+                BackColor = Color.Transparent,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            };
+
+            // Banner thông báo kết quả
+            pnlThongBao = new Panel
+            {
+                Location = new Point(0, 0),
+                Size = new Size(960, 48),
                 Visible = false,
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            };
+            pnlThongBao.Paint += (s, e) =>
+            {
+                using var pen = new Pen(ColorTranslator.FromHtml("#CBD5E1"), 1f);
+                e.Graphics.DrawRectangle(pen, 0, 0, pnlThongBao.Width - 1, pnlThongBao.Height - 1);
             };
             lblThongBao = new Label
             {
@@ -126,93 +67,143 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
                 Padding = new Padding(14, 0, 14, 0)
             };
             pnlThongBao.Controls.Add(lblThongBao);
-            pnlBodyCard.Controls.Add(pnlThongBao);
+            pnlContainer.Controls.Add(pnlThongBao);
 
-            // ----------------------------------------------------
-            // Nhóm 1: THÔNG TIN CHỈ XEM (Read-only)
-            // ----------------------------------------------------
-            var pnlNhomChiXem = TaoNhomThongTin(
-                "🔒  THÔNG TIN HỆ THỐNG (CHỈ XEM, KHÔNG THỂ CHỈNH SỬA)",
-                "Các thông tin định danh và phân quyền do quản trị viên cấp phát.",
-                new Point(24, 80),
-                new Size(950, 240),
-                ColorTranslator.FromHtml("#F8FAFC"));
+            // ====================================================
+            // 1. Nhóm 1: THÔNG TIN HỆ THỐNG (CHỈ XEM - HOÀN TOÀN KHÔNG CHO NHẬP/XÓA)
+            // ====================================================
+            var pnlNhomChiXem = TaoCardNhom(
+                "🔒  THÔNG TIN HỆ THỐNG (CHỈ XEM)",
+                "Thông tin định danh và phân quyền do Quản trị viên cấp phát, không thể tự ý sửa đổi.",
+                new Point(0, 56),
+                new Size(960, 240));
 
-            // Grid 2 cot cho 6 truong chi xem
-            ThemFieldChiXem(pnlNhomChiXem, "Mã nhân viên", $"NV{Session.MaNhanVien:D4}", 60, 20, 430);
-            ThemFieldChiXem(pnlNhomChiXem, "Họ và tên", Session.HoTen, 60, 480, 430);
+            ThemBadgeChiXem(pnlNhomChiXem, "MÃ NHÂN VIÊN", $"NV{Session.MaNhanVien:D4}", 75, 24, 440);
+            ThemBadgeChiXem(pnlNhomChiXem, "HỌ VÀ TÊN", Session.HoTen, 75, 488, 440);
 
-            ThemFieldChiXem(pnlNhomChiXem, "Tên đăng nhập", Session.TenDangNhap, 120, 20, 430);
-            ThemFieldChiXem(pnlNhomChiXem, "Chức vụ / Vai trò", Session.TenVaiTro, 120, 480, 430);
+            ThemBadgeChiXem(pnlNhomChiXem, "TÊN ĐĂNG NHẬP", Session.TenDangNhap, 148, 24, 440);
+            ThemBadgeChiXem(pnlNhomChiXem, "VAI TRÒ / CHỨC VỤ", Session.TenVaiTro, 148, 488, 440);
 
             string ngayVaoLamStr = Session.NgayVaoLam.HasValue && Session.NgayVaoLam.Value > DateTime.MinValue
                 ? Session.NgayVaoLam.Value.ToString("dd/MM/yyyy")
                 : "Chưa cập nhật";
-            ThemFieldChiXem(pnlNhomChiXem, "Ngày vào làm", ngayVaoLamStr, 175, 20, 430);
-            ThemFieldChiXem(pnlNhomChiXem, "Trạng thái nhân sự", Session.TrangThaiNhanVien, 175, 480, 430);
+            ThemBadgeChiXem(pnlNhomChiXem, "NGÀY VÀO LÀM", ngayVaoLamStr, 221, 24, 440);
+            ThemBadgeChiXem(pnlNhomChiXem, "TRẠNG THÁI NHÂN SỰ", Session.TrangThaiNhanVien, 221, 488, 440);
 
-            pnlBodyCard.Controls.Add(pnlNhomChiXem);
+            pnlNhomChiXem.Height = 295;
+            pnlContainer.Controls.Add(pnlNhomChiXem);
 
-            // ----------------------------------------------------
-            // Nhóm 2: THÔNG TIN ĐƯỢC PHÉP CHỈNH SỬA
-            // ----------------------------------------------------
-            var pnlNhomChinhSua = TaoNhomThongTin(
+            // ====================================================
+            // 2. Nhóm 2: THÔNG TIN LIÊN HỆ (ĐƯỢC PHÉP CHỈNH SỬA)
+            // ====================================================
+            var pnlNhomChinhSua = TaoCardNhom(
                 "✏  THÔNG TIN LIÊN HỆ (ĐƯỢC PHÉP CHỈNH SỬA)",
-                "Cập nhật số điện thoại, email và địa chỉ liên lạc của bạn khi có thay đổi.",
-                new Point(24, 335),
-                new Size(950, 255),
-                Color.White);
+                "Cập nhật số điện thoại, email và địa chỉ liên hệ của bạn khi có sự thay đổi.",
+                new Point(0, 365),
+                new Size(960, 275));
 
-            // Truong So dien thoai
-            txtSoDienThoai = ThemFieldChinhSua(pnlNhomChinhSua, "Số điện thoại", 65, 20, 430);
-
-            // Truong Email
-            txtEmail = ThemFieldChinhSua(pnlNhomChinhSua, "Email liên hệ", 65, 480, 430);
-
-            // Truong Dia chi
-            txtDiaChi = ThemFieldChinhSua(pnlNhomChinhSua, "Địa chỉ liên hệ", 150, 20, 890);
-
-            pnlBodyCard.Controls.Add(pnlNhomChinhSua);
-
-            // ----------------------------------------------------
-            // Nút Lưu thay đổi (Chuẩn hoá theo ThemeHelper)
-            // ----------------------------------------------------
-            btnLuuThayDoi = new Button
+            // SĐT
+            var lblSdt = new Label
             {
-                Text = "💾  Lưu thay đổi",
-                Location = new Point(24, 608),
-                Size = new Size(180, ThemeHelper.ChieuCaoButtonChuan)
-            };
-            ThemeHelper.ApDungButtonChinh(btnLuuThayDoi);
-            btnLuuThayDoi.Click += BtnLuuThayDoi_Click;
-            pnlBodyCard.Controls.Add(btnLuuThayDoi);
-
-            var lblHuongDanLuu = new Label
-            {
-                Text = "Dữ liệu sau khi nhấn Lưu thay đổi sẽ được cập nhật trực tiếp vào cơ sở dữ liệu và đồng bộ vào phiên làm việc hiện tại.",
-                Font = ThemeHelper.FontChuThich,
-                ForeColor = ThemeHelper.MauChuPhu,
-                Location = new Point(220, 618),
+                Text = "Số điện thoại:",
+                Font = ThemeHelper.FontLabel,
+                ForeColor = ThemeHelper.MauChuChinh,
+                Location = new Point(24, 75),
                 AutoSize = true
             };
-            pnlBodyCard.Controls.Add(lblHuongDanLuu);
+            txtSoDienThoai = new RoundedTextBox
+            {
+                Location = new Point(24, 102),
+                Size = new Size(440, 44),
+                BorderRadius = 8,
+                PlaceholderText = "Nhập số điện thoại liên hệ"
+            };
+            pnlNhomChinhSua.Controls.Add(lblSdt);
+            pnlNhomChinhSua.Controls.Add(txtSoDienThoai);
 
-            this.Controls.Add(pnlBodyCard);
-            this.Controls.Add(pnlHeaderCard);
+            // Email
+            var lblEmail = new Label
+            {
+                Text = "Email liên hệ:",
+                Font = ThemeHelper.FontLabel,
+                ForeColor = ThemeHelper.MauChuChinh,
+                Location = new Point(488, 75),
+                AutoSize = true
+            };
+            txtEmail = new RoundedTextBox
+            {
+                Location = new Point(488, 102),
+                Size = new Size(440, 44),
+                BorderRadius = 8,
+                PlaceholderText = "Nhập địa chỉ email liên hệ"
+            };
+            pnlNhomChinhSua.Controls.Add(lblEmail);
+            pnlNhomChinhSua.Controls.Add(txtEmail);
+
+            // Địa chỉ
+            var lblDiaChi = new Label
+            {
+                Text = "Địa chỉ liên hệ:",
+                Font = ThemeHelper.FontLabel,
+                ForeColor = ThemeHelper.MauChuChinh,
+                Location = new Point(24, 158),
+                AutoSize = true
+            };
+            txtDiaChi = new RoundedTextBox
+            {
+                Location = new Point(24, 185),
+                Size = new Size(904, 44),
+                BorderRadius = 8,
+                PlaceholderText = "Nhập số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố"
+            };
+            pnlNhomChinhSua.Controls.Add(lblDiaChi);
+            pnlNhomChinhSua.Controls.Add(txtDiaChi);
+
+            pnlNhomChinhSua.Height = 250;
+            pnlContainer.Controls.Add(pnlNhomChinhSua);
+
+            // ====================================================
+            // 3. Thanh thao tác Lưu thay đổi
+            // ====================================================
+            btnLuuThayDoi = new RoundedButton
+            {
+                Text = "💾  Lưu thay đổi",
+                Location = new Point(0, 630),
+                Size = new Size(180, 44),
+                BorderRadius = 8,
+                NormalColor = ThemeHelper.MauChinh,
+                HoverColor = ColorTranslator.FromHtml("#1D4ED8"),
+                PressedColor = ColorTranslator.FromHtml("#1E40AF"),
+                Font = new Font("Segoe UI", 10.5f, FontStyle.Bold)
+            };
+            btnLuuThayDoi.Click += BtnLuuThayDoi_Click;
+            pnlContainer.Controls.Add(btnLuuThayDoi);
+
+            var lblGhiChuLuu = new Label
+            {
+                Text = "Dữ liệu sau khi lưu sẽ được cập nhật trực tiếp vào cơ sở dữ liệu và đồng bộ vào phiên làm việc hiện tại.",
+                Font = ThemeHelper.FontChuThich,
+                ForeColor = ThemeHelper.MauChuPhu,
+                Location = new Point(196, 642),
+                AutoSize = true
+            };
+            pnlContainer.Controls.Add(lblGhiChuLuu);
+
+            this.Controls.Add(pnlContainer);
         }
 
-        private Panel TaoNhomThongTin(string tieuDe, string moTa, Point viTri, Size kichThuoc, Color mauNen)
+        private Panel TaoCardNhom(string tieuDe, string moTa, Point viTri, Size kichThuoc)
         {
             var pnl = new Panel
             {
                 Location = viTri,
                 Size = kichThuoc,
-                BackColor = mauNen,
+                BackColor = Color.White,
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
             };
             pnl.Paint += (s, e) =>
             {
-                using var pen = new Pen(ThemeHelper.MauDuongVien, 1);
+                using var pen = new Pen(ColorTranslator.FromHtml("#E2E8F0"), 1.2f);
                 e.Graphics.DrawRectangle(pen, 0, 0, pnl.Width - 1, pnl.Height - 1);
             };
 
@@ -221,7 +212,7 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
                 Text = tieuDe,
                 Font = ThemeHelper.FontTieuDeCard,
                 ForeColor = ThemeHelper.MauChuChinh,
-                Location = new Point(16, 12),
+                Location = new Point(22, 16),
                 AutoSize = true
             };
 
@@ -230,7 +221,7 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
                 Text = moTa,
                 Font = ThemeHelper.FontChuThich,
                 ForeColor = ThemeHelper.MauChuPhu,
-                Location = new Point(18, 36),
+                Location = new Point(24, 42),
                 AutoSize = true
             };
 
@@ -239,64 +230,53 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             return pnl;
         }
 
-        private void ThemFieldChiXem(Panel parent, string labelText, string valueText, int top, int left, int width)
+        /// <summary>
+        /// Tạo vùng hiển thị dữ liệu tĩnh dạng 2 tầng hoàn toàn bằng Panel + Label.
+        /// Triệt tiêu 100% khả năng nhập, xóa, click focus hoặc ấn phím space/text của người dùng.
+        /// </summary>
+        private void ThemBadgeChiXem(Panel parent, string labelText, string valueText, int top, int left, int width)
         {
-            var lbl = new Label
+            var pnlBadge = new Panel
+            {
+                Location = new Point(left, top),
+                Size = new Size(width, 58),
+                BackColor = ColorTranslator.FromHtml("#F1F5F9"),
+                Padding = new Padding(12, 6, 12, 6)
+            };
+            pnlBadge.Paint += (s, e) =>
+            {
+                using var pen = new Pen(ColorTranslator.FromHtml("#CBD5E1"), 1f);
+                e.Graphics.DrawRectangle(pen, 0, 0, pnlBadge.Width - 1, pnlBadge.Height - 1);
+            };
+
+            var lblLabel = new Label
             {
                 Text = labelText,
-                Font = ThemeHelper.FontChuThichDam,
-                ForeColor = ThemeHelper.MauChuPhu,
-                Location = new Point(left, top),
+                Font = new Font("Segoe UI", 8f, FontStyle.Bold),
+                ForeColor = ColorTranslator.FromHtml("#64748B"),
+                Location = new Point(12, 8),
                 AutoSize = true
             };
 
-            var txt = new TextBox
+            var lblValue = new Label
             {
                 Text = valueText,
-                Font = ThemeHelper.FontNoiDung,
-                ForeColor = ThemeHelper.MauChuChinh,
-                BackColor = ThemeHelper.MauNenInputReadOnly,
-                BorderStyle = BorderStyle.FixedSingle,
-                ReadOnly = true,
-                Location = new Point(left, top + 22),
-                Size = new Size(width, 32)
-            };
-
-            parent.Controls.Add(lbl);
-            parent.Controls.Add(txt);
-        }
-
-        private TextBox ThemFieldChinhSua(Panel parent, string labelText, int top, int left, int width)
-        {
-            var lbl = new Label
-            {
-                Text = labelText,
-                Font = ThemeHelper.FontLabel,
-                ForeColor = ThemeHelper.MauChuChinh,
-                Location = new Point(left, top),
+                Font = new Font("Segoe UI", 10.5f, FontStyle.Bold),
+                ForeColor = ColorTranslator.FromHtml("#1E293B"),
+                Location = new Point(12, 28),
                 AutoSize = true
             };
 
-            var txt = new TextBox
-            {
-                Font = ThemeHelper.FontNoiDung,
-                ForeColor = ThemeHelper.MauChuChinh,
-                BackColor = Color.White,
-                BorderStyle = BorderStyle.FixedSingle,
-                Location = new Point(left, top + 24),
-                Size = new Size(width, 32)
-            };
-
-            parent.Controls.Add(lbl);
-            parent.Controls.Add(txt);
-            return txt;
+            pnlBadge.Controls.Add(lblLabel);
+            pnlBadge.Controls.Add(lblValue);
+            parent.Controls.Add(pnlBadge);
         }
 
         private void NapDuLieuTuSession()
         {
-            txtSoDienThoai.Text = Session.SoDienThoai;
-            txtEmail.Text = Session.Email;
-            txtDiaChi.Text = Session.DiaChi;
+            txtSoDienThoai.Text = Session.SoDienThoai ?? string.Empty;
+            txtEmail.Text = Session.Email ?? string.Empty;
+            txtDiaChi.Text = Session.DiaChi ?? string.Empty;
         }
 
         private void BtnLuuThayDoi_Click(object? sender, EventArgs e)
@@ -341,20 +321,5 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             pnlThongBao.Visible = false;
             lblThongBao.Text = string.Empty;
         }
-
-        private string LayChuCaiDau(string hoTen)
-        {
-            if (string.IsNullOrWhiteSpace(hoTen))
-            {
-                return "U";
-            }
-            var parts = hoTen.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length == 1)
-            {
-                return parts[0][0].ToString().ToUpper();
-            }
-            return (parts[0][0].ToString() + parts[^1][0].ToString()).ToUpper();
-        }
     }
 }
-

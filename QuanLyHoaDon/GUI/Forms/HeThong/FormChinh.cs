@@ -9,8 +9,6 @@ using QuanLyHoaDon.GUI.Forms.NhanVien;
 using QuanLyHoaDon.GUI.Forms.SanPham;
 using QuanLyHoaDon.GUI.Forms.ThongKe;
 using QuanLyHoaDon.Utilities;
-using QuanLyHoaDon.GUI.Forms.KhachHang;
-using QuanLyHoaDon.GUI.Forms.SanPham;
 
 namespace QuanLyHoaDon.GUI.Forms.HeThong
 {
@@ -39,6 +37,31 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             pnlSidebarBrand.BackColor = Color.FromArgb(21, 44, 72);
             pnlAvatarSidebar.BackColor = ThemeHelper.MauChinh;
             lblBrandLogo.BackColor = ThemeHelper.MauChinh;
+
+            // Bo góc tròn cho logo và avatar Sidebar
+            pnlAvatarSidebar.Paint += (s, e) =>
+            {
+                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                using var path = new System.Drawing.Drawing2D.GraphicsPath();
+                path.AddEllipse(0, 0, pnlAvatarSidebar.Width - 1, pnlAvatarSidebar.Height - 1);
+                pnlAvatarSidebar.Region = new Region(path);
+            };
+
+            lblBrandLogo.Paint += (s, e) =>
+            {
+                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                using var path = new System.Drawing.Drawing2D.GraphicsPath();
+                path.AddEllipse(0, 0, lblBrandLogo.Width - 1, lblBrandLogo.Height - 1);
+                lblBrandLogo.Region = new Region(path);
+            };
+
+            pnlAvatarCircle.Paint += (s, e) =>
+            {
+                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                using var path = new System.Drawing.Drawing2D.GraphicsPath();
+                path.AddEllipse(0, 0, pnlAvatarCircle.Width - 1, pnlAvatarCircle.Height - 1);
+                pnlAvatarCircle.Region = new Region(path);
+            };
 
             // Topbar
             pnlTopbar.BackColor = ThemeHelper.MauNenNoiDung;
@@ -151,29 +174,29 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             // 1. Tổng quan (Tất cả)
             ThemItemSidebar("TongQuan", "📊  Tổng quan", () => DieuHuongTheoMa("TongQuan"));
 
-            // 2. Hệ thống & Cấu hình (Chỉ Quản lý)
+            // 2. Người dùng (Chỉ Quản lý - Sắp xếp ngay sau Tổng quan cho phân hệ quản trị nhân sự & tài khoản)
+            if (Session.LaQuanLy)
+            {
+                ThemItemSidebar("NhanVien", "👤  Người dùng", () => DieuHuongTheoMa("NhanVien"));
+            }
+
+            // 3. Khách hàng (Tất cả)
+            ThemItemSidebar("KhachHang", "👥  Khách hàng", () => DieuHuongTheoMa("KhachHang"));
+
+            // 4. Sản phẩm (Tất cả)
+            ThemItemSidebar("SanPham", "📦  Sản phẩm", () => DieuHuongTheoMa("SanPham"));
+
+            // 5. Hóa đơn (Tất cả)
+            ThemItemSidebar("HoaDon", "🧾  Hóa đơn", () => DieuHuongTheoMa("HoaDon"));
+
+            // 6. Thống kê & Báo cáo (Tất cả)
+            ThemItemSidebar("BaoCao", "📈  Thống kê & Báo cáo", () => DieuHuongTheoMa("BaoCao"));
+
+            // 7. Hệ thống & Cấu hình (Chỉ Quản lý - Đặt ở cuối danh mục quản trị)
             if (Session.LaQuanLy)
             {
                 ThemItemSidebar("HeThong", "⚙️  Hệ thống & Cấu hình", () => DieuHuongTheoMa("HeThong"));
             }
-
-            // 3. Nhân viên (Chỉ Quản lý)
-            if (Session.LaQuanLy)
-            {
-                ThemItemSidebar("NhanVien", "👤  Nhân viên", () => DieuHuongTheoMa("NhanVien"));
-            }
-
-            // 4. Khách hàng (Tất cả)
-            ThemItemSidebar("KhachHang", "👥  Khách hàng", () => DieuHuongTheoMa("KhachHang"));
-
-            // 5. Sản phẩm (Tất cả)
-            ThemItemSidebar("SanPham", "📦  Sản phẩm", () => DieuHuongTheoMa("SanPham"));
-
-            // 6. Hóa đơn (Tất cả)
-            ThemItemSidebar("HoaDon", "🧾  Hóa đơn", () => DieuHuongTheoMa("HoaDon"));
-
-            // 7. Thống kê & Báo cáo (Tất cả)
-            ThemItemSidebar("BaoCao", "📈  Thống kê & Báo cáo", () => DieuHuongTheoMa("BaoCao"));
         }
 
         private void ThemItemSidebar(string maChucNang, string textHienThi, Action hanhDong)
@@ -368,11 +391,8 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
 
         private void XacNhanVaDangXuat()
         {
-            var luaChon = MessageBox.Show(
-                "Bạn có chắc chắn muốn đăng xuất khỏi hệ thống không?",
-                "Xác Nhận Đăng Xuất",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
+            using var dlg = new FormXacNhanDangXuat();
+            var luaChon = dlg.ShowDialog(this);
 
             if (luaChon == DialogResult.Yes)
             {

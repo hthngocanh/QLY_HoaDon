@@ -40,6 +40,7 @@ namespace QuanLyHoaDon.GUI.Forms.NhanVien
         private Button btnThem = null!;
         private Button btnCapNhat = null!;
         private Button btnKhoaMoKhoa = null!;
+        private Button btnCapLaiMatKhau = null!;
         private Button btnBoChon = null!;
 
         private Panel pnlThongBao = null!;
@@ -239,19 +240,23 @@ namespace QuanLyHoaDon.GUI.Forms.NhanVien
             pnlFormChiTiet.Controls.Add(txtMaTaiKhoan);
 
             // Buttons
-            btnThem = new Button { Text = "Thêm NV", Location = new Point(18, top), Size = new Size(95, ThemeHelper.ChieuCaoButtonChuan) };
+            btnThem = new Button { Text = "Thêm NV", Location = new Point(18, top), Size = new Size(90, ThemeHelper.ChieuCaoButtonChuan) };
             ThemeHelper.ApDungButtonThanhCong(btnThem);
             btnThem.Click += BtnThem_Click;
 
-            btnCapNhat = new Button { Text = "Lưu hồ sơ", Location = new Point(120, top), Size = new Size(100, ThemeHelper.ChieuCaoButtonChuan) };
+            btnCapNhat = new Button { Text = "Lưu hồ sơ", Location = new Point(114, top), Size = new Size(95, ThemeHelper.ChieuCaoButtonChuan) };
             ThemeHelper.ApDungButtonChinh(btnCapNhat);
             btnCapNhat.Click += BtnCapNhat_Click;
 
-            btnKhoaMoKhoa = new Button { Text = "Khóa/Mở TK", Location = new Point(228, top), Size = new Size(105, ThemeHelper.ChieuCaoButtonChuan) };
+            btnKhoaMoKhoa = new Button { Text = "Khóa/Mở TK", Location = new Point(215, top), Size = new Size(100, ThemeHelper.ChieuCaoButtonChuan) };
             ThemeHelper.ApDungButtonNguyHiem(btnKhoaMoKhoa);
             btnKhoaMoKhoa.Click += BtnKhoaMoKhoa_Click;
 
-            btnBoChon = new Button { Text = "Bỏ chọn", Location = new Point(340, top), Size = new Size(80, ThemeHelper.ChieuCaoButtonChuan) };
+            btnCapLaiMatKhau = new Button { Text = "🔑 Cấp lại MK", Location = new Point(18, top + 42), Size = new Size(125, ThemeHelper.ChieuCaoButtonChuan) };
+            ThemeHelper.ApDungButtonCanhBao(btnCapLaiMatKhau);
+            btnCapLaiMatKhau.Click += BtnCapLaiMatKhau_Click;
+
+            btnBoChon = new Button { Text = "Bỏ chọn", Location = new Point(150, top + 42), Size = new Size(85, ThemeHelper.ChieuCaoButtonChuan) };
             ThemeHelper.ApDungButtonPhu(btnBoChon);
             btnBoChon.Click += (s, e) => LamMoiForm();
 
@@ -261,6 +266,7 @@ namespace QuanLyHoaDon.GUI.Forms.NhanVien
             pnlFormChiTiet.Controls.Add(btnThem);
             pnlFormChiTiet.Controls.Add(btnCapNhat);
             pnlFormChiTiet.Controls.Add(btnKhoaMoKhoa);
+            pnlFormChiTiet.Controls.Add(btnCapLaiMatKhau);
             pnlFormChiTiet.Controls.Add(btnBoChon);
 
             splitContainer.Panel2.Controls.Add(pnlFormChiTiet);
@@ -425,6 +431,32 @@ namespace QuanLyHoaDon.GUI.Forms.NhanVien
             {
                 TaiDanhSach();
             }
+        }
+
+        private void BtnCapLaiMatKhau_Click(object? sender, EventArgs e)
+        {
+            if (!int.TryParse(txtMaTaiKhoan.Text, out int maTK) || maTK <= 0)
+            {
+                HienThongBao("Nhân viên này chưa có tài khoản hoặc chưa được chọn trong danh sách.", true);
+                return;
+            }
+
+            string tenNV = txtHoTen.Text.Trim();
+            string tenTK = txtTenDangNhap.Text.Trim();
+
+            var xacNhan = MessageBox.Show(
+                $"Bạn có chắc chắn muốn cấp lại mật khẩu cho tài khoản '{tenTK}' ({tenNV})?\n\nMật khẩu sẽ được đặt lại về mật khẩu mặc định: Demo@123",
+                "Xác Nhận Cấp Lại Mật Khẩu",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (xacNhan != DialogResult.Yes)
+            {
+                return;
+            }
+
+            var kq = _bll.CapLaiMatKhau(maTK, "Demo@123");
+            HienThongBao(kq.ThongBao, !kq.ThanhCong);
         }
 
         private void HienThongBao(string thongBao, bool laLoi)

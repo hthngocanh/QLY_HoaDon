@@ -192,6 +192,19 @@ namespace QuanLyHoaDon.DAL
 
             return cmd.ExecuteNonQuery() > 0;
         }
+
+        public bool CapLaiMatKhau(int maTaiKhoan, string matKhauMoiHash)
+        {
+            using var conn = KetNoiCSDL.TaoKetNoi();
+            conn.Open();
+
+            string sql = "UPDATE dbo.TaiKhoan SET MatKhauHash = @MatKhauHash WHERE MaTaiKhoan = @MaTaiKhoan";
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@MaTaiKhoan", maTaiKhoan);
+            cmd.Parameters.AddWithValue("@MatKhauHash", matKhauMoiHash);
+
+            return cmd.ExecuteNonQuery() > 0;
+        }
     }
 }
 

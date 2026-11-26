@@ -136,6 +136,11 @@ namespace QuanLyHoaDon.Utilities
             ApDungDinhDangButton(btn, MauNutNguyHiem, MauNutNguyHiemHover, Color.White, 0, Color.Empty);
         }
 
+        public static void ApDungButtonCanhBao(Button btn)
+        {
+            ApDungDinhDangButton(btn, MauCanhBao, MauCanhBaoHover, Color.White, 0, Color.Empty);
+        }
+
         private static void ApDungDinhDangButton(Button btn, Color mauNen, Color mauHover, Color mauChu, int doDayVien, Color mauVien)
         {
             btn.Height = ChieuCaoButtonChuan;

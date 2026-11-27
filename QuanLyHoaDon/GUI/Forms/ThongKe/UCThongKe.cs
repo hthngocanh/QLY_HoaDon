@@ -64,9 +64,16 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
             DoubleBuffered = true;
 
             XayDungGiaoDien();
+
+            Load += async (s, e) =>
+            {
+                if (!DesignMode && IsHandleCreated && Visible)
+                    await TaiBaoCaoAsync();
+            };
+
             VisibleChanged += async (s, e) =>
             {
-                if (Visible && !DesignMode)
+                if (!DesignMode && IsHandleCreated && Visible)
                     await TaiBaoCaoAsync();
             };
         }
@@ -129,7 +136,7 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
             for (int i = 0; i < ten.Length; i++)
             {
                 int idx = i;
-                var b = TaoNut(ten[i], Color.White, ThemeHelper.MauChinh, 104);
+                var b = TaoNut(ten[i], Color.White, ThemeHelper.MauChinh, 124);
                 b.Click += async (s, e) => await ChonNhanhAsync(idx);
                 _btnNhanh[i] = b;
                 hang1.Controls.Add(b);
@@ -164,7 +171,11 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
             hang3.Controls.Add(_cboNhanVien);
 
             var btnApDung = TaoNut("Áp dụng", ThemeHelper.MauChinh, Color.White, 96);
-            btnApDung.Click += async (s, e) => { DanhDauNut(-1); await TaiBaoCaoAsync(); };
+            btnApDung.Click += async (s, e) =>
+            {
+                DanhDauNut(TimChiSoNutNhanh(_dtTu.Value, _dtDen.Value));
+                await TaiBaoCaoAsync();
+            };
             var btnLamMoi = TaoNut("Làm mới", ThemeHelper.MauNutLamMoi, Color.White, 96);
             btnLamMoi.Click += async (s, e) => await ChonNhanhAsync(2);
             var btnXuat = TaoNut("Xuất CSV", ThemeHelper.MauNutXuatExcel, Color.White, 96);
@@ -285,7 +296,12 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
 
         private Control TaoTheTopSanPham()
         {
-            var card = new TheCard { Height = Co(290), Margin = new Padding(0, 0, 0, 10), Padding = new Padding(12, 8, 12, 8) };
+            var card = new TheCard
+            {
+                Height = Co(310),
+                Margin = new Padding(0, 0, 0, 10),
+                Padding = new Padding(14, 10, 14, 10)
+            };
 
             _dgvTop = new DataGridView
             {
@@ -301,21 +317,29 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
                 CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal,
                 EnableHeadersVisualStyles = false,
                 ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing,
-                ColumnHeadersHeight = Co(36),
+                ColumnHeadersHeight = Co(40),
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                RowTemplate = { Height = Co(34) },
+                RowTemplate = { Height = Co(38) },
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect,
                 MultiSelect = false
             };
+
             _dgvTop.ColumnHeadersDefaultCellStyle.BackColor = ThemeHelper.MauTieuDeBang;
             _dgvTop.ColumnHeadersDefaultCellStyle.ForeColor = MauChuDen;
             _dgvTop.ColumnHeadersDefaultCellStyle.SelectionBackColor = ThemeHelper.MauTieuDeBang;
             _dgvTop.ColumnHeadersDefaultCellStyle.SelectionForeColor = MauChuDen;
             _dgvTop.ColumnHeadersDefaultCellStyle.Font = Chu(9.5f, FontStyle.Bold);
+            _dgvTop.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            _dgvTop.ColumnHeadersDefaultCellStyle.Padding = Padding.Empty;
+            _dgvTop.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.False;
+
             _dgvTop.DefaultCellStyle.Font = Chu(9.5f);
             _dgvTop.DefaultCellStyle.ForeColor = MauChuDen;
             _dgvTop.DefaultCellStyle.SelectionBackColor = ThemeHelper.MauTieuDeBang;
             _dgvTop.DefaultCellStyle.SelectionForeColor = MauChuDen;
+            _dgvTop.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            _dgvTop.DefaultCellStyle.Padding = Padding.Empty;
+            _dgvTop.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
 
             _dgvTop.Columns.Add("Hang", "Hạng");
             _dgvTop.Columns.Add("MaSP", "Mã SP");
@@ -323,17 +347,16 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
             _dgvTop.Columns.Add("SoLuong", "Số lượng bán");
             _dgvTop.Columns.Add("DoanhThu", "Doanh thu (VNĐ)");
             _dgvTop.Columns.Add("TyTrong", "Tỷ trọng");
-            _dgvTop.Columns["Hang"]!.FillWeight = 12;
-            _dgvTop.Columns["MaSP"]!.FillWeight = 12;
-            _dgvTop.Columns["TenSP"]!.FillWeight = 36;
+
+            _dgvTop.Columns["Hang"]!.FillWeight = 10;
+            _dgvTop.Columns["MaSP"]!.FillWeight = 11;
+            _dgvTop.Columns["TenSP"]!.FillWeight = 37;
             _dgvTop.Columns["SoLuong"]!.FillWeight = 14;
-            _dgvTop.Columns["DoanhThu"]!.FillWeight = 20;
-            _dgvTop.Columns["TyTrong"]!.FillWeight = 12;
-            foreach (var tenCot in new[] { "SoLuong", "DoanhThu", "TyTrong" })
-            {
-                _dgvTop.Columns[tenCot]!.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-                _dgvTop.Columns[tenCot]!.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight;
-            }
+            _dgvTop.Columns["DoanhThu"]!.FillWeight = 17;
+            _dgvTop.Columns["TyTrong"]!.FillWeight = 11;
+
+            foreach (DataGridViewColumn col in _dgvTop.Columns)
+                CauHinhCot(col, DataGridViewContentAlignment.MiddleCenter, Padding.Empty);
 
             _lblTopRong = new Label
             {
@@ -351,12 +374,21 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
             return card;
         }
 
+        private static void CauHinhCot(DataGridViewColumn col, DataGridViewContentAlignment canLe, Padding dem)
+        {
+            col.DefaultCellStyle.Alignment = canLe;
+            col.DefaultCellStyle.Padding = dem;
+            col.HeaderCell.Style.Alignment = canLe;
+            col.HeaderCell.Style.Padding = dem;
+        }
+
         private static Label TaoTieuDeThe(string text)
         {
             return new Label
             {
                 Dock = DockStyle.Top,
-                Height = Co(28),
+                Height = Co(30),
+                Margin = new Padding(0, 0, 0, 4),
                 Text = text,
                 Font = Chu(10f, FontStyle.Bold),
                 ForeColor = MauChuDen,
@@ -435,6 +467,28 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
             }
         }
 
+        private static int TimChiSoNutNhanh(DateTime tu, DateTime den)
+        {
+            DateTime homNay = DateTime.Today;
+            tu = tu.Date;
+            den = den.Date;
+
+            if (tu == homNay && den == homNay) return 0; // Hôm nay
+            if (tu == homNay.AddDays(-6) && den == homNay) return 1; // 7 ngày qua
+
+            DateTime dauThangNay = new DateTime(homNay.Year, homNay.Month, 1);
+            if (tu == dauThangNay && den == homNay) return 2; // Tháng này
+
+            DateTime dauThangTruoc = dauThangNay.AddMonths(-1);
+            DateTime cuoiThangTruoc = dauThangNay.AddDays(-1);
+            if (tu == dauThangTruoc && den == cuoiThangTruoc) return 3; // Tháng trước
+
+            DateTime dauNamNay = new DateTime(homNay.Year, 1, 1);
+            if (tu == dauNamNay && den == homNay) return 4; // Năm nay
+
+            return -1; // Khoảng thời gian tùy chỉnh
+        }
+
         private async Task ChonNhanhAsync(int chiSo)
         {
             DateTime homNay = DateTime.Today;
@@ -465,7 +519,7 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
             if (den > DateTime.Today) den = DateTime.Today;
 
             DatNgay(tu, den);
-            DanhDauNut(-1);
+            DanhDauNut(TimChiSoNutNhanh(tu, den));
             await TaiBaoCaoAsync();
         }
 
@@ -777,28 +831,41 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
                 using var nenThanh = new SolidBrush(Color.FromArgb(232, 238, 247));
                 var phai = new StringFormat { Alignment = StringAlignment.Far };
 
-                var muc = new (string Ten, int So, decimal TyLe, Color Mau)[]
+                var muc = new (string Ten, int So, Color Mau)[]
                 {
-                    ("Đã xác nhận", _duLieu.SoDaXacNhan, _duLieu.TyLeDaXacNhan, ThemeHelper.MauDaXacNhan),
-                    ("Đang lập", _duLieu.SoDangLap, _duLieu.TyLeDangLap, ThemeHelper.MauDangLap),
-                    ("Đã hủy", _duLieu.SoDaHuy, _duLieu.TyLeDaHuy, ThemeHelper.MauDaHuy)
+                    ("Đã xác nhận", _duLieu.SoDaXacNhan, ThemeHelper.MauDaXacNhan),
+                    ("Đang lập", _duLieu.SoDangLap, ThemeHelper.MauDangLap),
+                    ("Đã hủy", _duLieu.SoDaHuy, ThemeHelper.MauDaHuy)
                 };
 
-                int cao = Math.Max(Height / 3, 56);
-                for (int i = 0; i < muc.Length; i++)
-                {
-                    int y = 6 + i * cao;
-                    g.DrawString(muc[i].Ten, font, chu, 0, y);
-                    g.DrawString($"{muc[i].TyLe.ToString("0.0", Vi)}% ({muc[i].So})", font, chu,
-                        new RectangleF(0, y, Width - 2, 26), phai);
+                int tong = _duLieu.Tong > 0 ? _duLieu.Tong : muc.Sum(m => m.So);
+                int trai = 4;
+                int phaiX = Width - 4;
+                int rongThanh = Math.Max(10, phaiX - trai);
+                int caoThanh = Co(10);
+                int y = 8;
+                int buocNhay = Math.Max(Co(56), (Height - 12) / muc.Length);
 
-                    g.FillRectangle(nenThanh, 0, y + 30, Width - 2, 10);
-                    float rong = (Width - 2) * (float)muc[i].TyLe / 100f;
-                    if (rong > 0)
+                foreach (var item in muc)
+                {
+                    double tyLe = tong > 0 ? (item.So * 100.0) / tong : 0.0;
+                    string chuPhai = $"{tyLe.ToString("0.0", Vi)}% ({item.So.ToString("N0", Vi)})";
+
+                    g.DrawString(item.Ten, font, chu, new PointF(trai, y));
+                    g.DrawString(chuPhai, font, chu, new RectangleF(trai, y, rongThanh, Co(22)), phai);
+
+                    int yThanh = y + Co(24);
+                    g.FillRectangle(nenThanh, trai, yThanh, rongThanh, caoThanh);
+
+                    if (item.So > 0 && tong > 0)
                     {
-                        using var to = new SolidBrush(muc[i].Mau);
-                        g.FillRectangle(to, 0, y + 30, rong, 10);
+                        int rongMau = (int)Math.Round(rongThanh * (item.So / (double)tong));
+                        rongMau = Math.Clamp(rongMau, 4, rongThanh);
+                        using var coMau = new SolidBrush(item.Mau);
+                        g.FillRectangle(coMau, trai, yThanh, rongMau, caoThanh);
                     }
+
+                    y += buocNhay;
                 }
             }
         }

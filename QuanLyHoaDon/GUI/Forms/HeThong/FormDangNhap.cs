@@ -150,5 +150,10 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             pnlThongBaoLoi.Visible = false;
             lblThongBaoLoi.Text = string.Empty;
         }
+
+        private void btnDangNhap_Click_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }

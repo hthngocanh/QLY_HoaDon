@@ -210,7 +210,7 @@ namespace QuanLyHoaDon.DAL.HeThong
                     tk.TenDangNhap,
                     nv.HoTen AS HoTenNhanVien,
                     nv.Email,
-                    nv.SoDienThoai,
+nv.SoDienThoai,
                     yc.LyDoYeuCau,
                     yc.TrangThai,
                     yc.ThoiGianYeuCau,
@@ -265,7 +265,7 @@ namespace QuanLyHoaDon.DAL.HeThong
 
             using var cmd = new SqlCommand(sql, conn);
             cmd.Parameters.Add("@MaTaiKhoan", SqlDbType.Int).Value = maTaiKhoan;
-            cmd.Parameters.Add("@LyDoYeuCau", SqlDbType.NVarChar, 500).Value = 
+            cmd.Parameters.Add("@LyDoYeuCau", SqlDbType.NVarChar, 500).Value =
                 string.IsNullOrWhiteSpace(lyDoYeuCau) ? DBNull.Value : lyDoYeuCau.Trim();
 
             return cmd.ExecuteNonQuery() > 0;
@@ -275,7 +275,6 @@ namespace QuanLyHoaDon.DAL.HeThong
         {
             using var conn = KetNoiCSDL.TaoKetNoi();
             conn.Open();
-
             // Chỉ cập nhật nếu trạng thái hiện tại là ChoDuyet để tránh race condition
             const string sql = @"
                 UPDATE dbo.YeuCauCapLaiMatKhau

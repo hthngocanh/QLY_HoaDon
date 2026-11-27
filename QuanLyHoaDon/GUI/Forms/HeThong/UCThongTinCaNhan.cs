@@ -275,7 +275,6 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
                 Location = new Point(24, 16),
                 AutoSize = true
             };
-
             var lblMoTaChinhSua = new Label
             {
                 Text = "Cập nhật số điện thoại, hòm thư điện tử và địa chỉ cư trú của bạn khi có sự thay đổi.",
@@ -413,8 +412,7 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
 
             var lblGhiChuLuu = new Label
             {
-                Text = "Dữ liệu sau khi lưu thành công sẽ tự động đồng bộ vào CSDL và phiên đăng nhập hiện tại.",
-                Font = ThemeHelper.FontChuThich,
+
                 ForeColor = ThemeHelper.MauChuPhu,
                 Location = new Point(495, 15),
                 AutoSize = true
@@ -483,7 +481,6 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
 
                 lblProfileTen.Text = Session.HoTen;
                 lblProfileSub.Text = $"@{Session.TenDangNhap}  •  Vai trò: {Session.TenVaiTro}  •  Mã nhân viên: #{Session.MaNhanVien:D4}";
-
                 // Ban đầu không có thay đổi -> nút Lưu Disabled
                 btnLuuThayDoi.Enabled = false;
                 BatCheDoChinhSua(false);

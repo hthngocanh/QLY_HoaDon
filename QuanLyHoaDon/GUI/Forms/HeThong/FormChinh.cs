@@ -49,9 +49,9 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
 
             // Logo và avatar tròn: vẽ có khử răng cưa, luôn là hình vuông nên không bị méo
             lblBrandLogo.ForeColor = MauNavy;
-            VeHinhTron(lblBrandLogo, ThemeHelper.MauNhan);     // Logo: cam nổi bật trên nền navy
-            VeHinhTron(pnlAvatarSidebar, ThemeHelper.MauChinh);
-            VeHinhTron(pnlAvatarCircle, ThemeHelper.MauChinh);
+            VeHinhTron(lblBrandLogo, ThemeHelper.MauNhan);     // Logo trên: cam nổi bật trên nền navy
+            VeHinhTron(pnlAvatarSidebar, ThemeHelper.MauNhan); // Avatar dưới sidebar: đồng nhất cam (đổi thành ThemeHelper.MauChinh nếu muốn xanh)
+            VeHinhTron(pnlAvatarCircle, ThemeHelper.MauChinh);  // Avatar góc phải topbar: xanh
 
             // Topbar
             pnlTopbar.BackColor = ThemeHelper.MauNenNoiDung;

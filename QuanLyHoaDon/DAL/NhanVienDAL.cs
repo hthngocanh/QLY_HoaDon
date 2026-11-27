@@ -8,7 +8,11 @@ namespace QuanLyHoaDon.DAL
 {
     public class NhanVienDAL
     {
-        public List<NhanVienQuanLyDTO> LayDanhSach(string? tuKhoa = null)
+        /// <summary>
+        /// Lấy danh sách nhân viên.
+        /// Khi chiLayNhanVien = true: Chỉ lấy các tài khoản có vai trò 'NhanVien' (loại bỏ toàn bộ Quản lý và chính tài khoản Quản lý đang đăng nhập).
+        /// </summary>
+        public List<NhanVienQuanLyDTO> LayDanhSach(string? tuKhoa = null, bool chiLayNhanVien = false, int? maTaiKhoanLoaiTru = null)
         {
             var ds = new List<NhanVienQuanLyDTO>();
             using var conn = KetNoiCSDL.TaoKetNoi();
@@ -20,18 +24,40 @@ namespace QuanLyHoaDon.DAL
                     tk.MaTaiKhoan, tk.TenDangNhap, tk.MaVaiTro, vt.TenVaiTro, tk.TrangThai AS TrangThaiTaiKhoan
                 FROM dbo.NhanVien nv
                 LEFT JOIN dbo.TaiKhoan tk ON tk.MaNhanVien = nv.MaNhanVien
-                LEFT JOIN dbo.VaiTro vt ON vt.MaVaiTro = tk.MaVaiTro";
+                LEFT JOIN dbo.VaiTro vt ON vt.MaVaiTro = tk.MaVaiTro
+                WHERE 1 = 1";
+
+            if (chiLayNhanVien)
+            {
+                // Chỉ lấy vai trò NhanVien (MaVaiTro = 2 hoặc vt.TenVaiTro = 'NhanVien')
+                // và không phải tài khoản đang đăng nhập
+                sql += " AND vt.TenVaiTro = N'NhanVien'";
+            }
+
+            if (maTaiKhoanLoaiTru.HasValue)
+            {
+                sql += " AND (tk.MaTaiKhoan IS NULL OR tk.MaTaiKhoan != @MaTaiKhoanLoaiTru)";
+            }
 
             if (!string.IsNullOrWhiteSpace(tuKhoa))
             {
-                sql += @" WHERE nv.HoTen LIKE @TuKhoa
-                             OR nv.SoDienThoai LIKE @TuKhoa
-                             OR nv.Email LIKE @TuKhoa
-                             OR tk.TenDangNhap LIKE @TuKhoa";
+                sql += @" AND (
+                            nv.HoTen LIKE @TuKhoa
+                            OR nv.SoDienThoai LIKE @TuKhoa
+                            OR tk.TenDangNhap LIKE @TuKhoa
+                            OR ('NV' + RIGHT('0000' + CAST(nv.MaNhanVien AS VARCHAR(10)), 4)) LIKE @TuKhoa
+                            OR CAST(nv.MaNhanVien AS VARCHAR(10)) LIKE @TuKhoa
+                        )";
             }
+
             sql += " ORDER BY nv.MaNhanVien DESC";
 
             using var cmd = new SqlCommand(sql, conn);
+            if (maTaiKhoanLoaiTru.HasValue)
+            {
+                cmd.Parameters.AddWithValue("@MaTaiKhoanLoaiTru", maTaiKhoanLoaiTru.Value);
+            }
+
             if (!string.IsNullOrWhiteSpace(tuKhoa))
             {
                 cmd.Parameters.AddWithValue("@TuKhoa", "%" + tuKhoa.Trim() + "%");
@@ -59,6 +85,23 @@ namespace QuanLyHoaDon.DAL
             return ds;
         }
 
+        /// <summary>
+        /// Lấy mã nhân viên tự tăng tiếp theo để hiển thị dự kiến trên giao diện và đồng bộ username
+        /// </summary>
+        public int LayMaNhanVienTiepTheo()
+        {
+            using var conn = KetNoiCSDL.TaoKetNoi();
+            conn.Open();
+
+            // Lấy max MaNhanVien hiện tại hoặc IDENT_CURRENT
+            string sql = @"
+                SELECT ISNULL(MAX(MaNhanVien), 0) + 1 FROM dbo.NhanVien";
+
+            using var cmd = new SqlCommand(sql, conn);
+            object? res = cmd.ExecuteScalar();
+            return (res != null && res != DBNull.Value) ? Convert.ToInt32(res) : 1;
+        }
+
         public bool KiemTraTrungTenDangNhap(string tenDangNhap, int? maTaiKhoanBoQua = null)
         {
             using var conn = KetNoiCSDL.TaoKetNoi();
@@ -80,6 +123,52 @@ namespace QuanLyHoaDon.DAL
             return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
         }
 
+        public bool KiemTraTrungMaNhanVien(int maNhanVien)
+        {
+            using var conn = KetNoiCSDL.TaoKetNoi();
+            conn.Open();
+
+            string sql = "SELECT COUNT(1) FROM dbo.NhanVien WHERE MaNhanVien = @MaNhanVien";
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@MaNhanVien", maNhanVien);
+
+            return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+        }
+
+        /// <summary>
+        /// Lấy thông tin tài khoản để kiểm tra vai trò thực tế từ CSDL
+        /// </summary>
+        public (int MaTaiKhoan, int MaNhanVien, string TenVaiTro, string TrangThai)? LayThongTinTaiKhoan(int maTaiKhoan)
+        {
+            using var conn = KetNoiCSDL.TaoKetNoi();
+            conn.Open();
+
+            string sql = @"
+SELECT tk.MaTaiKhoan, tk.MaNhanVien, vt.TenVaiTro, tk.TrangThai
+                FROM dbo.TaiKhoan tk
+                INNER JOIN dbo.VaiTro vt ON vt.MaVaiTro = tk.MaVaiTro
+                WHERE tk.MaTaiKhoan = @MaTaiKhoan";
+
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@MaTaiKhoan", maTaiKhoan);
+
+            using var reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                return (
+                    reader.GetInt32(0),
+                    reader.GetInt32(1),
+                    reader.GetString(2),
+                    reader.GetString(3)
+                );
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Tạo hồ sơ nhân viên và tài khoản trong cùng 1 Transaction.
+        /// Đảm bảo tính toàn vẹn: nếu 1 trong 2 thất bại, rollback toàn bộ.
+        /// </summary>
         public bool ThemNhanVienVaTaiKhoan(NhanVienQuanLyDTO nv, string matKhau)
         {
             using var conn = KetNoiCSDL.TaoKetNoi();
@@ -88,7 +177,7 @@ namespace QuanLyHoaDon.DAL
 
             try
             {
-                // 1. Insert NhanVien
+                // 1. Insert NhanVien (Không chèn Email theo yêu cầu chuẩn hóa)
                 string sqlNV = @"
                     INSERT INTO dbo.NhanVien (HoTen, SoDienThoai, Email, DiaChi, NgayVaoLam, TrangThai)
                     OUTPUT INSERTED.MaNhanVien
@@ -100,20 +189,26 @@ namespace QuanLyHoaDon.DAL
                 cmdNV.Parameters.AddWithValue("@Email", (object?)nv.Email?.Trim() ?? DBNull.Value);
                 cmdNV.Parameters.AddWithValue("@DiaChi", (object?)nv.DiaChi?.Trim() ?? DBNull.Value);
                 cmdNV.Parameters.AddWithValue("@NgayVaoLam", nv.NgayVaoLam);
-                cmdNV.Parameters.AddWithValue("@TrangThai", nv.TrangThaiNhanVien);
+                cmdNV.Parameters.AddWithValue("@TrangThai", nv.TrangThaiNhanVien ?? "DangHoatDong");
 
                 int maNhanVien = (int)cmdNV.ExecuteScalar()!;
+                nv.MaNhanVien = maNhanVien;
 
-                // 2. Insert TaiKhoan
+                // Đồng bộ tên đăng nhập nếu chưa có hoặc khớp với mã nhân viên vừa sinh
+                if (string.IsNullOrWhiteSpace(nv.TenDangNhap))
+                {
+                    nv.TenDangNhap = $"nv{maNhanVien:D4}".ToLowerInvariant();
+                }
+
+                // 2. Insert TaiKhoan (bắt buộc vai trò Nhân viên: MaVaiTro = 2)
                 string matKhauHash = PasswordHelper.BamMatKhau(matKhau);
                 string sqlTK = @"
                     INSERT INTO dbo.TaiKhoan (MaNhanVien, MaVaiTro, TenDangNhap, MatKhauHash, TrangThai)
                     VALUES (@MaNhanVien, @MaVaiTro, @TenDangNhap, @MatKhauHash, @TrangThai)";
-
                 using var cmdTK = new SqlCommand(sqlTK, conn, tran);
                 cmdTK.Parameters.AddWithValue("@MaNhanVien", maNhanVien);
                 cmdTK.Parameters.AddWithValue("@MaVaiTro", nv.MaVaiTro ?? 2);
-                cmdTK.Parameters.AddWithValue("@TenDangNhap", nv.TenDangNhap!.Trim());
+                cmdTK.Parameters.AddWithValue("@TenDangNhap", nv.TenDangNhap.Trim().ToLowerInvariant());
                 cmdTK.Parameters.AddWithValue("@MatKhauHash", matKhauHash);
                 cmdTK.Parameters.AddWithValue("@TrangThai", nv.TrangThaiTaiKhoan ?? "HoatDong");
 

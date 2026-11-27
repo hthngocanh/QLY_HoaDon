@@ -41,8 +41,28 @@ namespace QuanLyHoaDon.BLL.HeThong
 
         /// <summary>
         /// Nhân viên gửi yêu cầu cấp lại mật khẩu từ Form đăng nhập
+        /// Tương thích ngược: tự động gọi overload đối chiếu nếu có dữ liệu
         /// </summary>
         public KetQuaThaoTacDTO GuiYeuCau(string tenDangNhap, string? lyDo)
+        {
+            return GuiYeuCau(tenDangNhap, null, null, null, lyDo, batBuocDoiChieu: false);
+        }
+
+        /// <summary>
+        /// Nhân viên gửi yêu cầu cấp lại mật khẩu kèm đối chiếu thông tin hồ sơ:
+        /// 1. Tên đăng nhập (bắt buộc)
+        /// 2. Mã nhân viên (bắt buộc)
+        /// 3. Họ và tên (bắt buộc)
+        /// 4. Số điện thoại đã đăng ký (bắt buộc)
+        /// 5. Lý do (tùy chọn)
+        /// </summary>
+        public KetQuaThaoTacDTO GuiYeuCau(
+            string tenDangNhap,
+            string? maNhanVienStr,
+            string? hoTen,
+            string? soDienThoai,
+            string? lyDo,
+            bool batBuocDoiChieu = true)
         {
             if (string.IsNullOrWhiteSpace(tenDangNhap))
             {
@@ -50,6 +70,24 @@ namespace QuanLyHoaDon.BLL.HeThong
             }
 
             tenDangNhap = tenDangNhap.Trim();
+
+            if (batBuocDoiChieu)
+            {
+                if (string.IsNullOrWhiteSpace(maNhanVienStr))
+                {
+                    return KetQuaThaoTacDTO.TaoThatBai("Vui lòng nhập mã nhân viên.");
+                }
+
+                if (string.IsNullOrWhiteSpace(hoTen))
+                {
+                    return KetQuaThaoTacDTO.TaoThatBai("Vui lòng nhập họ và tên.");
+                }
+
+                if (string.IsNullOrWhiteSpace(soDienThoai))
+                {
+                    return KetQuaThaoTacDTO.TaoThatBai("Vui lòng nhập số điện thoại đã đăng ký.");
+                }
+            }
 
             try
             {
@@ -60,18 +98,48 @@ namespace QuanLyHoaDon.BLL.HeThong
                     return KetQuaThaoTacDTO.TaoThatBai("Tên đăng nhập không tồn tại trên hệ thống.");
                 }
 
-                // 2. Kiểm tra tài khoản có đang hoạt động không
+                // 2. Đối chiếu thông tin hồ sơ nhân viên nếu bật chế độ đối chiếu
+                if (batBuocDoiChieu)
+                {
+                    // Đối chiếu Mã nhân viên
+                    string maNVChuanHoa = maNhanVienStr!.Trim().ToUpperInvariant();
+                    string maNVTrongDB = $"NV{taiKhoan.MaNhanVien:D4}";
+                    string maNVSoTrongDB = taiKhoan.MaNhanVien.ToString();
+
+                    if (!maNVChuanHoa.Equals(maNVTrongDB, StringComparison.OrdinalIgnoreCase) &&
+                        !maNVChuanHoa.Equals(maNVSoTrongDB, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return KetQuaThaoTacDTO.TaoThatBai("Mã nhân viên không khớp với tài khoản đã cung cấp.");
+                    }
+
+                    // Đối chiếu Họ và tên
+                    string hoTenNhap = hoTen!.Trim();
+                    if (!string.Equals(hoTenNhap, taiKhoan.HoTen?.Trim(), StringComparison.OrdinalIgnoreCase))
+                    {
+                        return KetQuaThaoTacDTO.TaoThatBai("Họ và tên không khớp với hồ sơ nhân viên trong hệ thống.");
+                    }
+
+                    // Đối chiếu Số điện thoại
+                    string sdtNhap = soDienThoai!.Trim();
+                    string sdtTrongDB = taiKhoan.SoDienThoai?.Trim() ?? string.Empty;
+
+                    if (string.IsNullOrEmpty(sdtTrongDB) || !string.Equals(sdtNhap, sdtTrongDB, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return KetQuaThaoTacDTO.TaoThatBai("Số điện thoại không khớp với hồ sơ nhân viên trong hệ thống.");
+                    }
+                }
+
+                // 3. Kiểm tra tài khoản có đang hoạt động không
                 if (!string.Equals(taiKhoan.TrangThai, "HoatDong", StringComparison.OrdinalIgnoreCase))
                 {
                     return KetQuaThaoTacDTO.TaoThatBai("Tài khoản của bạn hiện đang bị khóa hoặc ngừng hoạt động. Vui lòng liên hệ trực tiếp Quản trị viên.");
                 }
-
                 if (!string.Equals(taiKhoan.TrangThaiNhanVien, "DangHoatDong", StringComparison.OrdinalIgnoreCase))
                 {
                     return KetQuaThaoTacDTO.TaoThatBai("Nhân viên liên kết với tài khoản này đã ngừng hoạt động.");
                 }
 
-                // 3. Kiểm tra xem đã có yêu cầu nào đang chờ xử lý chưa (chống gửi trùng)
+                // 4. Kiểm tra xem đã có yêu cầu nào đang chờ xử lý chưa (chống gửi trùng)
                 var yeuCauDangCho = _yeuCauDAL.LayYeuCauChoDuyetCuaTaiKhoan(taiKhoan.MaTaiKhoan);
                 if (yeuCauDangCho != null)
                 {
@@ -79,7 +147,7 @@ namespace QuanLyHoaDon.BLL.HeThong
                         $"Bạn đã gửi một yêu cầu vào lúc {yeuCauDangCho.ThoiGianYeuCau:HH:mm dd/MM/yyyy} và đang chờ Quản lý phê duyệt. Vui lòng không gửi lặp lại!");
                 }
 
-                // 4. Lưu yêu cầu vào Database
+                // 5. Lưu yêu cầu vào Database
                 bool ketQua = _yeuCauDAL.TaoYeuCau(taiKhoan.MaTaiKhoan, lyDo);
                 if (!ketQua)
                 {

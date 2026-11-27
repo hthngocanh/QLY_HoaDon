@@ -22,6 +22,13 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
     public class UCThongKe : UserControl
     {
         private static readonly CultureInfo Vi = new CultureInfo("vi-VN");
+
+        // Chu den dong bo toan trang (lay tu ThemeHelper de khop cac trang khac)
+        private static readonly Color MauChuDen = ThemeHelper.MauChuChinh;
+
+        // true = giu mau xanh/cam/do cho 3 so lieu KPI dau trang; false = tat ca chu mau den
+        private const bool GiuMauSoLieu = false;
+
         private readonly ThongKeBLL _bll = new ThongKeBLL();
 
         private readonly Button[] _btnNhanh = new Button[5];
@@ -52,7 +59,8 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
         {
             Dock = DockStyle.Fill;
             BackColor = ThemeHelper.MauNenUngDung;
-            Font = ThemeHelper.TaoFont(9.5f);
+            Font = Chu(9.5f);
+            ForeColor = MauChuDen;
             DoubleBuffered = true;
 
             XayDungGiaoDien();
@@ -90,12 +98,12 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
                 TaoTheKpi("Tổng doanh thu (đã xác nhận)", ThemeHelper.MauKpiXanhDuong, false, out _lblDoanhThu, out _lblDoanhThuPhu),
                 TaoTheKpi("Tổng số hóa đơn", ThemeHelper.MauKpiXanhLa, false, out _lblTongHoaDon, out _lblTongHoaDonPhu),
                 TaoTheKpi("Giá trị trung bình / hóa đơn", ThemeHelper.MauKpiCam, false, out _lblTrungBinh, out _lblTrungBinhPhu),
-                96));
+                Co(96)));
             ThemHang(tbl, TaoHang3(
                 TaoTheKpi("Đã xác nhận", ThemeHelper.MauDaXacNhan, true, out _lblXacNhan, out _),
                 TaoTheKpi("Đang lập", ThemeHelper.MauDangLap, true, out _lblDangLap, out _),
                 TaoTheKpi("Đã hủy", ThemeHelper.MauDaHuy, true, out _lblDaHuy, out _),
-                76));
+                Co(76)));
             ThemHang(tbl, TaoHangBieuDo());
             ThemHang(tbl, TaoTheTopSanPham());
 
@@ -112,10 +120,10 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
 
         private Control TaoTheBoLoc()
         {
-            var card = new TheCard { Height = 176, Margin = new Padding(0, 0, 0, 10), Padding = new Padding(12, 8, 12, 8) };
+            var card = new TheCard { Height = Co(176), Margin = new Padding(0, 0, 0, 10), Padding = new Padding(12, 8, 12, 8) };
 
             // Hang 1: chon nhanh
-            var hang1 = new FlowLayoutPanel { Dock = DockStyle.Top, Height = 38, WrapContents = false };
+            var hang1 = new FlowLayoutPanel { Dock = DockStyle.Top, Height = Co(38), WrapContents = false };
             hang1.Controls.Add(Nhan("Chọn nhanh:", true));
             string[] ten = { "Hôm nay", "7 ngày qua", "Tháng này", "Tháng trước", "Năm nay" };
             for (int i = 0; i < ten.Length; i++)
@@ -128,7 +136,7 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
             }
 
             // Hang 2: chon ngay / thang
-            var hang2 = new FlowLayoutPanel { Dock = DockStyle.Top, Height = 38, WrapContents = false };
+            var hang2 = new FlowLayoutPanel { Dock = DockStyle.Top, Height = Co(38), WrapContents = false };
             hang2.Controls.Add(Nhan("Chọn thời gian:", true));
             hang2.Controls.Add(Nhan("Từ ngày"));
             _dtTu = TaoNgay("dd/MM/yyyy", 110);
@@ -143,13 +151,14 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
             hang2.Controls.Add(_dtThang);
 
             // Hang 3: nhan vien + nut chuc nang
-            var hang3 = new FlowLayoutPanel { Dock = DockStyle.Top, Height = 38, WrapContents = false };
+            var hang3 = new FlowLayoutPanel { Dock = DockStyle.Top, Height = Co(38), WrapContents = false };
             _lblNhanVien = Nhan("Nhân viên");
             _cboNhanVien = new ComboBox
             {
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                Width = 180,
-                Margin = new Padding(0, 3, 12, 0)
+                Width = Co(180),
+                Margin = new Padding(0, Co(3), Co(12), 0),
+                ForeColor = MauChuDen
             };
             hang3.Controls.Add(_lblNhanVien);
             hang3.Controls.Add(_cboNhanVien);
@@ -165,8 +174,8 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
             hang3.Controls.Add(btnXuat);
 
             // Hang 4: thong tin ky dang xem + loi
-            var hang4 = new FlowLayoutPanel { Dock = DockStyle.Top, Height = 28, WrapContents = false };
-            _lblKy = new Label { AutoSize = true, ForeColor = ThemeHelper.MauChuPhu, Margin = new Padding(0, 6, 16, 0) };
+            var hang4 = new FlowLayoutPanel { Dock = DockStyle.Top, Height = Co(28), WrapContents = false };
+            _lblKy = new Label { AutoSize = true, ForeColor = MauChuDen, Margin = new Padding(0, 6, 16, 0) };
             _lblLoi = new Label { AutoSize = true, ForeColor = ThemeHelper.MauLoi, Margin = new Padding(0, 6, 0, 0) };
             hang4.Controls.Add(_lblKy);
             hang4.Controls.Add(_lblLoi);
@@ -212,33 +221,34 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
             var lblTieuDe = new Label
             {
                 Dock = DockStyle.Top,
-                Height = 20,
+                Height = Co(20),
                 Text = tieuDe.ToUpper(Vi),
-                Font = ThemeHelper.TaoFont(8.5f),
-                ForeColor = ThemeHelper.MauChuPhu,
+                Font = Chu(8.5f, FontStyle.Bold),
+                ForeColor = MauChuDen,
                 TextAlign = ContentAlignment.MiddleLeft
             };
             giaTri = new Label
             {
                 Dock = DockStyle.Top,
-                Height = 34,
+                Height = Co(34),
                 Text = "--",
-                Font = ThemeHelper.TaoFont(17f, FontStyle.Bold),
-                ForeColor = mau,
+                Font = Chu(17f, FontStyle.Bold),
+                ForeColor = GiuMauSoLieu ? mau : MauChuDen,
                 TextAlign = ContentAlignment.MiddleLeft
             };
             phu = new Label
             {
                 Dock = DockStyle.Top,
-                Height = 20,
-                Font = ThemeHelper.TaoFont(8.5f),
-                ForeColor = ThemeHelper.MauChuPhu,
+                Height = Co(20),
+                Font = Chu(8.5f),
+                ForeColor = MauChuDen,
                 TextAlign = ContentAlignment.MiddleLeft
             };
 
             card.Controls.Add(phu);
             card.Controls.Add(giaTri);
             card.Controls.Add(lblTieuDe);
+            // Vach mau tren dau the trang thai van giu de phan biet Da xac nhan / Dang lap / Da huy
             if (vachTren)
                 card.Controls.Add(new Panel { Dock = DockStyle.Top, Height = 3, BackColor = mau });
             return card;
@@ -248,7 +258,7 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
         {
             var row = new TableLayoutPanel
             {
-                Height = 250,
+                Height = Co(250),
                 ColumnCount = 2,
                 RowCount = 1,
                 Margin = new Padding(0, 0, 0, 10),
@@ -275,7 +285,7 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
 
         private Control TaoTheTopSanPham()
         {
-            var card = new TheCard { Height = 290, Margin = new Padding(0, 0, 0, 10), Padding = new Padding(12, 8, 12, 8) };
+            var card = new TheCard { Height = Co(290), Margin = new Padding(0, 0, 0, 10), Padding = new Padding(12, 8, 12, 8) };
 
             _dgvTop = new DataGridView
             {
@@ -291,21 +301,21 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
                 CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal,
                 EnableHeadersVisualStyles = false,
                 ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing,
-                ColumnHeadersHeight = 36,
+                ColumnHeadersHeight = Co(36),
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                RowTemplate = { Height = 34 },
+                RowTemplate = { Height = Co(34) },
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect,
                 MultiSelect = false
             };
             _dgvTop.ColumnHeadersDefaultCellStyle.BackColor = ThemeHelper.MauTieuDeBang;
-            _dgvTop.ColumnHeadersDefaultCellStyle.ForeColor = ThemeHelper.MauChinhHover;
+            _dgvTop.ColumnHeadersDefaultCellStyle.ForeColor = MauChuDen;
             _dgvTop.ColumnHeadersDefaultCellStyle.SelectionBackColor = ThemeHelper.MauTieuDeBang;
-            _dgvTop.ColumnHeadersDefaultCellStyle.SelectionForeColor = ThemeHelper.MauChinhHover;
-            _dgvTop.ColumnHeadersDefaultCellStyle.Font = ThemeHelper.TaoFont(9.5f, FontStyle.Bold);
-            _dgvTop.DefaultCellStyle.Font = ThemeHelper.TaoFont(9.5f);
-            _dgvTop.DefaultCellStyle.ForeColor = ThemeHelper.MauChuChinh;
+            _dgvTop.ColumnHeadersDefaultCellStyle.SelectionForeColor = MauChuDen;
+            _dgvTop.ColumnHeadersDefaultCellStyle.Font = Chu(9.5f, FontStyle.Bold);
+            _dgvTop.DefaultCellStyle.Font = Chu(9.5f);
+            _dgvTop.DefaultCellStyle.ForeColor = MauChuDen;
             _dgvTop.DefaultCellStyle.SelectionBackColor = ThemeHelper.MauTieuDeBang;
-            _dgvTop.DefaultCellStyle.SelectionForeColor = ThemeHelper.MauChuChinh;
+            _dgvTop.DefaultCellStyle.SelectionForeColor = MauChuDen;
 
             _dgvTop.Columns.Add("Hang", "Hạng");
             _dgvTop.Columns.Add("MaSP", "Mã SP");
@@ -328,9 +338,9 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
             _lblTopRong = new Label
             {
                 Dock = DockStyle.Bottom,
-                Height = 40,
+                Height = Co(40),
                 Text = "Không có dữ liệu trong kỳ này",
-                ForeColor = ThemeHelper.MauChuPhu,
+                ForeColor = MauChuDen,
                 TextAlign = ContentAlignment.MiddleCenter,
                 Visible = false
             };
@@ -346,10 +356,10 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
             return new Label
             {
                 Dock = DockStyle.Top,
-                Height = 28,
+                Height = Co(28),
                 Text = text,
-                Font = ThemeHelper.TaoFont(10f, FontStyle.Bold),
-                ForeColor = ThemeHelper.MauChinhHover,
+                Font = Chu(10f, FontStyle.Bold),
+                ForeColor = MauChuDen,
                 TextAlign = ContentAlignment.MiddleLeft
             };
         }
@@ -360,9 +370,9 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
             {
                 Text = text,
                 AutoSize = true,
-                Margin = new Padding(0, 8, 6, 0),
-                Font = ThemeHelper.TaoFont(9.5f, dam ? FontStyle.Bold : FontStyle.Regular),
-                ForeColor = dam ? ThemeHelper.MauChuChinh : ThemeHelper.MauChuPhu
+                Margin = new Padding(0, Co(9), Co(6), 0),
+                Font = Chu(9.5f, FontStyle.Bold),
+                ForeColor = MauChuDen
             };
         }
 
@@ -372,9 +382,9 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
             {
                 Format = DateTimePickerFormat.Custom,
                 CustomFormat = dinhDang,
-                Width = rong,
+                Width = Co(rong),
                 MaxDate = DateTime.Today,
-                Margin = new Padding(0, 4, 12, 0)
+                Margin = new Padding(0, Co(4), Co(12), 0)
             };
         }
 
@@ -383,13 +393,13 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
             var b = new Button
             {
                 Text = text,
-                Width = rong,
-                Height = 30,
+                Width = Co(rong),
+                Height = Co(30),
                 FlatStyle = FlatStyle.Flat,
                 BackColor = nen,
                 ForeColor = chu,
                 Cursor = Cursors.Hand,
-                Margin = new Padding(0, 3, 8, 0),
+                Margin = new Padding(0, Co(3), Co(8), 0),
                 UseVisualStyleBackColor = false
             };
             b.FlatAppearance.BorderColor = ThemeHelper.MauChinh;
@@ -536,12 +546,13 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
             {
                 bool tang = pt >= 0;
                 _lblDoanhThuPhu.Text = $"{(tang ? "▲" : "▼")} {Math.Abs(pt).ToString("0.0", Vi)}% so với kỳ trước";
+                // Giu xanh/do cho mui ten tang/giam vi mang y nghia
                 _lblDoanhThuPhu.ForeColor = tang ? ThemeHelper.MauThanhCong : ThemeHelper.MauLoi;
             }
             else
             {
                 _lblDoanhThuPhu.Text = "-- so với kỳ trước (kỳ trước chưa có doanh thu)";
-                _lblDoanhThuPhu.ForeColor = ThemeHelper.MauChuPhu;
+                _lblDoanhThuPhu.ForeColor = MauChuDen;
             }
 
             _lblTongHoaDon.Text = kq.TrangThai.Tong.ToString("N0", Vi) + " đơn";
@@ -557,7 +568,6 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
             _thanhTrangThai.DuLieu = kq.TrangThai;
 
             _dgvTop.Rows.Clear();
-            Color[] huyChuong = { ThemeHelper.MauVang, ThemeHelper.MauBac, ThemeHelper.MauDong };
             foreach (var sp in kq.TopSanPham)
             {
                 int dong = _dgvTop.Rows.Add(
@@ -569,19 +579,20 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
                     sp.TyTrongPhanTram.ToString("0.0", Vi) + "%");
 
                 var hang = _dgvTop.Rows[dong];
-                hang.Cells["MaSP"].Style.ForeColor = ThemeHelper.MauChinh;
-                hang.Cells["DoanhThu"].Style.Font = ThemeHelper.TaoFont(9.5f, FontStyle.Bold);
-                hang.Cells["TyTrong"].Style.ForeColor = ThemeHelper.MauThanhCong;
+                hang.Cells["DoanhThu"].Style.Font = Chu(9.5f, FontStyle.Bold);
                 if (sp.Hang >= 1 && sp.Hang <= 3)
-                {
-                    hang.Cells["Hang"].Style.ForeColor = huyChuong[sp.Hang - 1];
-                    hang.Cells["Hang"].Style.Font = ThemeHelper.TaoFont(9.5f, FontStyle.Bold);
-                }
+                    hang.Cells["Hang"].Style.Font = Chu(9.5f, FontStyle.Bold);
                 if (sp.Hang == 1)
-                    hang.Cells["TenSP"].Style.Font = ThemeHelper.TaoFont(9.5f, FontStyle.Bold);
+                    hang.Cells["TenSP"].Style.Font = Chu(9.5f, FontStyle.Bold);
             }
             _lblTopRong.Visible = kq.TopSanPham.Count == 0;
         }
+
+        // Co chu rieng cua trang Thong ke (khong dung chung ThemeHelper de khong anh huong trang khac).
+        // Muon to/nho hon: doi HeSoChu. Chieu cao khung tu nong theo cung he so.
+        private const float HeSoChu = 1.2f;
+        private static Font Chu(float pt, FontStyle kieu = FontStyle.Regular) => new Font("Segoe UI", pt * HeSoChu, kieu);
+        private static int Co(int px) => (int)Math.Round(px * HeSoChu);
 
         private static string TienTe(decimal so)
         {
@@ -695,19 +706,18 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 g.Clear(BackColor);
 
-                using var fontNho = ThemeHelper.TaoFont(8.5f);
-                using var chuPhu = new SolidBrush(ThemeHelper.MauChuPhu);
-                using var chuChinh = new SolidBrush(ThemeHelper.MauChuChinh);
+                using var fontNho = Chu(8.5f);
+                using var chuDen = new SolidBrush(MauChuDen);
                 var giua = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
 
                 if (_duLieu.Count == 0)
                 {
-                    g.DrawString("Không có dữ liệu trong kỳ này", fontNho, chuPhu,
+                    g.DrawString("Không có dữ liệu trong kỳ này", fontNho, chuDen,
                         new RectangleF(0, 0, Width, Height), giua);
                     return;
                 }
 
-                int trai = 6, phai = Width - 6, tren = 22, day = Height - 26;
+                int trai = 6, phai = Width - 6, tren = 28, day = Height - 32;
                 using (var truc = new Pen(ThemeHelper.MauDuongVien))
                     g.DrawLine(truc, trai, day, phai, day);
 
@@ -727,12 +737,12 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
                     if (d.DoanhThu > 0)
                     {
                         string giaTri = (d.DoanhThu / 1_000_000m).ToString("N1", Vi);
-                        g.DrawString(giaTri, fontNho, chuChinh,
-                            new RectangleF(x - 10, day - cao - 18, rongCot + 20, 16), giua);
+                        g.DrawString(giaTri, fontNho, chuDen,
+                            new RectangleF(x - 14, day - cao - 22, rongCot + 28, 20), giua);
                     }
 
-                    g.DrawString(d.Nhan, fontNho, chuPhu,
-                        new RectangleF(trai + rongO * i, day + 4, rongO, 18), giua);
+                    g.DrawString(d.Nhan, fontNho, chuDen,
+                        new RectangleF(trai + rongO * i, day + 4, rongO, 24), giua);
                 }
             }
         }
@@ -762,8 +772,8 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
                 var g = e.Graphics;
                 g.Clear(BackColor);
 
-                using var font = ThemeHelper.TaoFont(9.5f);
-                using var chu = new SolidBrush(ThemeHelper.MauChuChinh);
+                using var font = Chu(9.5f);
+                using var chu = new SolidBrush(MauChuDen);
                 using var nenThanh = new SolidBrush(Color.FromArgb(232, 238, 247));
                 var phai = new StringFormat { Alignment = StringAlignment.Far };
 
@@ -774,20 +784,20 @@ namespace QuanLyHoaDon.GUI.Forms.ThongKe
                     ("Đã hủy", _duLieu.SoDaHuy, _duLieu.TyLeDaHuy, ThemeHelper.MauDaHuy)
                 };
 
-                int cao = Math.Max(Height / 3, 40);
+                int cao = Math.Max(Height / 3, 56);
                 for (int i = 0; i < muc.Length; i++)
                 {
                     int y = 6 + i * cao;
                     g.DrawString(muc[i].Ten, font, chu, 0, y);
                     g.DrawString($"{muc[i].TyLe.ToString("0.0", Vi)}% ({muc[i].So})", font, chu,
-                        new RectangleF(0, y, Width - 2, 20), phai);
+                        new RectangleF(0, y, Width - 2, 26), phai);
 
-                    g.FillRectangle(nenThanh, 0, y + 24, Width - 2, 9);
+                    g.FillRectangle(nenThanh, 0, y + 30, Width - 2, 10);
                     float rong = (Width - 2) * (float)muc[i].TyLe / 100f;
                     if (rong > 0)
                     {
                         using var to = new SolidBrush(muc[i].Mau);
-                        g.FillRectangle(to, 0, y + 24, rong, 9);
+                        g.FillRectangle(to, 0, y + 30, rong, 10);
                     }
                 }
             }

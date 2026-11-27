@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using QuanLyHoaDon.GUI.Controls;
 using QuanLyHoaDon.GUI.Forms.HoaDon;
@@ -14,6 +15,10 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
 {
     public partial class FormChinh : Form
     {
+        // Màu riêng cho khối thương hiệu đầu sidebar (navy đậm tạo điểm nhấn)
+        private static readonly Color MauNavy = ColorTranslator.FromHtml("#12305A");
+        private static readonly Color MauChuPhuNavy = ColorTranslator.FromHtml("#C9D9F5");
+
         // Danh sách các button menu để quản lý trạng thái active
         private readonly Dictionary<string, Button> _menuButtons = new();
         private string _maChucNangHienTai = string.Empty;
@@ -41,40 +46,22 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
 
             // Header Sidebar
             ApDungGiaoDienSidebarSang();
-            pnlAvatarSidebar.BackColor = ThemeHelper.MauChinh;
-            lblBrandLogo.BackColor = ThemeHelper.MauChinh;
 
-            // Bo góc tròn cho logo và avatar Sidebar
-            pnlAvatarSidebar.Paint += (s, e) =>
-            {
-                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-                using var path = new System.Drawing.Drawing2D.GraphicsPath();
-                path.AddEllipse(0, 0, pnlAvatarSidebar.Width - 1, pnlAvatarSidebar.Height - 1);
-                pnlAvatarSidebar.Region = new Region(path);
-            };
-
-            lblBrandLogo.Paint += (s, e) =>
-            {
-                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-                using var path = new System.Drawing.Drawing2D.GraphicsPath();
-                path.AddEllipse(0, 0, lblBrandLogo.Width - 1, lblBrandLogo.Height - 1);
-                lblBrandLogo.Region = new Region(path);
-            };
-
-            pnlAvatarCircle.Paint += (s, e) =>
-            {
-                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-                using var path = new System.Drawing.Drawing2D.GraphicsPath();
-                path.AddEllipse(0, 0, pnlAvatarCircle.Width - 1, pnlAvatarCircle.Height - 1);
-                pnlAvatarCircle.Region = new Region(path);
-            };
+            // Logo và avatar tròn: vẽ có khử răng cưa, luôn là hình vuông nên không bị méo
+            lblBrandLogo.ForeColor = MauNavy;
+            VeHinhTron(lblBrandLogo, ThemeHelper.MauNhan);     // Logo: cam nổi bật trên nền navy
+            VeHinhTron(pnlAvatarSidebar, ThemeHelper.MauChinh);
+            VeHinhTron(pnlAvatarCircle, ThemeHelper.MauChinh);
 
             // Topbar
             pnlTopbar.BackColor = ThemeHelper.MauNenNoiDung;
             pnlTopbar.Paint += (s, e) =>
             {
+                // Đường viền mảnh + vạch xanh dưới thanh tiêu đề
                 using var pen = new Pen(ThemeHelper.MauDuongVien, 1);
                 e.Graphics.DrawLine(pen, 0, pnlTopbar.Height - 1, pnlTopbar.Width, pnlTopbar.Height - 1);
+                using var brush = new SolidBrush(ThemeHelper.MauChinh);
+                e.Graphics.FillRectangle(brush, 0, pnlTopbar.Height - 3, pnlTopbar.Width, 3);
             };
 
             lblTopbarTieuDe.Font = ThemeHelper.FontTieuDeTrang;
@@ -148,7 +135,47 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
         }
 
         /// <summary>
-        /// Sidebar nền trắng: đổi nền các panel và chuyển chữ trắng thành chữ tối
+        /// Vẽ hình tròn mượt (khử răng cưa) cho một control, thay cho cách cắt Region gây méo và răng cưa.
+        /// Hình tròn được vẽ trên control cha, control mục tiêu chuyển thành nền trong suốt để chữ nằm trên hình tròn.
+        /// </summary>
+        private static void VeHinhTron(Control muc, Color mauNen)
+        {
+            var cha = muc.Parent;
+            if (cha == null) return;
+
+            // Ép thành hình vuông để vòng tròn không bị dẹt
+            int canh = Math.Max(muc.Width, muc.Height);
+            if (muc is Label lb)
+            {
+                lb.AutoSize = false;
+                lb.TextAlign = ContentAlignment.MiddleCenter;
+            }
+            muc.Size = new Size(canh, canh);
+
+            muc.BackColor = Color.Transparent;
+            foreach (Control con in muc.Controls)
+            {
+                if (con is Label labelCon) labelCon.BackColor = Color.Transparent;
+            }
+
+            cha.Paint += (s, e) =>
+            {
+                int d = Math.Min(muc.Width, muc.Height) - 1;
+                if (d <= 0) return;
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                using var brush = new SolidBrush(mauNen);
+                e.Graphics.FillEllipse(brush,
+                    muc.Left + (muc.Width - d) / 2f,
+                    muc.Top + (muc.Height - d) / 2f,
+                    d, d);
+            };
+            muc.Resize += (s, e) => cha.Invalidate();
+            muc.LocationChanged += (s, e) => cha.Invalidate();
+            cha.Invalidate();
+        }
+
+        /// <summary>
+        /// Sidebar: khối thương hiệu nền navy đậm (điểm nhấn), phần menu nền trắng, thẻ tài khoản xám xanh nhạt
         /// </summary>
         private void ApDungGiaoDienSidebarSang()
         {
@@ -164,11 +191,25 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             }
 
             flpSidebarMenu.BackColor = ThemeHelper.MauSidebar;
-            pnlSidebarBrand.BackColor = ThemeHelper.MauSidebarHeader;
+            pnlSidebarBrand.BackColor = MauNavy;
             pnlTaiKhoanSidebar.BackColor = ThemeHelper.MauSidebarAccount;
 
-            DoiMauChuSidebarSang(pnlSidebarBrand);
+            DatMauChuThuongHieu(pnlSidebarBrand);
             DoiMauChuSidebarSang(pnlTaiKhoanSidebar);
+        }
+
+        // Chữ trên khối thương hiệu navy: tiêu đề trắng, dòng phụ xanh nhạt
+        private void DatMauChuThuongHieu(Control goc)
+        {
+            foreach (Control c in goc.Controls)
+            {
+                if (c is Label lb && c != lblBrandLogo)
+                {
+                    lb.BackColor = Color.Transparent;
+                    lb.ForeColor = lb.Font.Bold ? Color.White : MauChuPhuNavy;
+                }
+                if (c.HasChildren) DatMauChuThuongHieu(c);
+            }
         }
 
         private void DoiMauChuSidebarSang(Control goc)
@@ -176,9 +217,11 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             foreach (Control c in goc.Controls)
             {
                 // Bỏ qua chữ nằm trong logo/avatar tròn màu xanh (giữ chữ trắng)
-                if (c is Label lb && c != lblBrandLogo && c != lblAvatarSidebar && lb.ForeColor.GetBrightness() > 0.6f)
+                if (c is Label lb && c != lblBrandLogo && c != lblAvatarSidebar)
                 {
-                    lb.ForeColor = lb.Font.Bold ? ThemeHelper.MauChuChinh : ThemeHelper.MauChuPhuSidebar;
+                    lb.BackColor = Color.Transparent;
+                    if (lb.ForeColor.GetBrightness() > 0.6f)
+                        lb.ForeColor = lb.Font.Bold ? ThemeHelper.MauChuChinh : ThemeHelper.MauChuPhuSidebar;
                 }
                 if (c.HasChildren) DoiMauChuSidebarSang(c);
             }
@@ -235,8 +278,6 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
             ThemItemSidebar("HoaDon", "🧾  Hóa đơn", () => DieuHuongTheoMa("HoaDon"));
             ThemItemSidebar("BaoCao", "📈  Thống kê & Báo cáo", () => DieuHuongTheoMa("BaoCao"));
         }
-
-
 
         private void TaoNhomMenuNguoiDung()
         {
@@ -298,8 +339,8 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
                 _menuNguoiDungMo = !_menuNguoiDungMo;
                 _btnSubNhanVien.Visible = _menuNguoiDungMo;
                 _btnSubYeuCauCapLaiMK.Visible = _menuNguoiDungMo;
-                _btnMenuNguoiDungParent.Text = _menuNguoiDungMo 
-                    ? "👤  Quản lý người dùng   ▲" 
+                _btnMenuNguoiDungParent.Text = _menuNguoiDungMo
+                    ? "👤  Quản lý người dùng   ▲"
                     : "👤  Quản lý người dùng   ▼";
             };
 
@@ -526,9 +567,9 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
                 rb.BackColor = active ? ThemeHelper.MauSidebarActive : ThemeHelper.MauSidebar;
                 rb.HoverColor = active ? ThemeHelper.MauSidebarActive : ThemeHelper.MauSidebarHover;
                 rb.Font = active ? ThemeHelper.FontNoiDungDam : ThemeHelper.FontNoiDung;
-                // Mục đang chọn: nền trắng, chữ xanh. Mục còn lại: nền xanh, chữ trắng
-                rb.ForeColor = active ? ThemeHelper.MauChinhHover : ThemeHelper.MauChuTrenSidebar;
-                rb.AccentBarColor = active ? ThemeHelper.MauChinh : Color.Empty;
+                // Mục đang chọn: nền xanh nhạt, chữ navy đậm, thanh cam bên trái làm điểm nhấn
+                rb.ForeColor = active ? MauNavy : ThemeHelper.MauChuTrenSidebar;
+                rb.AccentBarColor = active ? ThemeHelper.MauNhan : Color.Empty;
                 rb.Invalidate();
             }
         }
@@ -557,9 +598,9 @@ namespace QuanLyHoaDon.GUI.Forms.HeThong
         public override Color ImageMarginGradientEnd => Color.White;
         public override Color MenuBorder => ColorTranslator.FromHtml("#E2E8F0");
         public override Color MenuItemBorder => Color.Transparent;
-        public override Color MenuItemSelected => ColorTranslator.FromHtml("#F1F5F9");
-        public override Color MenuItemSelectedGradientBegin => ColorTranslator.FromHtml("#F1F5F9");
-        public override Color MenuItemSelectedGradientEnd => ColorTranslator.FromHtml("#F1F5F9");
+        public override Color MenuItemSelected => ColorTranslator.FromHtml("#EAF1FC");
+        public override Color MenuItemSelectedGradientBegin => ColorTranslator.FromHtml("#EAF1FC");
+        public override Color MenuItemSelectedGradientEnd => ColorTranslator.FromHtml("#EAF1FC");
         public override Color SeparatorDark => ColorTranslator.FromHtml("#E2E8F0");
         public override Color SeparatorLight => Color.White;
     }

@@ -61,12 +61,15 @@ namespace QuanLyHoaDon.GUI.Forms.HoaDon
             this.Padding = new Padding(24, 20, 24, 20);
 
             // 1. Top Panel
-            pnlTop = new Panel
+            pnlTop = new FlowLayoutPanel
             {
                 Dock = DockStyle.Top,
                 Height = 60,
                 BackColor = ThemeHelper.MauNenNoiDung,
-                Padding = new Padding(16, 10, 16, 10)
+                Padding = new Padding(16, 8, 16, 8),
+                FlowDirection = FlowDirection.LeftToRight,
+                WrapContents = false,
+                AutoScroll = false
             };
             pnlTop.Paint += (s, e) =>
             {
@@ -79,14 +82,14 @@ namespace QuanLyHoaDon.GUI.Forms.HoaDon
                 Text = "🔍 Tra cứu hóa đơn:",
                 Font = ThemeHelper.FontLabel,
                 ForeColor = ThemeHelper.MauChuChinh,
-                Location = new Point(16, 18),
-                AutoSize = true
+                AutoSize = true,
+                Margin = new Padding(0, 10, 10, 0)
             };
 
             txtTimKiem = new TextBox
             {
-                Location = new Point(175, 14),
                 Size = new Size(220, 32),
+                Margin = new Padding(0, 6, 10, 0),
                 Font = ThemeHelper.FontNoiDung,
                 PlaceholderText = "Mã HĐ, Khách hàng, SĐT..."
             };
@@ -94,8 +97,9 @@ namespace QuanLyHoaDon.GUI.Forms.HoaDon
 
             cboLocTrangThai = new ComboBox
             {
-                Location = new Point(405, 14),
-                Size = new Size(150, 32),
+                Size = new Size(210, 32),
+                DropDownWidth = 210,
+                Margin = new Padding(0, 6, 10, 0),
                 Font = ThemeHelper.FontNoiDung,
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
@@ -113,25 +117,27 @@ namespace QuanLyHoaDon.GUI.Forms.HoaDon
                 TaiDanhSachHoaDon();
             };
 
-            btnTimKiem = new Button { Text = "Tra cứu", Location = new Point(565, 12), Size = new Size(90, 36) };
+            btnTimKiem = new Button { Text = "Tra hóa đơn", Size = new Size(100, 36), Margin = new Padding(0, 2, 10, 0) };
             ThemeHelper.ApDungButtonChinh(btnTimKiem);
             btnTimKiem.Height = 36;
+            ChoNutTuGian(btnTimKiem);
             btnTimKiem.Click += (s, e) => TaiDanhSachHoaDon();
 
-            btnLamMoi = new Button { Text = "Tải lại", Location = new Point(665, 12), Size = new Size(85, 36) };
+            btnLamMoi = new Button { Text = "Tải hóa đơn", Size = new Size(100, 36), Margin = new Padding(0, 2, 20, 0) };
             ThemeHelper.ApDungButtonPhu(btnLamMoi);
             btnLamMoi.Height = 36;
+            ChoNutTuGian(btnLamMoi);
             btnLamMoi.Click += (s, e) => { txtTimKiem.Clear(); cboLocTrangThai.SelectedIndex = 0; _trangThaiLocHienTai = null; TaiDanhSachHoaDon(); };
 
             var lblPhanQuyenHD = new Label
             {
-                Text = Session.LaQuanLy 
+                Text = Session.LaQuanLy
                     ? "🛡 Quản lý: Toàn bộ hóa đơn"
                     : "👤 Cá nhân: Hóa đơn của tôi",
                 Font = ThemeHelper.FontChuThichDam,
                 ForeColor = Session.LaQuanLy ? ThemeHelper.MauChinh : ThemeHelper.MauThanhCong,
-                Location = new Point(760, 19),
-                AutoSize = true
+                AutoSize = true,
+                Margin = new Padding(0, 11, 0, 0)
             };
 
             pnlTop.Controls.Add(lblTim);
@@ -165,6 +171,33 @@ namespace QuanLyHoaDon.GUI.Forms.HoaDon
             this.Controls.Add(pnlTop);
         }
 
+        private static readonly Color MauVienO = Color.FromArgb(120, 130, 145);
+
+        /// <summary>Nút tự giãn theo chữ để chữ có dấu cách không bị xuống dòng rồi mất phần sau.</summary>
+        private static void ChoNutTuGian(Button b)
+        {
+            b.AutoSize = true;
+            b.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            b.MinimumSize = new Size(100, 36);
+            b.Padding = new Padding(10, 0, 10, 0);
+        }
+
+        /// <summary>Cho chiều cao dòng tiêu đề tự co theo chữ để không bị cắt phần dưới của chữ.</summary>
+        private static void ChinhTieuDeBang(DataGridView g)
+        {
+            g.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            var p = g.ColumnHeadersDefaultCellStyle.Padding;
+            g.ColumnHeadersDefaultCellStyle.Padding = new Padding(p.Left, 8, p.Right, 8);
+        }
+
+        private static void CanGiuaCot(DataGridView g, string tenCot)
+        {
+            var c = g.Columns[tenCot];
+            if (c == null) return;
+            c.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            c.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+        }
+
         private void KhoiTaoTabDanhSach()
         {
             tabDanhSach.BackColor = ThemeHelper.MauNenUngDung;
@@ -181,6 +214,7 @@ namespace QuanLyHoaDon.GUI.Forms.HoaDon
             // Phần trên: Danh sách hóa đơn
             dgvHoaDon = new DataGridView { Dock = DockStyle.Fill };
             ThemeHelper.ChuanHoaDataGridView(dgvHoaDon);
+            ChinhTieuDeBang(dgvHoaDon);
 
             dgvHoaDon.Columns.Add(new DataGridViewTextBoxColumn { Name = "MaHoaDon", HeaderText = "Mã HĐ", FillWeight = 20 });
             dgvHoaDon.Columns.Add(new DataGridViewTextBoxColumn { Name = "TenKhachHang", HeaderText = "Khách hàng", FillWeight = 40 });
@@ -189,6 +223,9 @@ namespace QuanLyHoaDon.GUI.Forms.HoaDon
             dgvHoaDon.Columns.Add(new DataGridViewTextBoxColumn { Name = "TongSoLuong", HeaderText = "Số lượng", FillWeight = 20 });
             dgvHoaDon.Columns.Add(new DataGridViewTextBoxColumn { Name = "TongTien", HeaderText = "Tổng tiền (đ)", FillWeight = 35 });
             dgvHoaDon.Columns.Add(new DataGridViewTextBoxColumn { Name = "TrangThai", HeaderText = "Trạng thái", FillWeight = 25 });
+
+            CanGiuaCot(dgvHoaDon, "TongSoLuong");
+            CanGiuaCot(dgvHoaDon, "TongTien");
 
             dgvHoaDon.SelectionChanged += DgvHoaDon_SelectionChanged;
 
@@ -205,12 +242,12 @@ namespace QuanLyHoaDon.GUI.Forms.HoaDon
             };
 
             var pnlThaoTacHD = new Panel { Dock = DockStyle.Bottom, Height = 50, BackColor = Color.Transparent };
-            btnXacNhanHD = new Button { Text = "✓ Xác nhận hoàn tất", Location = new Point(0, 8), Size = new Size(180, 38) };
+            btnXacNhanHD = new Button { Text = "✓ Xác nhận", Location = new Point(0, 8), Size = new Size(180, 38) };
             ThemeHelper.ApDungButtonThanhCong(btnXacNhanHD);
             btnXacNhanHD.Height = 38;
             btnXacNhanHD.Click += BtnXacNhanHD_Click;
 
-            btnHuyHD = new Button { Text = "✕ Hủy hóa đơn", Location = new Point(195, 8), Size = new Size(150, 38) };
+            btnHuyHD = new Button { Text = "✕ Hủy", Location = new Point(195, 8), Size = new Size(150, 38) };
             ThemeHelper.ApDungButtonNguyHiem(btnHuyHD);
             btnHuyHD.Height = 38;
             btnHuyHD.Click += BtnHuyHD_Click;
@@ -220,6 +257,7 @@ namespace QuanLyHoaDon.GUI.Forms.HoaDon
 
             dgvChiTiet = new DataGridView { Dock = DockStyle.Fill };
             ThemeHelper.ChuanHoaDataGridView(dgvChiTiet);
+            ChinhTieuDeBang(dgvChiTiet);
             dgvChiTiet.Columns.Add(new DataGridViewTextBoxColumn { Name = "MaSP", HeaderText = "Mã SP", FillWeight = 20 });
             dgvChiTiet.Columns.Add(new DataGridViewTextBoxColumn { Name = "TenSanPham", HeaderText = "Tên mặt hàng", FillWeight = 50 });
             dgvChiTiet.Columns.Add(new DataGridViewTextBoxColumn { Name = "DonViTinh", HeaderText = "ĐVT", FillWeight = 20 });
@@ -260,6 +298,15 @@ namespace QuanLyHoaDon.GUI.Forms.HoaDon
             {
                 using var pen = new Pen(ThemeHelper.MauDuongVien, 1);
                 e.Graphics.DrawRectangle(pen, 0, 0, pnlLapContainer.Width - 1, pnlLapContainer.Height - 1);
+
+                // Viền đậm quanh các ô nhập để nhìn rõ ranh giới
+                using var penVien = new Pen(MauVienO, 1);
+                foreach (Control c in new Control[] { cboKhachHang, cboSanPham, numSoLuong })
+                {
+                    var r = c.Bounds;
+                    r.Inflate(1, 1);
+                    e.Graphics.DrawRectangle(penVien, r);
+                }
             };
 
             var lblLapTieuDe = new Label
@@ -272,39 +319,42 @@ namespace QuanLyHoaDon.GUI.Forms.HoaDon
             };
 
             // Chọn khách hàng
-            var lblKH = new Label { Text = "Khách hàng mua:", Font = ThemeHelper.FontLabel, ForeColor = ThemeHelper.MauChuChinh, Location = new Point(20, 56), AutoSize = true };
-            cboKhachHang = new ComboBox { Location = new Point(20, 80), Size = new Size(340, 32), Font = ThemeHelper.FontNoiDung, DropDownStyle = ComboBoxStyle.DropDownList };
+            var lblKH = new Label { Text = "Khách hàng mua:", Font = ThemeHelper.FontLabel, ForeColor = ThemeHelper.MauChuChinh, Location = new Point(20, 52), AutoSize = true };
+            cboKhachHang = new ComboBox { Location = new Point(20, 84), Size = new Size(340, 32), Font = ThemeHelper.FontNoiDung, DropDownStyle = ComboBoxStyle.DropDownList };
 
             // Ghi chú
-            var lblGC = new Label { Text = "Ghi chú hóa đơn:", Font = ThemeHelper.FontLabel, ForeColor = ThemeHelper.MauChuChinh, Location = new Point(380, 56), AutoSize = true };
-            txtGhiChu = new TextBox { Location = new Point(380, 80), Size = new Size(420, 32), Font = ThemeHelper.FontNoiDung };
+            var lblGC = new Label { Text = "Ghi chú hóa đơn:", Font = ThemeHelper.FontLabel, ForeColor = ThemeHelper.MauChuChinh, Location = new Point(380, 52), AutoSize = true };
+            txtGhiChu = new TextBox { Location = new Point(380, 84), Size = new Size(420, 32), Font = ThemeHelper.FontNoiDung };
             ThemeHelper.ChuanHoaTextBox(txtGhiChu);
 
             // Thêm mặt hàng
-            var lblChonSP = new Label { Text = "Chọn sản phẩm:", Font = ThemeHelper.FontLabel, ForeColor = ThemeHelper.MauChuChinh, Location = new Point(20, 126), AutoSize = true };
-            cboSanPham = new ComboBox { Location = new Point(20, 150), Size = new Size(340, 32), Font = ThemeHelper.FontNoiDung, DropDownStyle = ComboBoxStyle.DropDownList };
+            var lblChonSP = new Label { Text = "Chọn sản phẩm:", Font = ThemeHelper.FontLabel, ForeColor = ThemeHelper.MauChuChinh, Location = new Point(20, 128), AutoSize = true };
+            cboSanPham = new ComboBox { Location = new Point(20, 160), Size = new Size(340, 32), Font = ThemeHelper.FontNoiDung, DropDownStyle = ComboBoxStyle.DropDownList };
 
-            var lblSL = new Label { Text = "Số lượng:", Font = ThemeHelper.FontLabel, ForeColor = ThemeHelper.MauChuChinh, Location = new Point(380, 126), AutoSize = true };
-            numSoLuong = new NumericUpDown { Location = new Point(380, 150), Size = new Size(110, 32), Font = ThemeHelper.FontNoiDung, Minimum = 1, Maximum = 1000, Value = 1 };
+            var lblSL = new Label { Text = "Số lượng:", Font = ThemeHelper.FontLabel, ForeColor = ThemeHelper.MauChuChinh, Location = new Point(380, 128), AutoSize = true };
+            numSoLuong = new NumericUpDown { Location = new Point(380, 160), Size = new Size(110, 32), Font = ThemeHelper.FontNoiDung, Minimum = 1, Maximum = 1000, Value = 1 };
 
-            btnThemSanPham = new Button { Text = "+ Thêm vào đơn", Location = new Point(505, 148), Size = new Size(140, 34) };
+            btnThemSanPham = new Button { Text = "+ Thêm vào đơn", Location = new Point(505, 158), Size = new Size(140, 34) };
             ThemeHelper.ApDungButtonChinh(btnThemSanPham);
             btnThemSanPham.Height = 34;
             btnThemSanPham.Click += BtnThemSanPham_Click;
 
-            btnXoaDong = new Button { Text = "✕ Xóa dòng chọn", Location = new Point(655, 148), Size = new Size(145, 34) };
+            btnXoaDong = new Button { Text = "✕ Xóa dòng chọn", Location = new Point(655, 158), Size = new Size(145, 34) };
             ThemeHelper.ApDungButtonPhu(btnXoaDong);
             btnXoaDong.Height = 34;
+            btnXoaDong.FlatAppearance.BorderSize = 1;
+            btnXoaDong.FlatAppearance.BorderColor = MauVienO;
             btnXoaDong.Click += BtnXoaDong_Click;
 
             // Bảng danh sách dòng hóa đơn mới
             dgvDongChiTietMoi = new DataGridView
             {
-                Location = new Point(20, 195),
+                Location = new Point(20, 208),
                 Size = new Size(780, 260),
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
             };
             ThemeHelper.ChuanHoaDataGridView(dgvDongChiTietMoi);
+            ChinhTieuDeBang(dgvDongChiTietMoi);
             dgvDongChiTietMoi.Columns.Add(new DataGridViewTextBoxColumn { Name = "MaSanPham", HeaderText = "Mã SP", FillWeight = 20 });
             dgvDongChiTietMoi.Columns.Add(new DataGridViewTextBoxColumn { Name = "TenSanPham", HeaderText = "Tên sản phẩm", FillWeight = 50 });
             dgvDongChiTietMoi.Columns.Add(new DataGridViewTextBoxColumn { Name = "DonViTinh", HeaderText = "ĐVT", FillWeight = 20 });
@@ -318,14 +368,14 @@ namespace QuanLyHoaDon.GUI.Forms.HoaDon
                 Text = "TỔNG TIỀN: 0 đ",
                 Font = ThemeHelper.FontTieuDeKhuVuc,
                 ForeColor = ThemeHelper.MauChinh,
-                Location = new Point(20, 470),
+                Location = new Point(20, 482),
                 AutoSize = true
             };
 
             btnLuuHoaDon = new Button
             {
                 Text = "💾  Lưu và Xuất hóa đơn",
-                Location = new Point(560, 465),
+                Location = new Point(560, 477),
                 Size = new Size(240, ThemeHelper.ChieuCaoButtonChuan)
             };
             ThemeHelper.ApDungButtonThanhCong(btnLuuHoaDon);

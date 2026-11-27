@@ -8,7 +8,7 @@ namespace QuanLyHoaDon.Utilities
 {
     /// <summary>
     /// Hệ thống thiết kế chuẩn hóa toàn bộ ứng dụng Quản lý hóa đơn
-    /// Phong cách: Modern Desktop Enterprise, Minimalist, Soft UI
+    /// Phong cách: Modern Desktop Enterprise. Bảng màu: Xanh dương chủ đạo + Cam làm điểm nhấn
     /// </summary>
     public static class ThemeHelper
     {
@@ -17,22 +17,27 @@ namespace QuanLyHoaDon.Utilities
         // Màu chính (Brand & Primary Actions)
         public static readonly Color MauChinh = ColorTranslator.FromHtml("#2563EB");           // Blue 600
         public static readonly Color MauChinhHover = ColorTranslator.FromHtml("#1D4ED8");      // Blue 700
-        public static readonly Color MauChinhNhe = ColorTranslator.FromHtml("#EFF6FF");        // Blue 50
+        public static readonly Color MauChinhNhe = ColorTranslator.FromHtml("#E6F0FF");        // Blue nhạt
+
+        // Màu nhấn (Accent) - dùng ÍT, đúng chỗ: nút hành động quan trọng, số liệu cần chú ý
+        public static readonly Color MauNhan = ColorTranslator.FromHtml("#F59E0B");            // Cam
+        public static readonly Color MauNhanHover = ColorTranslator.FromHtml("#D97706");       // Cam đậm
+        public static readonly Color MauNhanNhe = ColorTranslator.FromHtml("#FFF7E6");         // Cam nhạt
 
         // Nền ứng dụng & Card (Surfaces)
-        public static readonly Color MauNenUngDung = ColorTranslator.FromHtml("#F8FAFC");      // Slate 50
+        public static readonly Color MauNenUngDung = ColorTranslator.FromHtml("#F3F6FB");      // Xám xanh rất nhạt
         public static readonly Color MauNenNoiDung = ColorTranslator.FromHtml("#FFFFFF");      // White
-        public static readonly Color MauNenInputReadOnly = ColorTranslator.FromHtml("#F1F5F9");// Slate 100
-        public static readonly Color MauTieuDeBang = ColorTranslator.FromHtml("#F1F5F9");      // Slate 100
+        public static readonly Color MauNenInputReadOnly = ColorTranslator.FromHtml("#EEF3FB");
+        public static readonly Color MauTieuDeBang = ColorTranslator.FromHtml("#DBE7F8");      // Tiêu đề bảng xanh nhạt
 
-        // Chữ (Typography Colors)
-        public static readonly Color MauChuChinh = ColorTranslator.FromHtml("#0F172A");        // Slate 900
-        public static readonly Color MauChuPhu = ColorTranslator.FromHtml("#475569");          // Slate 600
+        // Chữ (Typography Colors) - đậm hơn để dễ đọc khi chiếu
+        public static readonly Color MauChuChinh = ColorTranslator.FromHtml("#0F2A43");        // Navy gần đen
+        public static readonly Color MauChuPhu = ColorTranslator.FromHtml("#3F5470");          // Xám xanh đậm
         public static readonly Color MauChuPlaceholder = ColorTranslator.FromHtml("#94A3B8");  // Slate 400
 
         // Viền (Borders & Dividers)
-        public static readonly Color MauDuongVien = ColorTranslator.FromHtml("#E2E8F0");       // Slate 200
-        public static readonly Color MauDuongVienNhe = ColorTranslator.FromHtml("#F1F5F9");    // Slate 100
+        public static readonly Color MauDuongVien = ColorTranslator.FromHtml("#D5DFEE");
+        public static readonly Color MauDuongVienNhe = ColorTranslator.FromHtml("#EAF0F8");
         public static readonly Color MauDuongVienFocus = MauChinh;
 
         // Trạng thái (Feedback Colors)
@@ -53,12 +58,12 @@ namespace QuanLyHoaDon.Utilities
 
         // Sidebar
         public static readonly Color MauSidebar = Color.White;
-        public static readonly Color MauSidebarHover = ColorTranslator.FromHtml("#F1F5F9");
-        public static readonly Color MauSidebarActive = ColorTranslator.FromHtml("#EFF6FF");
+        public static readonly Color MauSidebarHover = ColorTranslator.FromHtml("#EAF1FC");
+        public static readonly Color MauSidebarActive = ColorTranslator.FromHtml("#D6E4FA");   // Đậm hơn bản cũ để nổi bật
         public static readonly Color MauSidebarBorder = MauDuongVien;
         public static readonly Color MauSidebarHeader = Color.White;
-        public static readonly Color MauSidebarAccount = ColorTranslator.FromHtml("#F8FAFC");
-        public static readonly Color MauSidebarAccountHover = ColorTranslator.FromHtml("#F1F5F9");
+        public static readonly Color MauSidebarAccount = ColorTranslator.FromHtml("#F3F6FB");
+        public static readonly Color MauSidebarAccountHover = ColorTranslator.FromHtml("#E6EEF9");
         public static readonly Color MauChuTrenSidebar = MauChuChinh;
         public static readonly Color MauChuSidebar = MauChuChinh;
         public static readonly Color MauChuPhuSidebar = MauChuPhu;
@@ -67,7 +72,7 @@ namespace QuanLyHoaDon.Utilities
         // KPI
         public static readonly Color MauKpiXanhDuong = MauChinh;
         public static readonly Color MauKpiXanhLa = MauThanhCong;
-        public static readonly Color MauKpiCam = MauCanhBao;
+        public static readonly Color MauKpiCam = MauNhan;          // Cam nhấn cho số liệu cần chú ý
         public static readonly Color MauKpiTim = MauTim;
 
         // Trạng thái hóa đơn
@@ -77,7 +82,7 @@ namespace QuanLyHoaDon.Utilities
 
         // Nút chức năng nổi bật
         public static readonly Color MauNutXuatExcel = MauThanhCong;
-        public static readonly Color MauNutIn = MauCanhBao;
+        public static readonly Color MauNutIn = MauNhan;
         public static readonly Color MauNutLamMoi = MauChuPhu;
 
         // Huy chương Top (cho UCThongKe)
@@ -87,7 +92,7 @@ namespace QuanLyHoaDon.Utilities
 
         // Nút phụ & vô hiệu hóa
         public static readonly Color MauNutPhu = Color.White;
-        public static readonly Color MauNutPhuHover = ColorTranslator.FromHtml("#F8FAFC");
+        public static readonly Color MauNutPhuHover = ColorTranslator.FromHtml("#EEF3FB");
         public static readonly Color MauVienNutPhu = MauDuongVien;
         public static readonly Color MauNutNguyHiem = MauLoi;
         public static readonly Color MauNutNguyHiemHover = MauLoiHover;
@@ -168,6 +173,15 @@ namespace QuanLyHoaDon.Utilities
             ApDungDinhDangButton(btn, MauCanhBao, MauCanhBaoHover, Color.White, 0, Color.Empty);
         }
 
+        /// <summary>
+        /// Nút nhấn màu cam (chữ tối để dễ đọc). Dùng cho 1 hành động nổi bật nhất của màn hình,
+        /// ví dụ "Lập hóa đơn mới".
+        /// </summary>
+        public static void ApDungButtonNhan(Button btn)
+        {
+            ApDungDinhDangButton(btn, MauNhan, MauNhanHover, MauChuChinh, 0, Color.Empty);
+        }
+
         private static void ApDungDinhDangButton(Button btn, Color mauNen, Color mauHover, Color mauChu, int doDayVien, Color mauVien)
         {
             btn.Height = ChieuCaoButtonChuan;
@@ -245,6 +259,13 @@ namespace QuanLyHoaDon.Utilities
             return btn;
         }
 
+        public static Button TaoButtonNhan(string text, int chieuRong = 140, int chieuCao = ChieuCaoButtonChuan)
+        {
+            var btn = new RoundedButton { Text = text, Size = new Size(chieuRong, chieuCao) };
+            ApDungButtonNhan(btn);
+            return btn;
+        }
+
         #endregion
 
         #region 5. CHUẨN HÓA BẢNG DỮ LIỆU (DATAGRIDVIEW)
@@ -266,6 +287,8 @@ namespace QuanLyHoaDon.Utilities
             dgv.ColumnHeadersDefaultCellStyle.Font = FontBangTieuDeCot;
             dgv.ColumnHeadersDefaultCellStyle.BackColor = MauTieuDeBang;
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = MauChuChinh;
+            dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = MauTieuDeBang;
+            dgv.ColumnHeadersDefaultCellStyle.SelectionForeColor = MauChuChinh;
             dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(12, 10, 12, 10);
             dgv.ColumnHeadersHeight = 42;
             dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
@@ -274,11 +297,12 @@ namespace QuanLyHoaDon.Utilities
             dgv.DefaultCellStyle.BackColor = MauNenNoiDung;
             dgv.DefaultCellStyle.ForeColor = MauChuChinh;
             dgv.DefaultCellStyle.Padding = new Padding(10, 0, 10, 0);
-            dgv.DefaultCellStyle.SelectionBackColor = MauChinhNhe;
-            dgv.DefaultCellStyle.SelectionForeColor = MauChinh;
+            // Dòng đang chọn: nền xanh nhạt đậm hơn, chữ vẫn đen để dễ đọc khi chiếu
+            dgv.DefaultCellStyle.SelectionBackColor = ColorTranslator.FromHtml("#CFE0FA");
+            dgv.DefaultCellStyle.SelectionForeColor = MauChuChinh;
             dgv.RowTemplate.Height = 40;
 
-            dgv.AlternatingRowsDefaultCellStyle.BackColor = ColorTranslator.FromHtml("#F8FAFC");
+            dgv.AlternatingRowsDefaultCellStyle.BackColor = ColorTranslator.FromHtml("#F5F9FF");
         }
 
         #endregion
@@ -346,7 +370,6 @@ namespace QuanLyHoaDon.Utilities
         }
 
         #endregion
-
         #region 8. BO GÓC NÚT THƯỜNG (BUTTON)
 
         private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<Button, object> _nutDaBoGoc = new();

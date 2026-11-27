@@ -294,13 +294,14 @@ namespace QuanLyHoaDon.GUI.Forms.NhanVien
             var ds = _bll.LayDanhSach(txtTimKiem.Text);
             foreach (var nv in ds)
             {
-                dgvNhanVien.Rows.Add(
+                int rowIdx = dgvNhanVien.Rows.Add(
                     $"NV{nv.MaNhanVien:D4}",
                     nv.HoTen,
                     nv.TenDangNhap ?? "(Chưa có)",
                     nv.TenVaiTro ?? "",
-                    nv.TrangThaiNhanVien,
-                    nv.TrangThaiTaiKhoan ?? "");
+                    nv.TenTrangThaiNhanVien,
+                    nv.TenTrangThaiTaiKhoan);
+                dgvNhanVien.Rows[rowIdx].Tag = nv;
             }
         }
 

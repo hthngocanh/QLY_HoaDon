@@ -13,7 +13,7 @@ namespace QuanLyHoaDon.GUI.Controls
     {
         private int _borderRadius = 12;
         private int _borderWidth = 1;
-        private Color _borderColor = ColorTranslator.FromHtml("#E3EAF4");
+        private Color _borderColor = ColorTranslator.FromHtml("#E2E8F0");
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public int BorderRadius { get => _borderRadius; set { _borderRadius = value; Invalidate(); } }

@@ -12,7 +12,7 @@ namespace QuanLyHoaDon.GUI.Controls
         private bool _isPressed;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public int BorderRadius { get; set; } = 12;
+        public int BorderRadius { get; set; } = 8;
 
         // Màu thường = BackColor để code cũ đổi BackColor vẫn hoạt động
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -57,11 +57,11 @@ namespace QuanLyHoaDon.GUI.Controls
                    | ControlStyles.ResizeRedraw
                    | ControlStyles.SupportsTransparentBackColor, true);
 
-            Height = 50;
+            Height = 40;
             Cursor = Cursors.Hand;
-            Font = new Font("Segoe UI", 11f, FontStyle.Bold);
+            Font = new Font("Segoe UI", 10.5f, FontStyle.Bold);
             ForeColor = Color.White;
-            BackColor = ColorTranslator.FromHtml("#1976D2");
+            BackColor = ColorTranslator.FromHtml("#2563EB");
             FlatStyle = FlatStyle.Flat;
             FlatAppearance.BorderSize = 0;
             TextAlign = ContentAlignment.MiddleCenter;

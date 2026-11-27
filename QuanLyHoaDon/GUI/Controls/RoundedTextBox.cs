@@ -25,16 +25,18 @@ namespace QuanLyHoaDon.GUI.Controls
         private InputIconType _iconType = InputIconType.None;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public int BorderRadius { get; set; } = 10;
+        public int BorderRadius { get; set; } = 8;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Color BorderColor { get; set; } = ColorTranslator.FromHtml("#DCE3ED");
+        public Color BorderColor { get; set; } = ColorTranslator.FromHtml("#E2E8F0");
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Color FocusBorderColor { get; set; } = ColorTranslator.FromHtml("#2563EB");
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Color PlaceholderColor { get; set; } = ColorTranslator.FromHtml("#94A3B8");
+
+        private bool _isHoveringEye = false;
 
         public new event KeyEventHandler? KeyDown;
 
@@ -76,6 +78,7 @@ namespace QuanLyHoaDon.GUI.Controls
                 if (_btnToggleEye != null)
                 {
                     _btnToggleEye.Visible = value;
+                    CapNhatViTriTextBox();
                 }
                 Invalidate();
             }
@@ -157,6 +160,8 @@ namespace QuanLyHoaDon.GUI.Controls
             _btnToggleEye.FlatAppearance.BorderSize = 0;
             _btnToggleEye.FlatAppearance.MouseDownBackColor = Color.Transparent;
             _btnToggleEye.FlatAppearance.MouseOverBackColor = Color.FromArgb(240, 243, 248);
+            _btnToggleEye.MouseEnter += (s, e) => { _isHoveringEye = true; _btnToggleEye.Invalidate(); };
+            _btnToggleEye.MouseLeave += (s, e) => { _isHoveringEye = false; _btnToggleEye.Invalidate(); };
             _btnToggleEye.Paint += VeIconConMat;
             _btnToggleEye.Click += (s, e) =>
             {
@@ -261,8 +266,8 @@ namespace QuanLyHoaDon.GUI.Controls
             var g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
 
-            // Màu icon con mắt sắc nét, tương phản rõ trên nền trắng (#334155 - Slate-700)
-            Color mau = _btnToggleEye != null && _btnToggleEye.ClientRectangle.Contains(_btnToggleEye.PointToClient(Cursor.Position))
+            // Màu icon con mắt sắc nét, tương phản rõ trên nền trắng (#334155 - Slate-700, Hover: #2563EB)
+            Color mau = _isHoveringEye
                 ? ColorTranslator.FromHtml("#2563EB")
                 : ColorTranslator.FromHtml("#334155");
 

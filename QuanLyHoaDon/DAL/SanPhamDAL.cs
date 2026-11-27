@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using Microsoft.Data.SqlClient;
 using QuanLyHoaDon.DTO;
 
@@ -23,7 +24,7 @@ namespace QuanLyHoaDon.DAL
             using var cmd = new SqlCommand(sql, conn);
             if (!string.IsNullOrWhiteSpace(tuKhoa))
             {
-                cmd.Parameters.AddWithValue("@TuKhoa", "%" + tuKhoa.Trim() + "%");
+                cmd.Parameters.Add("@TuKhoa", SqlDbType.NVarChar, 150).Value = "%" + tuKhoa.Trim() + "%";
             }
 
             using var reader = cmd.ExecuteReader();
@@ -51,11 +52,11 @@ namespace QuanLyHoaDon.DAL
                            VALUES (@TenSanPham, @MoTa, @DonViTinh, @DonGia, @TrangThai)";
 
             using var cmd = new SqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@TenSanPham", sp.TenSanPham.Trim());
-            cmd.Parameters.AddWithValue("@MoTa", (object?)sp.MoTa?.Trim() ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@DonViTinh", sp.DonViTinh.Trim());
-            cmd.Parameters.AddWithValue("@DonGia", sp.DonGia);
-            cmd.Parameters.AddWithValue("@TrangThai", sp.TrangThai);
+            cmd.Parameters.Add("@TenSanPham", SqlDbType.NVarChar, 150).Value = sp.TenSanPham.Trim();
+            cmd.Parameters.Add("@MoTa", SqlDbType.NVarChar, 500).Value = (object?)sp.MoTa?.Trim() ?? DBNull.Value;
+            cmd.Parameters.Add("@DonViTinh", SqlDbType.NVarChar, 50).Value = sp.DonViTinh.Trim();
+            cmd.Parameters.Add("@DonGia", SqlDbType.Decimal).Value = sp.DonGia;
+            cmd.Parameters.Add("@TrangThai", SqlDbType.NVarChar, 30).Value = sp.TrangThai;
 
             return cmd.ExecuteNonQuery() > 0;
         }
@@ -71,9 +72,9 @@ namespace QuanLyHoaDon.DAL
                            WHERE MaSanPham = @MaSanPham";
 
             using var cmd = new SqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@MaSanPham", maSanPham);
-            cmd.Parameters.AddWithValue("@DonGia", donGia);
-            cmd.Parameters.AddWithValue("@TrangThai", trangThai);
+            cmd.Parameters.Add("@MaSanPham", SqlDbType.Int).Value = maSanPham;
+            cmd.Parameters.Add("@DonGia", SqlDbType.Decimal).Value = donGia;
+            cmd.Parameters.Add("@TrangThai", SqlDbType.NVarChar, 30).Value = trangThai;
 
             return cmd.ExecuteNonQuery() > 0;
         }

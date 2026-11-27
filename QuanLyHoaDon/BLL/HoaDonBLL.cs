@@ -9,11 +9,11 @@ namespace QuanLyHoaDon.BLL
     {
         private readonly HoaDonDAL _dal = new();
 
-        public List<HoaDonDTO> LayDanhSach(string? tuKhoa = null)
+        public List<HoaDonDTO> LayDanhSach(string? tuKhoa = null, string? trangThaiLoc = null)
         {
             // Phân quyền: Nhân viên chỉ xem hóa đơn của mình, Quản lý xem tất cả
             int? maNhanVienLoc = Session.LaQuanLy ? null : Session.MaNhanVien;
-            return _dal.LayDanhSach(maNhanVienLoc, tuKhoa);
+            return _dal.LayDanhSach(maNhanVienLoc, tuKhoa, trangThaiLoc);
         }
 
         public List<ChiTietHoaDonDTO> LayChiTietHoaDon(int maHoaDon)

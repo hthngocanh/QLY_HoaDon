@@ -31,6 +31,15 @@ namespace QuanLyHoaDon.GUI.Forms.SanPham
             TaiDanhSachSanPham();
         }
 
+        /// <summary>
+        /// Cho phép Dashboard hoặc màn hình khác lọc/tìm sản phẩm trực tiếp
+        /// </summary>
+        public void TimKiemSanPham(string tuKhoa)
+        {
+            txtTimKiem.Text = tuKhoa;
+            TaiDanhSachSanPham(tuKhoa.Trim());
+        }
+
         private void KhoiTaoGiaoDien()
         {
             Dock = DockStyle.Fill;

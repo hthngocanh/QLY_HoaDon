@@ -12,12 +12,27 @@ namespace QuanLyHoaDon.DTO
         public DateTime NgayVaoLam { get; set; }
         public string TrangThaiNhanVien { get; set; } = "DangHoatDong";
 
+        public string TenTrangThaiNhanVien => TrangThaiNhanVien switch
+        {
+            "DangHoatDong" => "Đang hoạt động",
+            "NgungHoatDong" => "Ngừng hoạt động",
+            _ => TrangThaiNhanVien
+        };
+
         // Thong tin tai khoan kem theo
         public int? MaTaiKhoan { get; set; }
         public string? TenDangNhap { get; set; }
         public int? MaVaiTro { get; set; }
         public string? TenVaiTro { get; set; }
         public string? TrangThaiTaiKhoan { get; set; } // HoatDong / BiKhoa
+
+        public string TenTrangThaiTaiKhoan => TrangThaiTaiKhoan switch
+        {
+            "HoatDong" => "Hoạt động",
+            "BiKhoa" => "Bị khóa",
+            null or "" => "(Chưa có)",
+            _ => TrangThaiTaiKhoan
+        };
     }
 }
 

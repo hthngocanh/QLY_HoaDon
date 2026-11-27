@@ -13,6 +13,14 @@ namespace QuanLyHoaDon.DTO
         public string? TenNhanVien { get; set; }
         public DateTime NgayLap { get; set; }
         public string TrangThai { get; set; } = "DangLap"; // DangLap, DaXacNhan, DaHuy
+
+        public string TenTrangThai => TrangThai switch
+        {
+            "DangLap" => "Đang lập",
+            "DaXacNhan" => "Đã xác nhận",
+            "DaHuy" => "Đã hủy",
+            _ => TrangThai
+        };
         public string? GhiChu { get; set; }
         public decimal TongTien { get; set; }
         public int TongSoLuong { get; set; }

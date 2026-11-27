@@ -8,54 +8,67 @@ namespace QuanLyHoaDon.Utilities
 {
     /// <summary>
     /// Hệ thống thiết kế chuẩn hóa toàn bộ ứng dụng Quản lý hóa đơn
-    /// Định hướng: Light Corporate - tông slate + teal, dịu mắt nhưng vẫn tương phản tốt khi chiếu
+    /// Phong cách: Modern Desktop Enterprise, Minimalist, Soft UI
     /// </summary>
     public static class ThemeHelper
     {
-        #region 1. BẢNG MÀU CHUẨN
+        #region 1. BẢNG MÀU CHUẨN (APP COLORS)
 
-        // Sidebar: xanh slate dịu hơn navy cũ
-        public static readonly Color MauSidebar = ColorTranslator.FromHtml("#FFFFFF");
-        public static readonly Color MauSidebarHover = ColorTranslator.FromHtml("#F0F5FC");
-        public static readonly Color MauSidebarActive = ColorTranslator.FromHtml("#E6EEFC");
-        public static readonly Color MauSidebarBorder = ColorTranslator.FromHtml("#E3EAF4");
-        public static readonly Color MauSidebarHeader = ColorTranslator.FromHtml("#FFFFFF");
-        public static readonly Color MauSidebarAccount = ColorTranslator.FromHtml("#F3F6FB");
-        public static readonly Color MauSidebarAccountHover = ColorTranslator.FromHtml("#E8EEF8");
+        // Màu chính (Brand & Primary Actions)
+        public static readonly Color MauChinh = ColorTranslator.FromHtml("#2563EB");           // Blue 600
+        public static readonly Color MauChinhHover = ColorTranslator.FromHtml("#1D4ED8");      // Blue 700
+        public static readonly Color MauChinhNhe = ColorTranslator.FromHtml("#EFF6FF");        // Blue 50
 
-        // Nền ứng dụng & Card
-        public static readonly Color MauNenUngDung = ColorTranslator.FromHtml("#F5F8FD");
-        public static readonly Color MauNenNoiDung = ColorTranslator.FromHtml("#FFFFFF");
-        public static readonly Color MauNenInputReadOnly = ColorTranslator.FromHtml("#EEF4FB");
-        public static readonly Color MauTieuDeBang = ColorTranslator.FromHtml("#E8F1FB");
+        // Nền ứng dụng & Card (Surfaces)
+        public static readonly Color MauNenUngDung = ColorTranslator.FromHtml("#F8FAFC");      // Slate 50
+        public static readonly Color MauNenNoiDung = ColorTranslator.FromHtml("#FFFFFF");      // White
+        public static readonly Color MauNenInputReadOnly = ColorTranslator.FromHtml("#F1F5F9");// Slate 100
+        public static readonly Color MauTieuDeBang = ColorTranslator.FromHtml("#F1F5F9");      // Slate 100
 
-        // Chữ
-        public static readonly Color MauChuChinh = ColorTranslator.FromHtml("#0F2A43");
-        public static readonly Color MauChuPhu = ColorTranslator.FromHtml("#4A6076");
-        public static readonly Color MauChuTrenSidebar = ColorTranslator.FromHtml("#1F2D3D");
-        public static readonly Color MauChuSidebar = ColorTranslator.FromHtml("#1F2D3D");
-        public static readonly Color MauChuPhuSidebar = ColorTranslator.FromHtml("#64748B");
-        public static readonly Color MauChuSidebarPhu = MauChuPhuSidebar;
+        // Chữ (Typography Colors)
+        public static readonly Color MauChuChinh = ColorTranslator.FromHtml("#0F172A");        // Slate 900
+        public static readonly Color MauChuPhu = ColorTranslator.FromHtml("#475569");          // Slate 600
+        public static readonly Color MauChuPlaceholder = ColorTranslator.FromHtml("#94A3B8");  // Slate 400
 
-        // Viền
-        public static readonly Color MauDuongVien = ColorTranslator.FromHtml("#D6E4F5");
-        public static readonly Color MauDuongVienFocus = ColorTranslator.FromHtml("#2563EB");
+        // Viền (Borders & Dividers)
+        public static readonly Color MauDuongVien = ColorTranslator.FromHtml("#E2E8F0");       // Slate 200
+        public static readonly Color MauDuongVienNhe = ColorTranslator.FromHtml("#F1F5F9");    // Slate 100
+        public static readonly Color MauDuongVienFocus = MauChinh;
 
-        // Màu chức năng
-        public static readonly Color MauChinh = ColorTranslator.FromHtml("#2563EB");
-        public static readonly Color MauChinhHover = ColorTranslator.FromHtml("#1D4ED8");
-        public static readonly Color MauTieuDe = MauChinh;
-        public static readonly Color MauThanhCong = ColorTranslator.FromHtml("#2E7D32");
-        public static readonly Color MauThanhCongHover = ColorTranslator.FromHtml("#1B5E20");
-        public static readonly Color MauCanhBao = ColorTranslator.FromHtml("#B45309");
-        public static readonly Color MauCanhBaoHover = ColorTranslator.FromHtml("#92400E");
-        public static readonly Color MauLoi = ColorTranslator.FromHtml("#B91C1C");
-        public static readonly Color MauLoiHover = ColorTranslator.FromHtml("#991B1B");
+        // Trạng thái (Feedback Colors)
+        public static readonly Color MauThanhCong = ColorTranslator.FromHtml("#16A34A");       // Green 600
+        public static readonly Color MauThanhCongHover = ColorTranslator.FromHtml("#15803D");  // Green 700
+        public static readonly Color MauThanhCongNhe = ColorTranslator.FromHtml("#F0FDF4");    // Green 50
+
+        public static readonly Color MauCanhBao = ColorTranslator.FromHtml("#D97706");         // Amber 600
+        public static readonly Color MauCanhBaoHover = ColorTranslator.FromHtml("#B45309");    // Amber 700
+        public static readonly Color MauCanhBaoNhe = ColorTranslator.FromHtml("#FFFBEB");      // Amber 50
+
+        public static readonly Color MauLoi = ColorTranslator.FromHtml("#DC2626");             // Red 600
+        public static readonly Color MauLoiHover = ColorTranslator.FromHtml("#B91C1C");         // Red 700
+        public static readonly Color MauLoiNhe = ColorTranslator.FromHtml("#FEF2F2");           // Red 50
+
+        public static readonly Color MauTim = ColorTranslator.FromHtml("#7C3AED");             // Violet 600
+        public static readonly Color MauTimNhe = ColorTranslator.FromHtml("#F5F3FF");           // Violet 50
+
+        // Sidebar
+        public static readonly Color MauSidebar = Color.White;
+        public static readonly Color MauSidebarHover = ColorTranslator.FromHtml("#F1F5F9");
+        public static readonly Color MauSidebarActive = ColorTranslator.FromHtml("#EFF6FF");
+        public static readonly Color MauSidebarBorder = MauDuongVien;
+        public static readonly Color MauSidebarHeader = Color.White;
+        public static readonly Color MauSidebarAccount = ColorTranslator.FromHtml("#F8FAFC");
+        public static readonly Color MauSidebarAccountHover = ColorTranslator.FromHtml("#F1F5F9");
+        public static readonly Color MauChuTrenSidebar = MauChuChinh;
+        public static readonly Color MauChuSidebar = MauChuChinh;
+        public static readonly Color MauChuPhuSidebar = MauChuPhu;
+        public static readonly Color MauChuSidebarPhu = MauChuPhu;
 
         // KPI
         public static readonly Color MauKpiXanhDuong = MauChinh;
         public static readonly Color MauKpiXanhLa = MauThanhCong;
         public static readonly Color MauKpiCam = MauCanhBao;
+        public static readonly Color MauKpiTim = MauTim;
 
         // Trạng thái hóa đơn
         public static readonly Color MauDaXacNhan = MauThanhCong;
@@ -67,21 +80,22 @@ namespace QuanLyHoaDon.Utilities
         public static readonly Color MauNutIn = MauCanhBao;
         public static readonly Color MauNutLamMoi = MauChuPhu;
 
-        // Huy chương Top
+        // Huy chương Top (cho UCThongKe)
         public static readonly Color MauVang = ColorTranslator.FromHtml("#D4A017");
         public static readonly Color MauBac = ColorTranslator.FromHtml("#8A97A8");
         public static readonly Color MauDong = ColorTranslator.FromHtml("#B8672E");
 
         // Nút phụ & vô hiệu hóa
-        public static readonly Color MauNutPhu = ColorTranslator.FromHtml("#FFFFFF");
-        public static readonly Color MauNutPhuHover = ColorTranslator.FromHtml("#E8F1FB");
-        public static readonly Color MauVienNutPhu = ColorTranslator.FromHtml("#BBD3EE");
+        public static readonly Color MauNutPhu = Color.White;
+        public static readonly Color MauNutPhuHover = ColorTranslator.FromHtml("#F8FAFC");
+        public static readonly Color MauVienNutPhu = MauDuongVien;
         public static readonly Color MauNutNguyHiem = MauLoi;
         public static readonly Color MauNutNguyHiemHover = MauLoiHover;
         public static readonly Color MauVoHieuHoa = ColorTranslator.FromHtml("#94A3B8");
-        public static readonly Color MauNenVoHieuHoa = ColorTranslator.FromHtml("#E3ECF7");
+        public static readonly Color MauNenVoHieuHoa = ColorTranslator.FromHtml("#E2E8F0");
 
-        // Alias cũ
+        // Alias tương thích ngược
+        public static readonly Color MauTieuDe = MauChinh;
         public static readonly Color MauChuDao = MauSidebar;
         public static readonly Color MauThaoTacChinh = MauChinh;
         public static readonly Color MauNen = MauNenUngDung;
@@ -90,21 +104,21 @@ namespace QuanLyHoaDon.Utilities
 
         #endregion
 
-        #region 2. TYPOGRAPHY (SEGOE UI)
+        #region 2. TYPOGRAPHY (APP FONTS)
 
         public const string TenFontMacDinh = "Segoe UI";
 
-        public static readonly Font FontTieuDeTrang = new Font(TenFontMacDinh, 18.5f, FontStyle.Bold);
-        public static readonly Font FontTieuDeKhuVuc = new Font(TenFontMacDinh, 14.5f, FontStyle.Bold);
-        public static readonly Font FontTieuDeCard = new Font(TenFontMacDinh, 12.5f, FontStyle.Bold);
-        public static readonly Font FontNoiDung = new Font(TenFontMacDinh, 11.25f, FontStyle.Regular);
-        public static readonly Font FontNoiDungDam = new Font(TenFontMacDinh, 11.25f, FontStyle.Bold);
-        public static readonly Font FontLabel = new Font(TenFontMacDinh, 11.25f, FontStyle.Bold);
-        public static readonly Font FontButton = new Font(TenFontMacDinh, 11.25f, FontStyle.Bold);
-        public static readonly Font FontBangDuLieu = new Font(TenFontMacDinh, 11f, FontStyle.Regular);
-        public static readonly Font FontBangTieuDeCot = new Font(TenFontMacDinh, 11f, FontStyle.Bold);
-        public static readonly Font FontChuThich = new Font(TenFontMacDinh, 10f, FontStyle.Regular);
-        public static readonly Font FontChuThichDam = new Font(TenFontMacDinh, 10f, FontStyle.Bold);
+        public static readonly Font FontTieuDeTrang = new Font(TenFontMacDinh, 16f, FontStyle.Bold);       // Page Title 16pt Bold
+        public static readonly Font FontTieuDeKhuVuc = new Font(TenFontMacDinh, 13f, FontStyle.Bold);     // Section Title 13pt Bold
+        public static readonly Font FontTieuDeCard = new Font(TenFontMacDinh, 12f, FontStyle.Bold);        // Card Title 12pt Bold
+        public static readonly Font FontNoiDung = new Font(TenFontMacDinh, 10.5f, FontStyle.Regular);       // Body 10.5pt Regular
+        public static readonly Font FontNoiDungDam = new Font(TenFontMacDinh, 10.5f, FontStyle.Bold);      // Body Bold 10.5pt Bold
+        public static readonly Font FontLabel = new Font(TenFontMacDinh, 10.5f, FontStyle.Bold);           // Label 10.5pt Bold
+        public static readonly Font FontButton = new Font(TenFontMacDinh, 10.5f, FontStyle.Bold);          // Button 10.5pt Bold
+        public static readonly Font FontBangDuLieu = new Font(TenFontMacDinh, 10.5f, FontStyle.Regular);   // Table Data 10.5pt
+        public static readonly Font FontBangTieuDeCot = new Font(TenFontMacDinh, 10.5f, FontStyle.Bold);   // Table Header 10.5pt Bold
+        public static readonly Font FontChuThich = new Font(TenFontMacDinh, 9.5f, FontStyle.Regular);      // Caption 9.5pt Regular
+        public static readonly Font FontChuThichDam = new Font(TenFontMacDinh, 9.5f, FontStyle.Bold);     // Caption Bold 9.5pt Bold
 
         public static Font TaoFont(float kichThuocPt, FontStyle kieuFont = FontStyle.Regular)
         {
@@ -113,9 +127,21 @@ namespace QuanLyHoaDon.Utilities
 
         #endregion
 
-        #region 3. QUY CHUẨN BUTTON (BO GÓC)
+        #region 3. RADIUS & SPACING (APP RADIUS & SPACING)
 
-        public const int ChieuCaoButtonChuan = 42;
+        // Bo góc chuẩn
+        public const int RadiusSmall = 6;      // Tag, Badge, Small button
+        public const int RadiusMedium = 8;     // Input, Standard button, Dropdown
+        public const int RadiusLarge = 12;     // Panel, Card, Dialog
+
+        // Kích thước chuẩn controls
+        public const int ChieuCaoInputChuan = 40;
+        public const int ChieuCaoButtonChuan = 40;
+        public const int ChieuCaoButtonNho = 32;
+
+        #endregion
+
+        #region 4. QUY CHUẨN BUTTON (BO GÓC)
 
         public static void ApDungButtonChinh(Button btn)
         {
@@ -155,21 +181,22 @@ namespace QuanLyHoaDon.Utilities
 
             if (btn is RoundedButton rb)
             {
-                // RoundedButton tự xử lý hover/pressed/disabled
+                rb.NormalColor = mauNen;
                 rb.HoverColor = mauHover;
-                rb.BorderRadius = 10;
+                rb.BorderRadius = RadiusMedium;
                 rb.BorderWidth = doDayVien;
                 rb.BorderColor = doDayVien > 0 ? mauVien : Color.Transparent;
+                rb.TextColor = mauChu;
                 return;
             }
 
-            // Button thường: giữ cách cũ
+            // Button thường
             btn.FlatAppearance.BorderSize = doDayVien;
             if (doDayVien > 0)
             {
                 btn.FlatAppearance.BorderColor = mauVien;
             }
-            btn.Padding = new Padding(18, 0, 18, 0);
+            btn.Padding = new Padding(16, 0, 16, 0);
 
             btn.MouseEnter += (s, e) => { if (btn.Enabled) btn.BackColor = mauHover; };
             btn.MouseLeave += (s, e) => { if (btn.Enabled) btn.BackColor = mauNen; };
@@ -190,28 +217,28 @@ namespace QuanLyHoaDon.Utilities
             };
         }
 
-        public static Button TaoButtonChinh(string text, int chieuRong = 150, int chieuCao = ChieuCaoButtonChuan)
+        public static Button TaoButtonChinh(string text, int chieuRong = 140, int chieuCao = ChieuCaoButtonChuan)
         {
             var btn = new RoundedButton { Text = text, Size = new Size(chieuRong, chieuCao) };
             ApDungButtonChinh(btn);
             return btn;
         }
 
-        public static Button TaoButtonPhu(string text, int chieuRong = 150, int chieuCao = ChieuCaoButtonChuan)
+        public static Button TaoButtonPhu(string text, int chieuRong = 140, int chieuCao = ChieuCaoButtonChuan)
         {
             var btn = new RoundedButton { Text = text, Size = new Size(chieuRong, chieuCao) };
             ApDungButtonPhu(btn);
             return btn;
         }
 
-        public static Button TaoButtonThanhCong(string text, int chieuRong = 150, int chieuCao = ChieuCaoButtonChuan)
+        public static Button TaoButtonThanhCong(string text, int chieuRong = 140, int chieuCao = ChieuCaoButtonChuan)
         {
             var btn = new RoundedButton { Text = text, Size = new Size(chieuRong, chieuCao) };
             ApDungButtonThanhCong(btn);
             return btn;
         }
 
-        public static Button TaoButtonNguyHiem(string text, int chieuRong = 150, int chieuCao = ChieuCaoButtonChuan)
+        public static Button TaoButtonNguyHiem(string text, int chieuRong = 140, int chieuCao = ChieuCaoButtonChuan)
         {
             var btn = new RoundedButton { Text = text, Size = new Size(chieuRong, chieuCao) };
             ApDungButtonNguyHiem(btn);
@@ -220,7 +247,7 @@ namespace QuanLyHoaDon.Utilities
 
         #endregion
 
-        #region 4. CHUẨN HÓA BẢNG DỮ LIỆU
+        #region 5. CHUẨN HÓA BẢNG DỮ LIỆU (DATAGRIDVIEW)
 
         public static void ChuanHoaDataGridView(DataGridView dgv)
         {
@@ -237,26 +264,26 @@ namespace QuanLyHoaDon.Utilities
 
             dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
             dgv.ColumnHeadersDefaultCellStyle.Font = FontBangTieuDeCot;
-            dgv.ColumnHeadersDefaultCellStyle.BackColor = ColorTranslator.FromHtml("#E8F1FB");
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = MauTieuDeBang;
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = MauChuChinh;
-            dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(10, 10, 10, 10);
-            dgv.ColumnHeadersHeight = 44;
+            dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(12, 10, 12, 10);
+            dgv.ColumnHeadersHeight = 42;
             dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
 
             dgv.DefaultCellStyle.Font = FontBangDuLieu;
             dgv.DefaultCellStyle.BackColor = MauNenNoiDung;
             dgv.DefaultCellStyle.ForeColor = MauChuChinh;
-            dgv.DefaultCellStyle.Padding = new Padding(8, 0, 8, 0);
-            dgv.DefaultCellStyle.SelectionBackColor = ColorTranslator.FromHtml("#DCEBFA");
-            dgv.DefaultCellStyle.SelectionForeColor = MauChuChinh;
-            dgv.RowTemplate.Height = 38;
+            dgv.DefaultCellStyle.Padding = new Padding(10, 0, 10, 0);
+            dgv.DefaultCellStyle.SelectionBackColor = MauChinhNhe;
+            dgv.DefaultCellStyle.SelectionForeColor = MauChinh;
+            dgv.RowTemplate.Height = 40;
 
-            dgv.AlternatingRowsDefaultCellStyle.BackColor = ColorTranslator.FromHtml("#F7FAFE");
+            dgv.AlternatingRowsDefaultCellStyle.BackColor = ColorTranslator.FromHtml("#F8FAFC");
         }
 
         #endregion
 
-        #region 5. CHUẨN HÓA Ô NHẬP LIỆU
+        #region 6. CHUẨN HÓA Ô NHẬP LIỆU (INPUTS)
 
         public static void ChuanHoaTextBox(TextBox txt, bool laReadOnly = false)
         {
@@ -288,25 +315,43 @@ namespace QuanLyHoaDon.Utilities
 
         #endregion
 
-        #region 6. THẺ THỐNG KÊ & CARD
+        #region 7. VẼ ĐƯỜNG BO GÓC & CARD
 
-        public static void VeVienCard(Graphics g, Rectangle bounds)
+        public static GraphicsPath TaoDuongBoGoc(RectangleF rect, int banKinh)
         {
-            using var pen = new Pen(MauDuongVien, 1);
-            g.DrawRectangle(pen, bounds.X, bounds.Y, bounds.Width - 1, bounds.Height - 1);
+            float d = banKinh * 2f;
+            var path = new GraphicsPath();
+            path.AddArc(rect.X, rect.Y, d, d, 180, 90);
+            path.AddArc(rect.Right - d, rect.Y, d, d, 270, 90);
+            path.AddArc(rect.Right - d, rect.Bottom - d, d, d, 0, 90);
+            path.AddArc(rect.X, rect.Bottom - d, d, d, 90, 90);
+            path.CloseFigure();
+            return path;
+        }
+
+        public static void VeCardBoGoc(Graphics g, Rectangle rect, int banKinh = RadiusLarge, Color? mauNen = null, Color? mauVien = null, int doDayVien = 1)
+        {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            var rectF = new RectangleF(rect.X, rect.Y, rect.Width - 1, rect.Height - 1);
+            using var path = TaoDuongBoGoc(rectF, banKinh);
+
+            using var brush = new SolidBrush(mauNen ?? MauNenNoiDung);
+            g.FillPath(brush, path);
+
+            if (doDayVien > 0)
+            {
+                using var pen = new Pen(mauVien ?? MauDuongVien, doDayVien);
+                g.DrawPath(pen, path);
+            }
         }
 
         #endregion
 
-        #region 7. BO GÓC MƯỢT CHO NÚT THƯỜNG (Button)
+        #region 8. BO GÓC NÚT THƯỜNG (BUTTON)
 
         private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<Button, object> _nutDaBoGoc = new();
 
-        /// <summary>
-        /// Bo góc mọi Button thường (không phải RoundedButton) trong control gốc, kể cả trong Tab/Panel.
-        /// Dùng vẽ chồng có khử răng cưa thay vì cắt Region nên mép nhẵn và giữ nguyên viền.
-        /// </summary>
-        public static void BoGocTatCaNut(Control goc, int banKinh = 10)
+        public static void BoGocTatCaNut(Control goc, int banKinh = RadiusMedium)
         {
             foreach (Control c in goc.Controls)
             {
@@ -326,7 +371,6 @@ namespace QuanLyHoaDon.Utilities
             int w = b.Width, h = b.Height;
             if (w <= 4 || h <= 4) return;
 
-            // Màu nền thật của control cha
             Color nenCha = SystemColors.Control;
             for (Control? c = b.Parent; c != null; c = c.Parent)
             {
@@ -336,7 +380,6 @@ namespace QuanLyHoaDon.Utilities
             int r = Math.Min(banKinh, Math.Min(w, h) / 2);
             g.SmoothingMode = SmoothingMode.AntiAlias;
 
-            // Tô phần góc ngoài hình bo bằng màu nền cha (khử răng cưa ở mép)
             using (var boBen = TaoDuongBoGoc(new RectangleF(0, 0, w, h), r))
             using (var vungNgoai = new GraphicsPath())
             using (var brush = new SolidBrush(nenCha))
@@ -346,7 +389,6 @@ namespace QuanLyHoaDon.Utilities
                 g.FillPath(brush, vungNgoai);
             }
 
-            // Vẽ lại viền theo đường bo
             int doDayVien = b.FlatAppearance.BorderSize;
             if (doDayVien > 0)
             {
@@ -356,18 +398,6 @@ namespace QuanLyHoaDon.Utilities
                 using var pen = new Pen(mauVien, doDayVien);
                 g.DrawPath(pen, duongVien);
             }
-        }
-
-        private static GraphicsPath TaoDuongBoGoc(RectangleF rect, int banKinh)
-        {
-            float d = banKinh * 2f;
-            var path = new GraphicsPath();
-            path.AddArc(rect.X, rect.Y, d, d, 180, 90);
-            path.AddArc(rect.Right - d, rect.Y, d, d, 270, 90);
-            path.AddArc(rect.Right - d, rect.Bottom - d, d, d, 0, 90);
-            path.AddArc(rect.X, rect.Bottom - d, d, d, 90, 90);
-            path.CloseFigure();
-            return path;
         }
 
         #endregion

@@ -16,8 +16,10 @@ namespace QuanLyHoaDon.GUI.Forms.HoaDon
 
         private Panel pnlTop = null!;
         private TextBox txtTimKiem = null!;
+        private ComboBox cboLocTrangThai = null!;
         private Button btnTimKiem = null!;
         private Button btnLamMoi = null!;
+        private string? _trangThaiLocHienTai = null;
 
         private TabControl tabHoaDon = null!;
         private TabPage tabDanhSach = null!;
@@ -84,34 +86,57 @@ namespace QuanLyHoaDon.GUI.Forms.HoaDon
             txtTimKiem = new TextBox
             {
                 Location = new Point(175, 14),
-                Size = new Size(300, 32),
-                Font = ThemeHelper.FontNoiDung
+                Size = new Size(220, 32),
+                Font = ThemeHelper.FontNoiDung,
+                PlaceholderText = "Mã HĐ, Khách hàng, SĐT..."
             };
             txtTimKiem.KeyDown += (s, e) => { if (e.KeyCode == Keys.Enter) TaiDanhSachHoaDon(); };
 
-            btnTimKiem = new Button { Text = "Tra cứu", Location = new Point(485, 12), Size = new Size(100, 36) };
+            cboLocTrangThai = new ComboBox
+            {
+                Location = new Point(405, 14),
+                Size = new Size(150, 32),
+                Font = ThemeHelper.FontNoiDung,
+                DropDownStyle = ComboBoxStyle.DropDownList
+            };
+            cboLocTrangThai.Items.AddRange(new object[] { "Tất cả trạng thái", "Đang lập", "Đã xác nhận", "Đã hủy" });
+            cboLocTrangThai.SelectedIndex = 0;
+            cboLocTrangThai.SelectedIndexChanged += (s, e) =>
+            {
+                _trangThaiLocHienTai = cboLocTrangThai.SelectedIndex switch
+                {
+                    1 => "DangLap",
+                    2 => "DaXacNhan",
+                    3 => "DaHuy",
+                    _ => null
+                };
+                TaiDanhSachHoaDon();
+            };
+
+            btnTimKiem = new Button { Text = "Tra cứu", Location = new Point(565, 12), Size = new Size(90, 36) };
             ThemeHelper.ApDungButtonChinh(btnTimKiem);
             btnTimKiem.Height = 36;
             btnTimKiem.Click += (s, e) => TaiDanhSachHoaDon();
 
-            btnLamMoi = new Button { Text = "Tải lại", Location = new Point(595, 12), Size = new Size(100, 36) };
+            btnLamMoi = new Button { Text = "Tải lại", Location = new Point(665, 12), Size = new Size(85, 36) };
             ThemeHelper.ApDungButtonPhu(btnLamMoi);
             btnLamMoi.Height = 36;
-            btnLamMoi.Click += (s, e) => { txtTimKiem.Clear(); TaiDanhSachHoaDon(); };
+            btnLamMoi.Click += (s, e) => { txtTimKiem.Clear(); cboLocTrangThai.SelectedIndex = 0; _trangThaiLocHienTai = null; TaiDanhSachHoaDon(); };
 
             var lblPhanQuyenHD = new Label
             {
                 Text = Session.LaQuanLy 
-                    ? "🛡 Quản lý: Xem toàn bộ hóa đơn toàn hệ thống."
-                    : "👤 Nhân viên: Xem và lập hóa đơn của chính mình.",
+                    ? "🛡 Quản lý: Toàn bộ hóa đơn"
+                    : "👤 Cá nhân: Hóa đơn của tôi",
                 Font = ThemeHelper.FontChuThichDam,
                 ForeColor = Session.LaQuanLy ? ThemeHelper.MauChinh : ThemeHelper.MauThanhCong,
-                Location = new Point(710, 19),
+                Location = new Point(760, 19),
                 AutoSize = true
             };
 
             pnlTop.Controls.Add(lblTim);
             pnlTop.Controls.Add(txtTimKiem);
+            pnlTop.Controls.Add(cboLocTrangThai);
             pnlTop.Controls.Add(btnTimKiem);
             pnlTop.Controls.Add(btnLamMoi);
             pnlTop.Controls.Add(lblPhanQuyenHD);
@@ -353,7 +378,7 @@ namespace QuanLyHoaDon.GUI.Forms.HoaDon
         private void TaiDanhSachHoaDon()
         {
             dgvHoaDon.Rows.Clear();
-            var ds = _hoaDonBLL.LayDanhSach(txtTimKiem.Text);
+            var ds = _hoaDonBLL.LayDanhSach(txtTimKiem.Text, _trangThaiLocHienTai);
             foreach (var hd in ds)
             {
                 dgvHoaDon.Rows.Add(
@@ -363,8 +388,47 @@ namespace QuanLyHoaDon.GUI.Forms.HoaDon
                     hd.NgayLap.ToString("dd/MM/yyyy HH:mm"),
                     hd.TongSoLuong,
                     $"{hd.TongTien:N0}",
-                    hd.TrangThai);
+                    hd.TenTrangThai);
+                dgvHoaDon.Rows[dgvHoaDon.Rows.Count - 1].Tag = hd.TrangThai;
             }
+        }
+
+        /// <summary>
+        /// Cho phép Dashboard hoặc màn hình khác kích hoạt bộ lọc và tab tương ứng
+        /// </summary>
+        public void ApDungBoLoc(string? trangThai = null, string? tuKhoa = null, bool moTabLapHoaDon = false)
+        {
+            if (moTabLapHoaDon)
+            {
+                tabHoaDon.SelectedTab = tabLapHoaDon;
+                return;
+            }
+
+            tabHoaDon.SelectedTab = tabDanhSach;
+
+            if (tuKhoa != null)
+            {
+                txtTimKiem.Text = tuKhoa;
+            }
+
+            if (!string.IsNullOrEmpty(trangThai))
+            {
+                _trangThaiLocHienTai = trangThai;
+                cboLocTrangThai.SelectedIndex = trangThai switch
+                {
+                    "DangLap" => 1,
+                    "DaXacNhan" => 2,
+                    "DaHuy" => 3,
+                    _ => 0
+                };
+            }
+            else
+            {
+                _trangThaiLocHienTai = null;
+                cboLocTrangThai.SelectedIndex = 0;
+            }
+
+            TaiDanhSachHoaDon();
         }
 
         private void DgvHoaDon_SelectionChanged(object? sender, EventArgs e)
@@ -382,9 +446,12 @@ namespace QuanLyHoaDon.GUI.Forms.HoaDon
                 dgvChiTiet.Rows.Add(ct.MaSanPham, ct.TenSanPham, ct.DonViTinh, ct.SoLuong, $"{ct.DonGia:N0}", $"{ct.ThanhTien:N0}");
             }
 
-            string trangThai = dgvHoaDon.CurrentRow.Cells["TrangThai"].Value?.ToString() ?? "";
-            btnXacNhanHD.Enabled = (trangThai == "DangLap");
-            btnHuyHD.Enabled = (trangThai == "DangLap");
+            string rawTrangThai = dgvHoaDon.CurrentRow.Tag?.ToString() ?? "";
+            string trangThaiText = dgvHoaDon.CurrentRow.Cells["TrangThai"].Value?.ToString() ?? "";
+            bool laDangLap = rawTrangThai == "DangLap" || trangThaiText == "Đang lập" || trangThaiText == "DangLap";
+
+            btnXacNhanHD.Enabled = laDangLap;
+            btnHuyHD.Enabled = laDangLap;
         }
 
         private void BtnThemSanPham_Click(object? sender, EventArgs e)

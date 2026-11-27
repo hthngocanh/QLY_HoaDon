@@ -7,7 +7,7 @@ namespace QuanLyHoaDon.DAL
 {
     public class HoaDonDAL
     {
-        public List<HoaDonDTO> LayDanhSach(int? maNhanVienLoc = null, string? tuKhoa = null)
+        public List<HoaDonDTO> LayDanhSach(int? maNhanVienLoc = null, string? tuKhoa = null, string? trangThaiLoc = null)
         {
             var ds = new List<HoaDonDTO>();
             using var conn = KetNoiCSDL.TaoKetNoi();
@@ -30,6 +30,11 @@ namespace QuanLyHoaDon.DAL
                 sql += " AND hd.MaNhanVien = @MaNhanVienLoc";
             }
 
+            if (!string.IsNullOrWhiteSpace(trangThaiLoc) && trangThaiLoc != "TatCa")
+            {
+                sql += " AND hd.TrangThai = @TrangThaiLoc";
+            }
+
             if (!string.IsNullOrWhiteSpace(tuKhoa))
             {
                 sql += " AND (CAST(hd.MaHoaDon AS VARCHAR) LIKE @TuKhoa OR kh.HoTen LIKE @TuKhoa OR kh.SoDienThoai LIKE @TuKhoa OR nv.HoTen LIKE @TuKhoa)";
@@ -43,6 +48,10 @@ namespace QuanLyHoaDon.DAL
             if (maNhanVienLoc.HasValue)
             {
                 cmd.Parameters.AddWithValue("@MaNhanVienLoc", maNhanVienLoc.Value);
+            }
+            if (!string.IsNullOrWhiteSpace(trangThaiLoc) && trangThaiLoc != "TatCa")
+            {
+                cmd.Parameters.AddWithValue("@TrangThaiLoc", trangThaiLoc.Trim());
             }
             if (!string.IsNullOrWhiteSpace(tuKhoa))
             {
